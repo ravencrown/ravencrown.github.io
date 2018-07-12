@@ -355,8 +355,8 @@ body {
 #logo,
 #subtitle {
   text-decoration: none;
-  color: #555;
-  font-weight: 100;
+  color: #567;
+  font-weight: normal;
 }
 #logo {
   font-size: 1.6em;

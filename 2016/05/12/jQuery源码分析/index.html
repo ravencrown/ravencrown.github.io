@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>如何在疲劳的JS世界中持续学习？ | 陈广宵的网络日志</title>
+  <title>jQuery源码分析 | 陈广宵的网络日志</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="关注业界前端大牛 关注大牛及其github作品等等，微博，twitter等等。阮一峰老师，justjavac，狼叔，四月，月影，尤雨溪等等 经常follow他们，还有JavaScript社区的领袖们，CNode的狼叔了解下 经常关注github，关注业界顶级的项目  持续关注和探索页面的项目 Github的Explore，里面有很多Topics、Resource、Trending reposito">
+  <meta name="description" content="jQuery 源码分析的资料可以参考 Aaron 大神的《jQuery源码分析系列》文章,以及他的 githut 地址 备注：喜欢 Aaron 大神那句名言 - 以大多数人的努力程度之低，根本轮不到拼天赋…  jQuery源码分析系列 jQuery源码分析系列 github 地址  关于 jQuery 的一些设计思想和用法，可以参考 阮一峰 老师的几篇文章  jQuery设计思想 jQuery最佳">
 <meta name="keywords" content="JavaScript">
 <meta property="og:type" content="article">
-<meta property="og:title" content="如何在疲劳的JS世界中持续学习？">
-<meta property="og:url" content="http://www.xbroder.com/2018/07/11/如何在疲劳的JS世界中持续学习？/index.html">
+<meta property="og:title" content="jQuery源码分析">
+<meta property="og:url" content="http://www.xbroder.com/2016/05/12/jQuery源码分析/index.html">
 <meta property="og:site_name" content="陈广宵的网络日志">
-<meta property="og:description" content="关注业界前端大牛 关注大牛及其github作品等等，微博，twitter等等。阮一峰老师，justjavac，狼叔，四月，月影，尤雨溪等等 经常follow他们，还有JavaScript社区的领袖们，CNode的狼叔了解下 经常关注github，关注业界顶级的项目  持续关注和探索页面的项目 Github的Explore，里面有很多Topics、Resource、Trending reposito">
+<meta property="og:description" content="jQuery 源码分析的资料可以参考 Aaron 大神的《jQuery源码分析系列》文章,以及他的 githut 地址 备注：喜欢 Aaron 大神那句名言 - 以大多数人的努力程度之低，根本轮不到拼天赋…  jQuery源码分析系列 jQuery源码分析系列 github 地址  关于 jQuery 的一些设计思想和用法，可以参考 阮一峰 老师的几篇文章  jQuery设计思想 jQuery最佳">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-07-12T04:38:07.000Z">
+<meta property="og:updated_time" content="2018-07-12T12:31:00.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="如何在疲劳的JS世界中持续学习？">
-<meta name="twitter:description" content="关注业界前端大牛 关注大牛及其github作品等等，微博，twitter等等。阮一峰老师，justjavac，狼叔，四月，月影，尤雨溪等等 经常follow他们，还有JavaScript社区的领袖们，CNode的狼叔了解下 经常关注github，关注业界顶级的项目  持续关注和探索页面的项目 Github的Explore，里面有很多Topics、Resource、Trending reposito">
+<meta name="twitter:title" content="jQuery源码分析">
+<meta name="twitter:description" content="jQuery 源码分析的资料可以参考 Aaron 大神的《jQuery源码分析系列》文章,以及他的 githut 地址 备注：喜欢 Aaron 大神那句名言 - 以大多数人的努力程度之低，根本轮不到拼天赋…  jQuery源码分析系列 jQuery源码分析系列 github 地址  关于 jQuery 的一些设计思想和用法，可以参考 阮一峰 老师的几篇文章  jQuery设计思想 jQuery最佳">
   
     <link rel="alternate" href="/atom.xml" title="陈广宵的网络日志" type="application/atom+xml">
   
@@ -69,10 +69,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-如何在疲劳的JS世界中持续学习？" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-jQuery源码分析" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/blog/2018/07/11/如何在疲劳的JS世界中持续学习？/" class="article-date">
-  <time datetime="2018-07-11T03:46:51.000Z" itemprop="datePublished">2018-07-11</time>
+    <a href="/blog/2016/05/12/jQuery源码分析/" class="article-date">
+  <time datetime="2016-05-12T12:05:11.000Z" itemprop="datePublished">2016-05-12</time>
 </a>
     
   <div class="article-category">
@@ -87,7 +87,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      如何在疲劳的JS世界中持续学习？
+      jQuery源码分析
     </h1>
   
 
@@ -97,35 +97,23 @@
       
         <!-- Table of Contents -->
         
-        <h3 id="关注业界前端大牛"><a href="#关注业界前端大牛" class="headerlink" title="关注业界前端大牛"></a>关注业界前端大牛</h3><ul>
-<li>关注大牛及其github作品等等，微博，twitter等等。阮一峰老师，justjavac，狼叔，四月，月影，尤雨溪等等</li>
-<li>经常follow他们，还有JavaScript社区的领袖们，CNode的狼叔了解下</li>
-<li>经常关注github，关注业界顶级的项目</li>
+        <p>jQuery 源码分析的资料可以参考 Aaron 大神的《jQuery源码分析系列》文章,以及他的 githut 地址</p>
+<p><strong>备注：喜欢 Aaron 大神那句名言 - 以大多数人的努力程度之低，根本轮不到拼天赋…</strong></p>
+<ul>
+<li><a href="http://www.cnblogs.com/aaronjs/p/3279314.html" target="_blank" rel="noopener">jQuery源码分析系列</a></li>
+<li><a href="https://github.com/JsAaron/jQuery" target="_blank" rel="noopener">jQuery源码分析系列 github 地址</a></li>
 </ul>
-<h3 id="持续关注和探索页面的项目"><a href="#持续关注和探索页面的项目" class="headerlink" title="持续关注和探索页面的项目"></a>持续关注和探索页面的项目</h3><ul>
-<li>Github的Explore，里面有很多Topics、Resource、Trending repositories</li>
-</ul>
-<h3 id="看最好的资讯"><a href="#看最好的资讯" class="headerlink" title="看最好的资讯"></a>看最好的资讯</h3><ul>
-<li>奇舞周刊</li>
-<li><a href="web-design-weekly.com">Web Design Weekly</a></li>
-<li><a href="esnextnews.com">ES.next News</a></li>
-<li><a href="frontendfront.com">Front-End Front</a></li>
-<li><a href="medium.com/dailyjs">DailyJS</a></li>
-<li><a href="www.echojs.com">EchoJS</a></li>
-<li><a href="https://cnodejs.org/" target="_blank" rel="noopener">CNODE</a></li>
-<li><a href="https://www.zhihu.com/" target="_blank" rel="noopener">知乎Live</a></li>
-</ul>
-<h3 id="源码源码源码"><a href="#源码源码源码" class="headerlink" title="源码源码源码"></a>源码源码源码</h3><p>源码源码，拒绝无耻搬砖，当伸手党</p>
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
-<li><a href="https://medium.com/@alonronin/stay-updated-in-js-fatigue-universe-3bf5c0d671a4" target="_blank" rel="noopener">Stay updated in JS fatigue universe</a></li>
-<li><a href="https://uptodate.frontendrescue.org/" target="_blank" rel="noopener">HOW TO KEEP UP TO DATE ON  FRONT-END TECHNOLOGIE</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/36339128" target="_blank" rel="noopener">如何在疲劳的JS世界中持续学习</a></li>
+<p>关于 jQuery 的一些设计思想和用法，可以参考 <code>阮一峰</code> 老师的几篇文章</p>
+<ul>
+<li><a href="http://www.ruanyifeng.com/blog/2011/07/jquery_fundamentals.html" target="_blank" rel="noopener">jQuery设计思想</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2011/08/jquery_best_practices.html" target="_blank" rel="noopener">jQuery最佳实践</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2011/08/a_detailed_explanation_of_jquery_deferred_object.html" target="_blank" rel="noopener">jQuery的deferred对象详解</a></li>
 </ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/07/11/如何在疲劳的JS世界中持续学习？/" data-id="cjjijijz9000zr6s6v7npfh2t" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/05/12/jQuery源码分析/" data-id="cjjijijz7000wr6s63igi322r" class="article-share-link">分享</a>
       
       
       
@@ -179,19 +167,19 @@
     
 <nav id="article-nav">
   
-    <a href="/blog/2018/07/12/京东入职篇章/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/blog/2016/11/02/Nginx的编译安装/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">上一篇</strong>
       <div class="article-nav-title">
         
-          京东入职新篇
+          Nginx的编译安装
         
       </div>
     </a>
   
   
-    <a href="/blog/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/blog/2016/01/20/如何正确学习JavaScript/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title">Nginx做负载均衡器以及proxy缓存配置</div>
+      <div class="article-nav-title">如何正确学习JavaScript</div>
     </a>
   
 </nav>
@@ -221,24 +209,42 @@
 
   
     
-    <div class="widget-wrap">
+  
     
-      <div class="widget" id="toc-widget-fixed">
-      
-        <strong class="toc-title">文章目录</strong>
-        <div class="toc-widget-list">
-              <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#关注业界前端大牛"><span class="toc-number">1.</span> <span class="toc-text">关注业界前端大牛</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#持续关注和探索页面的项目"><span class="toc-number">2.</span> <span class="toc-text">持续关注和探索页面的项目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#看最好的资讯"><span class="toc-number">3.</span> <span class="toc-text">看最好的资讯</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#源码源码源码"><span class="toc-number">4.</span> <span class="toc-text">源码源码源码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol>
-          </div>
-      </div>
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title recent-posts">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/blog/2018/07/12/京东入职篇章/">京东入职新篇</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2018/07/11/如何在疲劳的JS世界中持续学习？/">如何在疲劳的JS世界中持续学习？</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/">Nginx做负载均衡器以及proxy缓存配置</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2016/12/29/Nginx的Gzip配置/">Nginx的Gzip设置</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2016/12/26/Nginx的Expires缓存设置/">Expires缓存设置</a>
+          </li>
+        
+      </ul>
     </div>
+  </div>
 
-  
-    
-
-  
-    
-  
-    
   
     
 

@@ -3,15 +3,16 @@
 <head>
   <meta charset="utf-8">
   
-  <title>归档: 2018/7 | 陈广宵的网络日志</title>
+  <title>京东入职新篇 | 陈广宵的网络日志</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="陈广宵的网络日志">
-<meta property="og:url" content="http://www.xbroder.com/archives/2018/07/index.html">
+  <meta property="og:type" content="article">
+<meta property="og:title" content="京东入职新篇">
+<meta property="og:url" content="http://www.xbroder.com/2018/07/12/京东入职篇章/index.html">
 <meta property="og:site_name" content="陈广宵的网络日志">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-07-12T12:38:57.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="陈广宵的网络日志">
+<meta name="twitter:title" content="京东入职新篇">
   
     <link rel="alternate" href="/atom.xml" title="陈广宵的网络日志" type="application/atom+xml">
   
@@ -64,59 +65,109 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/blog/archives/2018" class="archive-year">2018</a>
-        </div>
-         <span class="archive-year-post">2 post  this year</span>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/blog/2018/07/12/京东入职篇章/" class="archive-article-date">
-  <time datetime="2018-07-12T12:38:23.000Z" itemprop="datePublished">07-12</time>
+        <section id="main"><article id="post-京东入职篇章" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/blog/2018/07/12/京东入职篇章/" class="article-date">
+  <time datetime="2018-07-12T12:38:23.000Z" itemprop="datePublished">2018-07-12</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/blog/2018/07/12/京东入职篇章/">京东入职新篇</a>
+    <h1 class="article-title" itemprop="name">
+      京东入职新篇
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/blog/2018/07/11/如何在疲劳的JS世界中持续学习？/" class="archive-article-date">
-  <time datetime="2018-07-11T03:46:51.000Z" itemprop="datePublished">07-11</time>
-</a>
+    <div class="article-entry" itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/blog/2018/07/11/如何在疲劳的JS世界中持续学习？/">如何在疲劳的JS世界中持续学习？</a>
-    </h1>
-  
-
-    </header>
+        <!-- Table of Contents -->
+        
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2018/07/12/京东入职篇章/" data-id="cjjijijz4000qr6s683p1yzro" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
   </div>
+  
+    
+ <script src="/blog/jquery/jquery.min.js"></script>
+  <div id="random_posts">
+    <h2>推荐文章</h2>
+    <div class="random_posts_ul">
+      <script>
+          var random_count =4
+          var site = {BASE_URI:'/blog/'};
+          function load_random_posts(obj) {
+              var arr=site.posts;
+              if (!obj) return;
+              // var count = $(obj).attr('data-count') || 6;
+              for (var i, tmp, n = arr.length; n; i = Math.floor(Math.random() * n), tmp = arr[--n], arr[n] = arr[i], arr[i] = tmp);
+              arr = arr.slice(0, random_count);
+              var html = '<ul>';
+            
+              for(var j=0;j<arr.length;j++){
+                var item=arr[j];
+                html += '<li><strong>' + 
+                item.date + ':&nbsp;&nbsp;<a href="' + (site.BASE_URI+item.uri) + '">' + 
+                (item.title || item.uri) + '</a></strong>';
+                if(item.excerpt){
+                  html +='<div class="post-excerpt">'+item.excerpt+'</div>';
+                }
+                html +='</li>';
+                
+              }
+              $(obj).html(html + '</ul>');
+          }
+          $('.random_posts_ul').each(function () {
+              var c = this;
+              if (!site.posts || !site.posts.length){
+                  $.getJSON(site.BASE_URI + 'js/posts.js',function(json){site.posts = json;load_random_posts(c)});
+              } 
+               else{
+                load_random_posts(c);
+              }
+          });
+      </script>
+    </div>
+  </div>
+
+    
+<nav id="article-nav">
+  
+  
+    <a href="/blog/2018/07/11/如何在疲劳的JS世界中持续学习？/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">如何在疲劳的JS世界中持续学习？</div>
+    </a>
+  
+</nav>
+
+  
 </article>
-  
-  
-    </div></section>
+ 
+     
+  <div class="comments" id="comments">
+    
+     
+       
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+       
+      
+      
+  </div>
+ 
   
 
 </section>
@@ -165,13 +216,6 @@
 
   
     
-  <div class="widget-wrap">
-    <h3 class="widget-title archive">归档</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/blog/archives/2018/07/">July 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/blog/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/blog/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/blog/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/blog/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li></ul>
-    </div>
-  </div>
-
 
   
     

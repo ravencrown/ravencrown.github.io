@@ -9,7 +9,7 @@
 <meta name="keywords" content="Nginx">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Nginx做负载均衡器以及proxy缓存配置">
-<meta property="og:url" content="https://blog.guangxiao.me/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/index.html">
+<meta property="og:url" content="http://www.xbroder.com/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/index.html">
 <meta property="og:site_name" content="陈广宵的网络日志">
 <meta property="og:description" content="nginx-sticky-module本文主要是完成一下几个功能  结合proxy和upstream模块实现nginx负载均衡 结合nginx_upstream_check_module模块实现后端服务器的健康检查 使用nginx-sticky-module扩展模块实现Cookie会话黏贴（session-sticky效果） 使用proxy模块实现静态文件缓存 使用ngx_cache_purge实">
 <meta property="og:locale" content="default">
@@ -30,7 +30,7 @@
   
     
   
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/blog/css/style.css">
   
 
 </head>
@@ -50,23 +50,23 @@
         <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://blog.guangxiao.me"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://www.xbroder.com"></form>
       </div>
       <nav id="main-nav">
         <a id="main-nav-toggle" class="nav-icon"></a>
         
-          <a class="main-nav-link" href="/">首页</a>
+          <a class="main-nav-link" href="/blog/">首页</a>
         
-          <a class="main-nav-link" href="/archives">归档</a>
+          <a class="main-nav-link" href="/blog/archives">归档</a>
         
-          <a class="main-nav-link" href="/about">关于</a>
+          <a class="main-nav-link" href="/blog/about">关于</a>
         
       </nav>
       
     </div>
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">陈广宵的网络日志</a>
+        <a href="/blog/" id="logo">陈广宵的网络日志</a>
       </h1>
       
     </div>
@@ -75,12 +75,12 @@
       <div class="outer">
         <section id="main"><article id="post-Nginx做负载均衡器以及proxy缓存配置" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/" class="article-date">
+    <a href="/blog/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/" class="article-date">
   <time datetime="2016-12-29T15:02:24.000Z" itemprop="datePublished">2016-12-29</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+    <a class="article-category-link" href="/blog/categories/Nginx/">Nginx</a>
   </div>
 
   </div>
@@ -161,23 +161,23 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://blog.guangxiao.me/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/" data-id="cjji2mxqz0001vus61d620b8r" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/" data-id="cjjijijy70004r6s6y1y9g4qi" class="article-share-link">分享</a>
       
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Nginx/">Nginx</a></li></ul>
 
     </footer>
   </div>
   
     
- <script src="/jquery/jquery.min.js"></script>
+ <script src="/blog/jquery/jquery.min.js"></script>
   <div id="random_posts">
     <h2>推荐文章</h2>
     <div class="random_posts_ul">
       <script>
           var random_count =4
-          var site = {BASE_URI:'/'};
+          var site = {BASE_URI:'/blog/'};
           function load_random_posts(obj) {
               var arr=site.posts;
               if (!obj) return;
@@ -215,7 +215,7 @@
     
 <nav id="article-nav">
   
-    <a href="/2018/07/11/如何在疲劳的JS世界中持续学习？/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/blog/2018/07/11/如何在疲劳的JS世界中持续学习？/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">上一篇</strong>
       <div class="article-nav-title">
         
@@ -225,7 +225,7 @@
     </a>
   
   
-    <a href="/2016/12/29/Nginx的Gzip配置/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/blog/2016/12/29/Nginx的Gzip配置/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">下一篇</strong>
       <div class="article-nav-title">Nginx的Gzip设置</div>
     </a>
@@ -300,15 +300,15 @@
     </div>
   </div>
 </footer>
- <script src="/jquery/jquery.min.js"></script>
+ <script src="/blog/jquery/jquery.min.js"></script>
     </div>
     <nav id="mobile-nav">
   
-    <a href="/" class="mobile-nav-link">首页</a>
+    <a href="/blog/" class="mobile-nav-link">首页</a>
   
-    <a href="/archives" class="mobile-nav-link">归档</a>
+    <a href="/blog/archives" class="mobile-nav-link">归档</a>
   
-    <a href="/about" class="mobile-nav-link">关于</a>
+    <a href="/blog/about" class="mobile-nav-link">关于</a>
   
 </nav>
     <img class="back-to-top-btn" src="/images/fly-to-top.png"/>
@@ -375,15 +375,15 @@ window.onload = function() {
   
 
 
- <script src="/js/is.js"></script>
+ <script src="/blog/js/is.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+  <link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.css">
+  <script src="/blog/fancybox/jquery.fancybox.pack.js"></script>
 
 
-<script src="/js/script.js"></script>
-<script src="/js/elevator.js"></script>
+<script src="/blog/js/script.js"></script>
+<script src="/blog/js/elevator.js"></script>
   </div>
 </body>
 </html>

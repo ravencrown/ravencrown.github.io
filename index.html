@@ -95,64 +95,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://blog.guangxiao.me/2018/07/12/测试文章1/" data-id="cjjhcmp31000332s62dp49uvz" class="article-share-link">分享</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
- 
-
-
-  
-    <article id="post-事件代理" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/07/12/事件代理/" class="article-date">
-  <time datetime="2018-07-11T16:26:29.000Z" itemprop="datePublished">2018-07-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/12/事件代理/">事件代理</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <!-- Table of Contents -->
-        
-        <p>当我们需要对很多元素添加事件的时候，可以通过将事件添加到他们的父节点从而将事件委托给父节点来触发处理函数，这主要得益于浏览器的冒泡机制。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span> <span class="attr">id</span>=<span class="string">"parent-list"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span> <span class="attr">id</span>=<span class="string">"post-1"</span>&gt;</span>Item 1<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span> <span class="attr">id</span>=<span class="string">"post-2"</span>&gt;</span>Item 2<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span> <span class="attr">id</span>=<span class="string">"post-3"</span>&gt;</span>Item 3<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span> <span class="attr">id</span>=<span class="string">"post-4"</span>&gt;</span>Item 4<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span> <span class="attr">id</span>=<span class="string">"post-5"</span>&gt;</span>Item 5<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span> <span class="attr">id</span>=<span class="string">"post-6"</span>&gt;</span>Item 6<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>如上代码，当我们的鼠标移到Li上的时候，需要获取此Li的相关信息并飘出悬浮窗以显示详细信息，或者当某个Li被点击的时候需要触发相应的处理事件。我们通常的写法，是为每个Li都添加一些类似onMouseOver或者onClick之类的事件监听。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addListeners4Li</span>(<span class="params">liNode</span>)</span>&#123;</span><br><span class="line">    liNode.onclick = <span class="function"><span class="keyword">function</span> <span class="title">clickHandler</span>(<span class="params"></span>)</span>&#123;...&#125;;</span><br><span class="line">    liNode.onmouseover = <span class="function"><span class="keyword">function</span> <span class="title">mouseOverHandler</span>(<span class="params"></span>)</span>&#123;...&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">window</span>.onload = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> ulNode = <span class="built_in">document</span>.getElementById(<span class="string">"parent-list"</span>);</span><br><span class="line">    <span class="keyword">var</span> liNodes = ulNode.getElementByTagName(<span class="string">"Li"</span>);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>, l = liNodes.length; i &lt; l; i++)&#123;</span><br><span class="line">        addListeners4Li(liNodes[i]);</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果这个UL中的Li子元素会频繁地添加或者删除，我们就需要在每次添加Li的时候都调用这个addListeners4Li方法来为每个Li节点添加事件处理函数。这就添加的复杂度和出错的可能性。</p>
-<p>更简单的方法是使用事件代理机制，当事件被抛到更上层的父节点的时候，我们通过检查事件的目标对象（target）来判断并获取事件源Li。下面的代码可以完成我们想要的效果：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取父节点，并为它添加一个click事件</span></span><br><span class="line"><span class="built_in">document</span>.getElementById(<span class="string">"parent-list"</span>).addEventListener(<span class="string">"click"</span>,<span class="function"><span class="keyword">function</span>(<span class="params">e</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 检查事件源e.targe是否为Li</span></span><br><span class="line">    <span class="keyword">if</span>(e.target &amp;&amp; e.target.nodeName.toUpperCase == <span class="string">"LI"</span>) &#123;</span><br><span class="line">        <span class="comment">// 真正的处理过程在这里</span></span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"List item "</span>,e.target.id.replace(<span class="string">"post-"</span>),<span class="string">" was clicked!"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>为父节点添加一个click事件，当子节点被点击的时候，click事件会从子节点开始向上冒泡。父节点捕获到事件之后，通过判断e.target.nodeName来判断是否为我们需要处理的节点。并且通过e.target拿到了被点击的Li节点。从而可以获取到相应的信息，并作处理。</p>
-<p>为什么它会行得通呢？！因为DOM2.0的事件模型是这样的，如果某个元素触发一个事件，如onclick，顶层对象document就会发出一个事件流，随着DOM树往目标元素流去，这就是传说中的捕获阶段，也就是原Netscape的事件执行模式，沿途的元素如果绑定了事件，它是不会执行的！第二阶段，就是到达了目标元素，执行它上面的绑定事件，但如果onclick只是个空实现，当然是没有效果啦!第三阶级，就是起泡阶级，原IE的事件执行模式，从目标元素往顶层元素折回，如果沿途有onclick事件，就随个触发！因此我们是点击了a元素，但它的onclick事件为空，当事件流上浮到ul元素时，发现ul元素绑定了onclick事件，就执行当中的函数。如果ul的祖先元素也绑定了onclick事件呢？！继续执行！有多少执行多少！看下面的例子：</p>
-<h1 id="事件冒泡及捕获"><a href="#事件冒泡及捕获" class="headerlink" title="事件冒泡及捕获"></a>事件冒泡及捕获</h1><p><img src="https://cloud.githubusercontent.com/assets/9835391/26770989/bc53f37c-49ed-11e7-8c3d-a736ce11d3c2.png" alt="image"></p>
-<p>事件捕获：当某个元素触发某个事件（如onclick），顶层对象document就会发出一个事件流，随着DOM树的节点向目标元素节点流去，直到到达事件真正发生的目标元素。在这个过程中，事件相应的监听函数是不会被触发的。</p>
-<p>事件目标：当到达目标元素之后，执行目标元素该事件相应的处理函数。如果没有绑定监听函数，那就不执行。</p>
-<p>事件起泡：从目标元素开始，往顶层元素传播。途中如果有节点绑定了相应的事件处理函数，这些函数都会被一次触发。如果想阻止事件起泡，可以使用e.stopPropagation()（Firefox）或者e.cancelBubble=true（IE）来组织事件的冒泡传播。</p>
-<h1 id="事件代理的优缺点"><a href="#事件代理的优缺点" class="headerlink" title="事件代理的优缺点"></a>事件代理的优缺点</h1><p>通过上面的介绍，大家应该能够体会到使用事件委托对于web应用程序带来的几个优点：</p>
-<p>1.管理的函数变少了。不需要为每个元素都添加监听函数。对于同一个父节点下面类似的子元素，可以通过委托给父元素的监听函数来处理事件。</p>
-<p>2.可以方便地动态添加和修改元素，不需要因为元素的改动而修改事件绑定。</p>
-<p>3.JavaScript和DOM节点之间的关联变少了，这样也就减少了因循环引用而带来的内存泄漏发生的概率。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://blog.guangxiao.me/2018/07/12/事件代理/" data-id="cjjhcmp2z000232s63w158a3y" class="article-share-link">分享</a>
+      <a data-url="https://blog.guangxiao.me/2018/07/12/测试文章1/" data-id="cjjhcejq900087zs6d3364cv8" class="article-share-link">分享</a>
       
       
       
@@ -220,61 +163,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://blog.guangxiao.me/2018/07/11/如何在疲劳的JS世界中持续学习？/" data-id="cjjhcmp32000432s6nu75uei9" class="article-share-link">分享</a>
+      <a data-url="https://blog.guangxiao.me/2018/07/11/如何在疲劳的JS世界中持续学习？/" data-id="cjjhc7az800037zs63vaqhxiy" class="article-share-link">分享</a>
       
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
 
-    </footer>
-  </div>
-  
-</article>
- 
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/07/10/hello-world/" class="article-date">
-  <time datetime="2018-07-10T12:52:53.000Z" itemprop="datePublished">2018-07-10</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/10/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <!-- Table of Contents -->
-        
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://blog.guangxiao.me/2018/07/10/hello-world/" data-id="cjjhcmp2h000132s6ec540vzp" class="article-share-link">分享</a>
-      
-      
-      
     </footer>
   </div>
   
@@ -343,15 +237,7 @@
           </li>
         
           <li>
-            <a href="/2018/07/12/事件代理/">事件代理</a>
-          </li>
-        
-          <li>
             <a href="/2018/07/11/如何在疲劳的JS世界中持续学习？/">如何在疲劳的JS世界中持续学习？</a>
-          </li>
-        
-          <li>
-            <a href="/2018/07/10/hello-world/">Hello World</a>
           </li>
         
       </ul>
@@ -363,7 +249,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title archive">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">2</span></li></ul>
     </div>
   </div>
 

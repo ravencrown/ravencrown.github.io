@@ -66,47 +66,6 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-测试文章1" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/07/12/测试文章1/" class="article-date">
-  <time datetime="2018-07-11T16:32:21.000Z" itemprop="datePublished">2018-07-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/12/测试文章1/">测试文章1</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <!-- Table of Contents -->
-        
-        <p>测试文章</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://blog.guangxiao.me/2018/07/12/测试文章1/" data-id="cjjhcejq900087zs6d3364cv8" class="article-share-link">分享</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
- 
-
-
-  
     <article id="post-如何在疲劳的JS世界中持续学习？" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/07/11/如何在疲劳的JS世界中持续学习？/" class="article-date">
@@ -163,7 +122,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://blog.guangxiao.me/2018/07/11/如何在疲劳的JS世界中持续学习？/" data-id="cjjhc7az800037zs63vaqhxiy" class="article-share-link">分享</a>
+      <a data-url="https://blog.guangxiao.me/2018/07/11/如何在疲劳的JS世界中持续学习？/" data-id="cjji2mxu30013vus601m6l75m" class="article-share-link">分享</a>
       
       
       
@@ -177,7 +136,710 @@
 
 
   
+    <article id="post-Nginx做负载均衡器以及proxy缓存配置" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/" class="article-date">
+  <time datetime="2016-12-29T15:02:24.000Z" itemprop="datePublished">2016-12-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
 
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/">Nginx做负载均衡器以及proxy缓存配置</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <h2 id="nginx-sticky-module"><a href="#nginx-sticky-module" class="headerlink" title="nginx-sticky-module"></a>nginx-sticky-module</h2><p>本文主要是完成一下几个功能</p>
+<ul>
+<li>结合proxy和upstream模块实现nginx负载均衡</li>
+<li>结合nginx_upstream_check_module模块实现后端服务器的健康检查</li>
+<li>使用nginx-sticky-module扩展模块实现Cookie会话黏贴（session-sticky效果）</li>
+<li>使用proxy模块实现静态文件缓存</li>
+<li>使用ngx_cache_purge实现更强大的缓存清除功能</li>
+</ul>
+<p>项目地址 <a href="https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng" target="_blank" rel="noopener">https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng</a>  </p>
+<p>这个模块的作用是通过cookie黏贴的方式将来自同一个客户端（浏览器）的请求发送到同一个后端服务器上处理，这样一定程度上可以解决多个backend servers的session同步的问题 —— 因为不再需要同步，而RR轮询模式必须要运维人员自己考虑session同步的实现。  </p>
+<p>另外内置的 ip_hash 也可以实现根据客户端IP来分发请求，但它很容易造成负载不均衡的情况，而如果nginx前面有CDN网络或者来自同一局域网的访问，它接收的客户端IP是一样的，容易造成负载不均衡现象。淘宝Tengine的 ngx_http_upstream_session_sticky_module 也是类似的功能。nginx-sticky-module的cookie过期时间，默认浏览器关闭就过期，也就是会话方式。  </p>
+<p>这个模块并不合适不支持 Cookie 或手动禁用了cookie的浏览器，此时默认sticky就会切换成RR。它不能与ip_hash同时使用。  </p>
+<p><img src="http://7q5fot.com1.z0.glb.clouddn.com/nginx-lb-sticky.jpg" alt="img1">  </p>
+<h3 id="sticky配置"><a href="#sticky配置" class="headerlink" title="sticky配置"></a>sticky配置</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 语法</span><br><span class="line"><span class="meta">#</span> sticky [name=route] [domain=.foo.bar] [path=/] [expires=1h] [hash=index|md5|sha1] [no_fallback]</span><br><span class="line"><span class="meta">#</span> name: 可以为任何的 string 字符,默认是 route</span><br><span class="line"><span class="meta">#</span> domain：哪些域名下可以使用这个 cookie</span><br><span class="line"><span class="meta">#</span> path：哪些路径对启用 sticky，例如 path/test，那么只有 test 这个目录才会使用 sticky 做负载均衡</span><br><span class="line"><span class="meta">#</span> expires：cookie 过期时间，默认浏览器关闭就过期，也就是会话方式。</span><br><span class="line"><span class="meta">#</span> no_fallbackup：如果设置了这个，cookie 对应的服务器宕机了，那么将会返回502（bad gateway 或者 proxy error），建议不启用</span><br><span class="line"></span><br><span class="line">upstream backend &#123;</span><br><span class="line">    server 192.168.1.100:8080 weight=1;</span><br><span class="line">    server 192.168.1.101:8080 weight=1;</span><br><span class="line">    sticky;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置起来超级简单，一般来说一个sticky指令就够了。  </p>
+<p>你在查看官方文档可能会注意到里面也有个 sticky 指令，要说它们的作用几乎是一样的，但是你可能注意到This directive is available as part of our commercial subscription.的说明 —— 这是nginx商业版本里才有的特性。包括后面的check指令，在nginx的商业版本里也有对应的health_check（配在 location ）实现几乎一样的监控检查功能。  </p>
+<h3 id="load-balance其它调度方案"><a href="#load-balance其它调度方案" class="headerlink" title="load-balance其它调度方案"></a>load-balance其它调度方案</h3><p>这里顺带介绍一下nginx的负载均衡模块支持的其它调度算法：</p>
+<ul>
+<li>轮询（默认） ： 每个请求按时间顺序逐一分配到不同的后端服务器，如果后端某台服务器宕机，故障系统被自动剔除，使用户访问不受影响。Weight 指定轮询权值，Weight值越大，分配到的访问机率越高，主要用于后端每个服务器性能不均的情况下。</li>
+<li>ip_hash ： 每个请求按访问IP的hash结果分配，这样来自同一个IP的访客固定访问一个后端服务器，有效解决了动态网页存在的session共享问题。当然如果这个节点不可用了，会发到下个节点，而此时没有session同步的话就注销掉了。</li>
+<li>least_conn ： 请求被发送到当前活跃连接最少的realserver上。会考虑weight的值。</li>
+<li>url_hash ： 此方法按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，可以进一步提高后端缓存服务器的效率。Nginx本身是不支持url_hash的，如果需要使用这种调度算法，必须安装Nginx 的hash软件包 nginx_upstream_hash 。</li>
+<li>fair ： 这是比上面两个更加智能的负载均衡算法。此种算法可以依据页面大小和加载时间长短智能地进行负载均衡，也就是根据后端服务器的响应时间来分配请求，响应时间短的优先分配。Nginx本身是不支持fair的，如果需要使用这种调度算法，必须下载Nginx的 upstream_fair 模块。</li>
+</ul>
+<h2 id="负载均衡与健康检查"><a href="#负载均衡与健康检查" class="headerlink" title="负载均衡与健康检查"></a>负载均衡与健康检查</h2><p>严格来说，nginx自带是没有针对负载均衡后端节点的健康检查的，但是可以通过默认自带的 ngx_http_proxy_module 模块和 ngx_http_upstream_module 模块中的相关指令来完成当后端节点出现故障时，自动切换到下一个节点来提供访问。  </p>
+<p>示例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> weight ： 轮询权值也是可以用在ip_hash的，默认值为1</span><br><span class="line"><span class="meta">#</span> max_fails ： 允许请求失败的次数，默认为1。当超过最大次数时，返回proxy_next_upstream 模块定义的错误。</span><br><span class="line"><span class="meta">#</span> fail_timeout ： 有两层含义，一是在 30s 时间内最多容许 2 次失败；二是在经历了 2 次失败以后，30s时间内不分配请求到这台服务器。</span><br><span class="line"><span class="meta">#</span> backup ： 预留的备份机器。当其他所有的非backup机器出现故障的时候，才会请求backup机器，因此这台机器的压力最轻。（为什么我的1.6.3版本里配置backup启动nginx时说invalid parameter "backup"？）</span><br><span class="line"><span class="meta">#</span> max_conns： 限制同时连接到某台后端服务器的连接数，默认为0即无限制。因为queue指令是commercial，所以还是保持默认吧。</span><br><span class="line"><span class="meta">#</span> proxy_next_upstream ： 这个指令属于 http_proxy 模块的，指定后端返回什么样的异常响应时，使用另一个realserver</span><br><span class="line"></span><br><span class="line">upstream backend &#123;</span><br><span class="line">    ip_hash;</span><br><span class="line">    server 192.168.1.101:8080:8080 weight 2;</span><br><span class="line">    server 192.168.1.101:8080 weight=1 max_fails=2 fail_timeout=30s;</span><br><span class="line">    server 192.168.1.102:8080 backup;</span><br><span class="line">&#125;</span><br><span class="line">server &#123;</span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass http://backend;</span><br><span class="line">        proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="nginx-upstream-check-module"><a href="#nginx-upstream-check-module" class="headerlink" title="nginx_upstream_check_module"></a>nginx_upstream_check_module</h2><p>nginx_upstream_check_module 是专门提供负载均衡器内节点的健康检查的外部模块，由淘宝的姚伟斌大神开发，通过它可以用来检测后端 realserver 的健康状态。如果后端 realserver 不可用，则后面的请求就不会转发到该节点上，并持续检查几点的状态。在淘宝自己的 tengine 上是自带了该模块。项目地址  </p>
+<p><a href="https://github.com/yaoweibin/nginx_upstream_check_module" target="_blank" rel="noopener">https://github.com/yaoweibin/nginx_upstream_check_module</a>  </p>
+<p>下面的是一个带后端监控检查的 nginx.conf 配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">upstream backend &#123;</span><br><span class="line"><span class="meta">	#</span> interval ： 向后端发送的健康检查包的间隔。</span><br><span class="line"><span class="meta">	#</span> fall ： 如果连续失败次数达到fall_count，服务器就被认为是down。</span><br><span class="line"><span class="meta">	#</span> rise ： 如果连续成功次数达到rise_count，服务器就被认为是up。</span><br><span class="line"><span class="meta">	#</span> timeout ： 后端健康请求的超时时间。</span><br><span class="line"><span class="meta">	#</span> default_down ： 设定初始时服务器的状态，如果是true，就说明默认是down的，如果是false，就是up的。默认值是true，也就是一开始服务器认为是不可用，要等健康检查包达到一定成功次数以后才会被认为是健康的。</span><br><span class="line"><span class="meta">	#</span> type：健康检查包的类型，现在支持以下多种类型</span><br><span class="line"><span class="meta">		#</span> tcp：简单的tcp连接，如果连接成功，就说明后端正常。</span><br><span class="line"><span class="meta">		#</span> http：发送HTTP请求，通过后端的回复包的状态来判断后端是否存活。</span><br><span class="line"><span class="meta">		#</span> ajp：向后端发送AJP协议的Cping包，通过接收Cpong包来判断后端是否存活。</span><br><span class="line"><span class="meta">		#</span> ssl_hello：发送一个初始的SSL hello包并接受服务器的SSL hello包。</span><br><span class="line"><span class="meta">		#</span> mysql: 向mysql服务器连接，通过接收服务器的greeting包来判断后端是否存活。</span><br><span class="line"><span class="meta">		#</span> fastcgi：发送一个fastcgi请求，通过接受解析fastcgi响应来判断后端是否存活</span><br><span class="line"><span class="meta">	#</span> port: 指定后端服务器的检查端口。你可以指定不同于真实服务的后端服务器的端口，比如后端提供的是443端口的应用，你可以去检查80端口的状态来判断后端健康状况。默认是0，表示跟后端server提供真实服务的端口一样。该选项出现于Tengine-1.4.0。</span><br><span class="line">    sticky;     # or simple round-robin</span><br><span class="line">    server 192.168.1.101:8080 weight=2;</span><br><span class="line">    server 192.168.1.101:8081 weight=1 max_fails=2 fail_timeout=30s ;</span><br><span class="line">    server 192.168.1.102:8080 weight=1 max_fails=2 fail_timeout=30s ;</span><br><span class="line">    server 192.168.1.102:8081;</span><br><span class="line">    </span><br><span class="line">    check interval=5000 rise=2 fall=3 timeout=1000 type=http;</span><br><span class="line">    check_http_send "HEAD / HTTP/1.0\r\n\r\n";</span><br><span class="line">    check_http_expect_alive http_2xx http_3xx;</span><br><span class="line">&#125;</span><br><span class="line">server &#123;</span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass http://backend;</span><br><span class="line">    &#125;</span><br><span class="line">    location /status &#123;</span><br><span class="line">        check_status;</span><br><span class="line">        access_log   off;</span><br><span class="line">        allow 172.29.73.23;</span><br><span class="line">        deny all;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面配置的意思是，对name这个负载均衡条目中的所有节点，每个5秒检测一次，请求2次正常则标记 realserver状态为up，如果检测 3 次都失败，则标记 realserver的状态为down，超时时间为1秒。  </p>
+<p>check指令只能出现在upstream中  </p>
+<p>如果 type 为 http ，你还可以使用check_http_send来配置http监控检查包发送的请求内容，为了减少传输数据量，推荐采用 HEAD 方法。当采用长连接进行健康检查时，需在该指令中添加keep-alive请求头，如： HEAD / HTTP/1.1\r\nConnection: keep-alive\r\n\r\n 。当采用 GET 方法的情况下，请求uri的size不宜过大，确保可以在1个interval内传输完成，否则会被健康检查模块视为后端服务器或网络异常。  </p>
+<p>check_http_expect_alive指定HTTP回复的成功状态，默认认为 2XX 和 3XX 的状态是健康的。  </p>
+<h2 id="Nginx的proxy缓存使用"><a href="#Nginx的proxy缓存使用" class="headerlink" title="Nginx的proxy缓存使用"></a>Nginx的proxy缓存使用</h2><p>nginx的页面缓存功能与上面的负载均衡和健康检查是没有关系的，放在这里一是因为懒得再起一篇文章，二是再有load-balance的地方一般都会启用缓存的。  </p>
+<p>缓存也就是将js、css、image等静态文件从tomcat缓存到nginx指定的缓存目录下，既可以减轻tomcat负担，也可以加快访问速度，但这样缓存及时清理成为了一个问题，所以需要 ngx_cache_purge 这个模块来在过期时间未到之前，手动清理缓存。（这里有篇 文章，对比使用缓存、不使用缓存、使用动静分离三种情况下，高并发性能比较。使用代理缓存功能性能会高出很多倍）  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> proxy_temp_path ： 缓存临时目录。后端的响应并不直接返回客户端，而是先写到一个临时文件中，然后被rename一下当做缓存放在 proxy_cache_path 。0.8.9版本以后允许temp和cache两个目录在不同文件系统上（分区），然而为了减少性能损失还是建议把它们设成一个文件系统上。</span><br><span class="line"><span class="meta">#</span> proxy_cache_path ... ： 设置缓存目录，目录里的文件名是 cache_key 的MD5值。levels=1:2 keys_zone=cache_one:50m表示采用2级目录结构，Web缓存区名称为cache_one，内存缓存空间大小为100MB，这个缓冲zone可以被多次使用。文件系统上看到的缓存文件名类似于 /usr/local/nginx-1.6/proxy_cache/c/29/b7f54b2df7773722d382f4809d65029c 。inactive=2d max_size=2g表示2天没有被访问的内容自动清除，硬盘最大缓存空间为2GB，超过这个大学将清除最近最少使用的数据。</span><br><span class="line"><span class="meta">#</span> proxy_cache ： 引用前面定义的缓存区 cache_one</span><br><span class="line"><span class="meta">#</span> proxy_cache_key ： 定义cache_key</span><br><span class="line"><span class="meta">#</span> proxy_cache_valid ： 为不同的响应状态码设置不同的缓存时间，比如200、302等正常结果可以缓存的时间长点，而404、500等缓存时间设置短一些，这个时间到了文件就会过期，而不论是否刚被访问过。</span><br><span class="line"><span class="meta">#</span> expires ： 在响应头里设置Expires:或Cache-Control:max-age，返回给客户端的浏览器缓存失效时间。</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    ... // $upstream_cache_status记录缓存命中率</span><br><span class="line">    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">                      '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">                      '"$http_user_agent" "$http_x_forwarded_for"'</span><br><span class="line">                      '"$upstream_cache_status"';</span><br><span class="line"></span><br><span class="line">    proxy_temp_path   /usr/local/nginx-1.6/proxy_temp;</span><br><span class="line">    proxy_cache_path /usr/local/nginx-1.6/proxy_cache levels=1:2 keys_zone=cache_one:100m inactive=2d max_size=2g;</span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        listen       80; </span><br><span class="line">        server_name  ittest.example.com;</span><br><span class="line">        root   html;</span><br><span class="line">        index  index.html index.htm index.jsp;</span><br><span class="line"></span><br><span class="line">        location ~ .*\.(gif|jpg|png|html|css|js|ico|swf|pdf)(.*) &#123;</span><br><span class="line">            proxy_pass  http://backend;</span><br><span class="line">            proxy_redirect off;</span><br><span class="line">            proxy_set_header Host $host;</span><br><span class="line">            proxy_set_header   X-Real-IP   $remote_addr;</span><br><span class="line">            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line"></span><br><span class="line">            proxy_cache cache_one;</span><br><span class="line">            add_header Nginx-Cache $upstream_cache_status;</span><br><span class="line">            proxy_cache_valid  200 304 301 302 8h;</span><br><span class="line">            proxy_cache_valid 404 1m;</span><br><span class="line">            proxy_cache_valid  any 2d;</span><br><span class="line">            proxy_cache_key $host$uri$is_args$args;</span><br><span class="line">            expires 30d;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        location ~ /purge(/.*) &#123;</span><br><span class="line">            #设置只允许指定的IP或IP段才可以清除URL缓存。</span><br><span class="line">            allow   127.0.0.1;</span><br><span class="line">            allow   172.29.73.0/24;</span><br><span class="line">            deny    all;</span><br><span class="line">            proxy_cache_purge  cache_one $host$1$is_args$args;</span><br><span class="line">            error_page 405 =200 /purge$1;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关于缓存的失效期限上面有三个选项：X-Accel-Expires、inactive、proxy_cache_valid、expires，它们之间是有优先级的，按上面的顺序如果在header里设置 X-Accel-Expires 则它的优先级最高，否则inactive优先级最高。更多资料请参考 nginx缓存优先级 或这里。</p>
+<p><img src="http://7q5fot.com1.z0.glb.clouddn.com/nginx-cache-hit.png" alt="http://7q5fot.com1.z0.glb.clouddn.com/nginx-cache-hit.png"></p>
+<h2 id="清除缓存"><a href="#清除缓存" class="headerlink" title="清除缓存"></a>清除缓存</h2><p>上述配置的proxy_cache_purge指令用于方便的清除缓存，但必须按照第三方的 ngx_cache_purge 模块才能使用，项目地址:<br><a href="https://github.com/FRiCKLE/ngx_cache_purge" target="_blank" rel="noopener">https://github.com/FRiCKLE/ngx_cache_purge</a>  </p>
+<p>使用 ngx_cache_purge 模块清除缓存有2种办法（直接删除缓存目录下的文件也算一种办法）：</p>
+<ul>
+<li>echo发送PURGE指令: proxy_cache_purge PURGE from 127.0.0.1表示只允许在来自本地的清除指令</li>
+<li>GET方式请求URL: 即使用配置文件中的location ~ /purge(/.*)，浏览器访问<a href="http://ittest.example.com/purge/your/may/path来清除缓存，或者echo" target="_blank" rel="noopener">http://ittest.example.com/purge/your/may/path来清除缓存，或者echo</a> -e ‘GET /purge/ HTTP/1.0\r\n’ | nc ittest.example.com 80  </li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo -e 'PURGE / HTTP/1.0\r\n' | nc 127.0.0.1 80</span><br></pre></td></tr></table></figure>
+<p><img src="http://7q5fot.com1.z0.glb.clouddn.com/nginx-cache-purge.png" alt="http://7q5fot.com1.z0.glb.clouddn.com/nginx-cache-purge.png">  </p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>official documentation, <a href="http://nginx.org/en/docs/http/ngx_http_upstream_module.html" target="_blank" rel="noopener">official documentation</a></li>
+<li>Nginx实战系列之功能篇—-后端节点健康检查, <a href="http://nolinux.blog.51cto.com/4824967/1594029" target="_blank" rel="noopener">Nginx实战系列之功能篇—-后端节点健康检查</a></li>
+<li>Tengine, <a href="http://tengine.taobao.org/document_cn/http_upstream_check_cn.html" target="_blank" rel="noopener">Tengine nginx_upstream_check_module</a></li>
+<li>nginx反向代理tomcat集群做负载均衡缓存, <a href="http://quenlang.blog.51cto.com/4813803/1570352" target="_blank" rel="noopener">nginx反向代理tomcat集群做负载均衡缓存</a></li>
+<li>web内容缓存 nginx高性能缓存详解, <a href="http://www.ttlsa.com/nginx/nginx-high-performance-caching/" target="_blank" rel="noopener">web内容缓存 nginx高性能缓存详解</a></li>
+<li>使用nginx sticky实现基于cookie的负载均衡, <a href="http://www.ttlsa.com/nginx/nginx-modules-nginx-sticky-module/" target="_blank" rel="noopener">使用nginx sticky实现基于cookie的负载均衡</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.guangxiao.me/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/" data-id="cjji2mxqz0001vus61d620b8r" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
+    <article id="post-Nginx的Gzip配置" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/29/Nginx的Gzip配置/" class="article-date">
+  <time datetime="2016-12-29T15:02:24.000Z" itemprop="datePublished">2016-12-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/29/Nginx的Gzip配置/">Nginx的Gzip设置</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <h2 id="Gzip配置参数"><a href="#Gzip配置参数" class="headerlink" title="Gzip配置参数"></a>Gzip配置参数</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">gzip配置的常用参数</span><br><span class="line">gzip on|off;  #是否开启gzip</span><br><span class="line">gzip_buffers 32 4K| 16 8K #缓冲(压缩在内存中缓冲几块? 每块多大?)</span><br><span class="line">gzip_comp_level [1-9] #推荐6 压缩级别(级别越高,压的越小,越浪费CPU计算资源)</span><br><span class="line">gzip_disable #正则匹配UA 什么样的Uri不进行gzip</span><br><span class="line">gzip_min_length 200 # 开始压缩的最小长度(再小就不要压缩了,意义不在)</span><br><span class="line">gzip_http_version 1.0|1.1 # 开始压缩的http协议版本(可以不设置,目前几乎全是1.1协议)</span><br><span class="line">gzip_proxied          # 设置请求者代理服务器,该如何缓存内容</span><br><span class="line">gzip_types text/plain  application/xml # 对哪些类型的文件用压缩 如txt,xml,html ,css</span><br><span class="line">gzip_vary on|off  # 是否传输gzip压缩标志 Vary是用来标志缓存的依据.</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>注意:</span><br><span class="line"><span class="meta">#</span>图片/mp3这样的二进制文件,不必压缩</span><br><span class="line"><span class="meta">#</span>因为压缩率比较小, 比如100-&gt;80字节,而且压缩也是耗费CPU资源的.</span><br><span class="line"><span class="meta">#</span>比较小的文件不必压缩,</span><br></pre></td></tr></table></figure>
+<p><strong>思考:</strong></p>
+<ul>
+<li>如果2个人,一个浏览器支持gzip,一个浏览器不支持gzip2个同时请求同个页面, chinaCache缓存压缩后,还是未压缩的?</li>
+<li>如果1人,再次请求页面,chinaCache返回压缩后的缓存内容,还是压缩前的缓存内容?</li>
+</ul>
+<p>这个时候 Vary的作用体现出来.即——缓存的内容受 Accept-Encoding头信息的影响.  </p>
+<p>所以如果<br>请求时,不支持gzip, 缓存服务器将会生成一份未gzip的内容.<br>请求时,支持gzip, 缓存服务器将会生成一份gzip的内容.  </p>
+<p>下次再请求时, 缓存服务器会考虑客户端的Accept-Encoding因素,并合理的返回信息  </p>
+<p>Nginx对于图片,js等静态文件的缓存设置<br>注:这个缓存是指针对浏览器所做的缓存,不是指服务器端的数据缓存.  </p>
+<p>主要知识点: location expires指令  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">location ~ \.(jpg|jpeg|png|gif)$ &#123;</span><br><span class="line">    expires 1d;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~ \.js$ &#123;</span><br><span class="line">    expires 1h;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>设置并载入新配置文件,用firebug观察,<br>会发现 图片内容,没有再次产生新的请求,原因–利用了本地缓存的效果.  </p>
+<p><strong>注: 在大型的新闻站,或文章站中,图片变动的可能性很小,建议做1周左右的缓存Js,css等小时级的缓存.</strong></p>
+<p>如果信息流动比较快,也可以不用expires指令,<br>用last_modified, etag功能(主流的web服务器都支持这2个头信息)  </p>
+<p>原理是:<br>响应: 计算响应内容的签名, etag 和 上次修改时间<br>请求: 发送 etatg, If-Modified-Since 头信息.<br>服务器收到后,判断etag是否一致, 最后修改时间是否大于if-Modifiled-Since<br>如果监测到服务器的内容有变化,则返回304,<br>浏览器就知道,内容没变,直接用缓存.  </p>
+<p><strong>304 比起上面的expires 指令多了1次请求,但是比200状态,少了传输内容.</strong></p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_gzip_module.html" target="_blank" rel="noopener">Nginx Gzip Module</a></li>
+<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html" target="_blank" rel="noopener">Nginx Gzip Static Module</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.guangxiao.me/2016/12/29/Nginx的Gzip配置/" data-id="cjji2mxrg000avus6cb7pavos" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
+    <article id="post-Nginx的Expires缓存设置" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/26/Nginx的Expires缓存设置/" class="article-date">
+  <time datetime="2016-12-26T12:43:23.000Z" itemprop="datePublished">2016-12-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/26/Nginx的Expires缓存设置/">Expires缓存设置</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <h2 id="Expires-设置"><a href="#Expires-设置" class="headerlink" title="Expires 设置"></a>Expires 设置</h2><p>对于网站的图片,尤其是新闻站, 图片一旦发布, 改动的可能是非常小的.我们希望 能否在用户访问一次后, 图片缓存在用户的浏览器端,且时间比较长的缓存.<br>可以, 用到 nginx的expires设置 .<br>nginx中设置过期时间,非常简单,<br>在location或if段里,来写.</p>
+<p>格式</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">expire -1;</span><br><span class="line">expire 0;</span><br><span class="line">expire 1h;</span><br><span class="line">expire max;</span><br><span class="line">expire off;</span><br></pre></td></tr></table></figure>
+<p>这个指令表示在HTTP响应头中是否增加或修改Expires 和 Cache-Control ，仅当响应状态是200, 201, 204, 206, 301, 302, 303, 304, 或者 307的时候有效。  </p>
+<p>当expire 为负时，会在响应头增加Cache-Control: no-cache；  </p>
+<p>当为正或者0时，就表示Cache-Control: max-age=指定的时间(秒)；  </p>
+<p>当为max时，会把Expires设置为 “Thu, 31 Dec 2037 23:55:55 GMT”， Cache-Control 设置到 10 年；  </p>
+<p>当为off时，表示不增加或修改Expires 和 Cache-Control 。  </p>
+<p>例如</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> curl -I http://su.bdimg.com/static/superplus/css/super_min_2b5190eb.css</span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: JSP3/2.0.4</span><br><span class="line">Date: Fri, 31 Oct 2014 07:28:20 GMT</span><br><span class="line">Content-Type: text/css</span><br><span class="line">Content-Length: 25076</span><br><span class="line">Connection: keep-alive</span><br><span class="line">ETag: “1121644245”</span><br><span class="line">Last-Modified: Wed, 24 Sep 2014 15:50:22 GMT</span><br><span class="line">Expires: Mon, 23 Mar 2015 16:29:25 GMT</span><br><span class="line">Age: 3164335</span><br><span class="line">Cache-Control: max-age=15552000</span><br><span class="line">Accept-Ranges: bytes</span><br><span class="line">Vary: Accept-Encoding</span><br></pre></td></tr></table></figure>
+<p>Date 的意思是服务器发送消息的时间； Age 的意思有点复杂，它的存在暗示你访问的服务器不是源服务器，而是一台缓存服务器，Age 的大小表示这个资源已经”存活了”多长时间，所以这个值不会大于 源服务器设置的最大缓存时间。  </p>
+<p>这里Expires 表示过期时间，Cache-Control 表示最大的存活时间，在服务器端的Nginx 我们可以用 expires 指令来定义这两项。  </p>
+<p>另: 304 也是一种很好的缓存手段<br>原理是: 服务器响应文件内容是,同时响应etag标签(内容的签名,内容一变,他也变), 和 last_modified_since 2个标签值<br>浏览器下次去请求时,头信息发送这两个标签, 服务器检测文件有没有发生变化,如无,直接头信息返回 etag,last_modified_since<br>浏览器知道内容无改变,于是直接调用本地缓存.<br>这个过程,也请求了服务器,但是传着的内容极少.<br>对于变化周期较短的,如静态html,js,css,比较适于用这个方式  </p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>Nginx官网，<a href="http://nginx.org/en/docs/http/ngx_http_headers_module.html#expires" target="_blank" rel="noopener">Location Expires</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.guangxiao.me/2016/12/26/Nginx的Expires缓存设置/" data-id="cjji2mxrb0006vus6sd5vboui" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
+    <article id="post-Nginx-PHP的编译安装" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/18/Nginx-PHP的编译安装/" class="article-date">
+  <time datetime="2016-12-18T14:45:12.000Z" itemprop="datePublished">2016-12-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/18/Nginx-PHP的编译安装/">Nginx+PHP的编译安装</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <h2 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install gd gd-devel</span><br><span class="line">yum install ttf</span><br><span class="line">yum install freetype</span><br><span class="line">yum install mysql mysql-server</span><br><span class="line">yum install libvpx libjpeg libpng zlib libXpm libXpm-devel FreeType t1lib  libt1-devel -y</span><br></pre></td></tr></table></figure>
+<p>nginx+php的配置比较简单,核心就一句话—-<br>把请求的信息转发给9000端口的PHP进程,<br>让PHP进程处理 指定目录下的PHP文件.</p>
+<h2 id="PHP的编译"><a href="#PHP的编译" class="headerlink" title="PHP的编译"></a>PHP的编译</h2><p>apache一般是把php当做自己的一个模块来启动的.<br>而nginx则是把http请求变量(如get,user_agent等)转发给 php进程,即php独立进程,与nginx进行通信. 称为 fastcgi运行方式.<br>因此,为apache所编译的php,是不能用于nginx的.  </p>
+<p>注意: 我们编译的PHP 要有如下功能:<br>连接mysql, gd, ttf, 以fpm(fascgi)方式运行  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">./configure  --prefix=/usr/local/fastphp \</span><br><span class="line">--with-mysql=mysqlnd \</span><br><span class="line">--enable-mysqlnd \</span><br><span class="line">--with-gd \</span><br><span class="line">--enable-gd-native-ttf \</span><br><span class="line">--enable-gd-jis-conv</span><br><span class="line">--enable-fpm</span><br><span class="line"></span><br><span class="line">cd /usr/local/fastphp</span><br><span class="line">cp /usr/local/src/php-5.5.16/php.ini-development ./lib/php.ini #制作php.ini文件</span><br><span class="line">cp etc/php-fpm.conf.default etc/php-fpm.conf                   #制作fpm文件</span><br><span class="line">./sbin/php-fpm</span><br></pre></td></tr></table></figure>
+<h2 id="PHP命令"><a href="#PHP命令" class="headerlink" title="PHP命令"></a>PHP命令</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>php-fpm 启动：</span><br><span class="line">/usr/local/php/sbin/php-fpm</span><br><span class="line"><span class="meta">#</span>php-fpm 关闭：</span><br><span class="line">kill -INT `cat /var/run/php-fpm/php-fpm.pid`</span><br><span class="line"><span class="meta">#</span>php-fpm 重启：</span><br><span class="line">kill -USR2 `cat /var/run/php-fpm/php-fpm.pid`</span><br><span class="line"><span class="meta">#</span>批量删除进程</span><br><span class="line">kill -9  ps aux | grep php-fpm | awk '&#123;print $2&#125;'</span><br></pre></td></tr></table></figure>
+<p>如下例子</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>1:碰到php文件,</span><br><span class="line"><span class="meta">#</span>2: 把根目录定位到 html,</span><br><span class="line"><span class="meta">#</span>3: 把请求上下文转交给9000端口PHP进程,</span><br><span class="line"><span class="meta">#</span>4: 并告诉PHP进程,当前的脚本是$document_root$fastcgi_scriptname</span><br><span class="line"><span class="meta">#</span>(注:PHP会去找这个脚本并处理,所以脚本的位置要指对)</span><br><span class="line">location ~ \.php$ &#123;</span><br><span class="line">    root html;</span><br><span class="line">    fastcgi_pass   127.0.0.1:9000;</span><br><span class="line">    fastcgi_index  index.php;</span><br><span class="line">    fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;</span><br><span class="line">    include    fastcgi_params;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.guangxiao.me/2016/12/18/Nginx-PHP的编译安装/" data-id="cjji2mxqt0000vus69q5ss3jj" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
+    <article id="post-Nginx重定向Rewrite" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/17/Nginx重定向Rewrite/" class="article-date">
+  <time datetime="2016-12-17T04:43:23.000Z" itemprop="datePublished">2016-12-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/17/Nginx重定向Rewrite/">Nginx重定向Rewrite</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <h2 id="Rewrite语法"><a href="#Rewrite语法" class="headerlink" title="Rewrite语法"></a>Rewrite语法</h2><p>rewrite功能就是，使用nginx提供的全局变量或自己设置的变量，结合正则表达式和标志位实现url重写以及重定向。rewrite只能放在server{},location{},if{}中，并且只能对域名后边的除去传递的参数外的字符串起作用，例如 <a href="http://seanlook.com/a/we/index.php?id=1&amp;u=str" target="_blank" rel="noopener">http://seanlook.com/a/we/index.php?id=1&amp;u=str</a> 只对/a/we/index.php重写。语法rewrite regex replacement [flag];  </p>
+<p>如果相对域名或参数字符串起作用，可以使用全局变量匹配，也可以使用proxy_pass反向代理。</p>
+<p>表明看rewrite和location功能有点像，都能实现跳转，主要区别在于rewrite是在同一域名内更改获取资源的路径，而location是对一类路径做控制访问或反向代理，可以proxy_pass到其他机器。很多情况下rewrite也会写在location里，它们的执行顺序是：  </p>
+<ul>
+<li>执行server块的rewrite指令</li>
+<li>执行location匹配</li>
+<li>执行选定的location中的rewrite指令</li>
+</ul>
+<p>如果其中某步URI被重写，则重新循环执行1-3，直到找到真实存在的文件；循环超过10次，则返回500 Internal Server Error错误。  </p>
+<h2 id="flag标志位"><a href="#flag标志位" class="headerlink" title="flag标志位"></a>flag标志位</h2><ul>
+<li>last : 相当于Apache的[L]标记，表示完成rewrite</li>
+<li>break : 停止执行当前虚拟主机的后续rewrite指令集</li>
+<li>redirect : 返回302临时重定向，地址栏会显示跳转后的地址</li>
+<li>permanent : 返回301永久重定向，地址栏会显示跳转后的地址</li>
+</ul>
+<p>因为301和302不能简单的只返回状态码，还必须有重定向的URL，这就是return指令无法返回301,302的原因了。这里 last 和 break 区别有点难以理解：  </p>
+<ul>
+<li>last一般写在server和if中，而break一般使用在location中</li>
+<li>last不终止重写后的url匹配，即新的url会再从server走一遍匹配流程，而break终止重写后的匹配</li>
+<li>break和last都能组织继续执行后面的rewrite指令  </li>
+</ul>
+<h2 id="if指令与全局变量"><a href="#if指令与全局变量" class="headerlink" title="if指令与全局变量"></a>if指令与全局变量</h2><p>if判断指令<br>语法为if(condition){…}，对给定的条件condition进行判断。如果为真，大括号内的rewrite指令将被执行，if条件(conditon)可以是如下任何内容：</p>
+<ul>
+<li>当表达式只是一个变量时，如果值为空或任何以0开头的字符串都会当做false</li>
+<li>直接比较变量和内容时，使用=或!=</li>
+<li>~正则表达式匹配，~*不区分大小写的匹配，!~区分大小写的不匹配</li>
+</ul>
+<p>-f和!-f用来判断是否存在文件<br>-d和!-d用来判断是否存在目录<br>-e和!-e用来判断是否存在文件或目录<br>-x和!-x用来判断文件是否可执行  </p>
+<p>例如</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ($http_user_agent ~ MSIE) &#123;</span><br><span class="line">    rewrite ^(.*)$ /msie/$<span class="number">1</span> <span class="keyword">break</span>;</span><br><span class="line">&#125; <span class="comment">//如果UA包含"MSIE"，rewrite请求到/msid/目录下</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($http_cookie ~* <span class="string">"id=([^;]+)(?:;|$)"</span>) &#123;</span><br><span class="line">    set $id $<span class="number">1</span>;</span><br><span class="line">&#125; <span class="comment">//如果cookie匹配正则，设置变量$id等于正则引用部分</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($request_method = POST) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">405</span>;</span><br><span class="line">&#125; <span class="comment">//如果提交方法为POST，则返回状态405（Method not allowed）。return不能返回301,302</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($slow) &#123;</span><br><span class="line">    limit_rate <span class="number">10</span>k;</span><br><span class="line">&#125; <span class="comment">//限速，$slow可以通过 set 指令设置</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!-f $request_filename)&#123;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">    proxy_pass  http:<span class="comment">//127.0.0.1; </span></span><br><span class="line">&#125; <span class="comment">//如果请求的文件名不存在，则反向代理到localhost 。这里的break也是停止rewrite检查</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($args ~ post=<span class="number">140</span>)&#123;</span><br><span class="line">    rewrite ^ http:<span class="comment">//example.com/ permanent;</span></span><br><span class="line">&#125; <span class="comment">//如果query string中包含"post=140"，永久重定向到example.com</span></span><br><span class="line"></span><br><span class="line">location ~* \.(gif|jpg|png|swf|flv)$ &#123;</span><br><span class="line">    valid_referers none blocked www.jefflei.com www.leizhenfang.com;</span><br><span class="line">    <span class="keyword">if</span> ($invalid_referer) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">404</span>;</span><br><span class="line">    &#125; <span class="comment">//防盗链</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="全局变量"><a href="#全局变量" class="headerlink" title="全局变量"></a>全局变量</h2><ul>
+<li>$args ： #这个变量等于请求行中的参数，同$query_string</li>
+<li>$content_length ： 请求头中的Content-length字段。</li>
+<li>$content_type ： 请求头中的Content-Type字段。</li>
+<li>$document_root ： 当前请求在root指令中指定的值。</li>
+<li>$host ： 请求主机头字段，否则为服务器名称。</li>
+<li>$http_user_agent ： 客户端agent信息</li>
+<li>$http_cookie ： 客户端cookie信息</li>
+<li>$limit_rate ： 这个变量可以限制连接速率。</li>
+<li>$request_method ： 客户端请求的动作，通常为GET或POST。</li>
+<li>$remote_addr ： 客户端的IP地址。</li>
+<li>$remote_port ： 客户端的端口。</li>
+<li>$remote_user ： 已经经过Auth Basic Module验证的用户名。</li>
+<li>$request_filename ： 当前请求的文件路径，由root或alias指令与URI请求生成。</li>
+<li>$scheme ： HTTP方法（如http，https）。</li>
+<li>$server_protocol ： 请求使用的协议，通常是HTTP/1.0或HTTP/1.1。</li>
+<li>$server_addr ： 服务器地址，在完成一次系统调用后可以确定这个值。</li>
+<li>$server_name ： 服务器名称。</li>
+<li>$server_port ： 请求到达服务器的端口号。</li>
+<li>$request_uri ： 包含请求参数的原始URI，不包含主机名，如：”/foo/bar.php?arg=baz”。</li>
+<li>$uri ： 不带请求参数的当前URI，$uri不包含主机名，如”/foo/bar.html”。</li>
+<li>$document_uri ： 与$uri相同。</li>
+</ul>
+<p>例如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">例：http://localhost:88/test1/test2/test.php</span><br><span class="line">$host：localhost</span><br><span class="line">$server_port：88</span><br><span class="line">$request_uri：http://localhost:88/test1/test2/test.php</span><br><span class="line">$document_uri：/test1/test2/test.php</span><br><span class="line">$document_root：/var/www/html</span><br><span class="line">$request_filename：/var/www/html/test1/test2/test.php</span><br></pre></td></tr></table></figure>
+<h2 id="常用正则"><a href="#常用正则" class="headerlink" title="常用正则"></a>常用正则</h2><ul>
+<li>. ： 匹配除换行符以外的任意字符</li>
+<li>? ： 重复0次或1次</li>
+<li><ul>
+<li>： 重复1次或更多次</li>
+</ul>
+</li>
+<li><ul>
+<li>： 重复0次或更多次</li>
+</ul>
+</li>
+<li>\d ：匹配数字</li>
+<li>^ ： 匹配字符串的开始</li>
+<li>$ ： 匹配字符串的介绍</li>
+<li>{n} ： 重复n次</li>
+<li>{n,} ： 重复n次或更多次</li>
+<li>[c] ： 匹配单个字符c</li>
+<li>[a-z] ： 匹配a-z小写字母的任意一个</li>
+</ul>
+<p>小括号()之间匹配的内容，可以在后面通过$1来引用，$2表示的是前面第二个()里的内容。正则里面容易让人困惑的是\转义特殊字符。</p>
+<h2 id="rewrite实例"><a href="#rewrite实例" class="headerlink" title="rewrite实例"></a>rewrite实例</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    # 定义image日志格式</span><br><span class="line">    log_format imagelog '[$time_local] ' $image_file ' ' $image_type ' ' $body_bytes_sent ' ' $status;</span><br><span class="line">    # 开启重写日志</span><br><span class="line">    rewrite_log on;</span><br><span class="line"> </span><br><span class="line">    server &#123;</span><br><span class="line">        root /home/www;</span><br><span class="line"> </span><br><span class="line">        location / &#123;</span><br><span class="line">                # 重写规则信息</span><br><span class="line">                error_log logs/rewrite.log notice; </span><br><span class="line">                # 注意这里要用‘’单引号引起来，避免&#123;&#125;</span><br><span class="line">                rewrite '^/images/([a-z]&#123;2&#125;)/([a-z0-9]&#123;5&#125;)/(.*)\.(png|jpg|gif)$' /data?file=$3.$4;</span><br><span class="line">                # 注意不能在上面这条规则后面加上“last”参数，否则下面的set指令不会执行</span><br><span class="line">                set $image_file $3;</span><br><span class="line">                set $image_type $4;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        location /data &#123;</span><br><span class="line">                # 指定针对图片的日志格式，来分析图片类型和大小</span><br><span class="line">                access_log logs/images.log mian;</span><br><span class="line">                root /data/images;</span><br><span class="line">                # 应用前面定义的变量。判断首先文件在不在，不在再判断目录在不在，如果还不在就跳转到最后一个url里</span><br><span class="line">                try_files /$arg_file /image404.html;</span><br><span class="line">        &#125;</span><br><span class="line">        location = /image404.html &#123;</span><br><span class="line">                # 图片不存在返回特定的信息</span><br><span class="line">                return 404 "image not found\n";</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对形如/images/ef/uh7b3/test.png的请求，重写到/data?file=test.png，于是匹配到location /data，先看/data/images/test.png文件存不存在，如果存在则正常响应，如果不存在则重写tryfiles到新的image404 location，直接返回404状态码。</p>
+<p>例2</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rewrite ^/images/(.*)_(\d+)x(\d+)\.(png|jpg|gif)$ /resizer/$1.$4?width=$2&amp;height=$3? last;</span><br></pre></td></tr></table></figure>
+<p>对形如/images/bla_500x400.jpg的文件请求，重写到/resizer/bla.jpg?width=500&amp;height=400地址，并会继续尝试匹配location。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><p>Nginx官网，<a href="http://nginx.org/en/docs/http/ngx_http_rewrite_module.html#rewrite" target="_blank" rel="noopener">Location Rewrite语法</a></p>
+</li>
+<li><p>Nginx官网，<a href="http://nginx.org/en/docs/http/ngx_http_rewrite_module.html" target="_blank" rel="noopener">Rewrite Module</a></p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.guangxiao.me/2016/12/17/Nginx重定向Rewrite/" data-id="cjji2mxrv000qvus6uf67msej" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
+    <article id="post-Nginx的Location正则" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/12/Nginx的Location正则/" class="article-date">
+  <time datetime="2016-12-12T02:15:34.000Z" itemprop="datePublished">2016-12-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/12/Nginx的Location正则/">Nginx的Location正则</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <h2 id="Location正则"><a href="#Location正则" class="headerlink" title="Location正则"></a>Location正则</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    root   /usr/local/nginx/html;</span><br><span class="line">    index  index.html index.htm;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">location ~ image &#123;</span><br><span class="line">    root /var/www/image;</span><br><span class="line">    index index.html;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果我们访问  <a href="http://xx.com/image/logo.png" target="_blank" rel="noopener">http://xx.com/image/logo.png</a><br>此时, “/” 与”/image/logo.png” 匹配<br>同时,”image”正则 与”image/logo.png”也能匹配,谁发挥作用?<br>正则表达式的成果将会使用.  </p>
+<p>图片真正会访问 /var/www/image/logo.png  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    root	/usr/local/nginx/html;</span><br><span class="line">    index	index.html index.htm;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">location /foo &#123;</span><br><span class="line">    root	/var/www/html;</span><br><span class="line">    index	index.html;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们访问<a href="http://xxx.com/foo" target="_blank" rel="noopener">http://xxx.com/foo</a><br> 对于uri “/foo”,   两个location的patt,都能匹配他们<br>即 ‘/’能从左前缀匹配 ‘/foo’, ‘/foo’也能左前缀匹配’/foo’,<br>此时, 真正访问 /var/www/html/index.html<br>原因:’/foo’匹配的更长,因此使用之.;  </p>
+<p><strong>Location的正则写法</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">location  = / &#123;</span><br><span class="line">    # 精确匹配 / ，主机名后面不能带任何字符串</span><br><span class="line">    [ configuration A ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location  / &#123;</span><br><span class="line">    # 因为所有的地址都以 / 开头，所以这条规则将匹配到所有请求</span><br><span class="line">    # 但是正则和最长字符串会优先匹配</span><br><span class="line">    [ configuration B ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /documents/ &#123;</span><br><span class="line">    # 匹配任何以 /documents/ 开头的地址，匹配符合以后，还要继续往下搜索</span><br><span class="line">    # 只有后面的正则表达式没有匹配到时，这一条才会采用这一条</span><br><span class="line">    [ configuration C ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~ /documents/Abc &#123;</span><br><span class="line">    # 匹配任何以 /documents/ 开头的地址，匹配符合以后，还要继续往下搜索</span><br><span class="line">    # 只有后面的正则表达式没有匹配到时，这一条才会采用这一条</span><br><span class="line">    [ configuration CC ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ^~ /images/ &#123;</span><br><span class="line">    # 匹配任何以 /images/ 开头的地址，匹配符合以后，停止往下搜索正则，采用这一条。</span><br><span class="line">    [ configuration D ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~* \.(gif|jpg|jpeg)$ &#123;</span><br><span class="line">    # 匹配所有以 gif,jpg或jpeg 结尾的请求</span><br><span class="line">    # 然而，所有请求 /images/ 下的图片会被 config D 处理，因为 ^~ 到达不了这一条正则</span><br><span class="line">    [ configuration E ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /images/ &#123;</span><br><span class="line">    # 字符匹配到 /images/，继续往下，会发现 ^~ 存在</span><br><span class="line">    [ configuration F ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /images/abc &#123;</span><br><span class="line">    # 最长字符匹配到 /images/abc，继续往下，会发现 ^~ 存在</span><br><span class="line">    # F与G的放置顺序是没有关系的</span><br><span class="line">    [ configuration G ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~ /images/abc/ &#123;</span><br><span class="line">    # 只有去掉 config D 才有效：先最长匹配 config G 开头的地址，继续往下搜索，匹配到这一条正则，采用</span><br><span class="line">    [ configuration H ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~* /js/.*/\.js</span><br></pre></td></tr></table></figure>
+<ul>
+<li>以=开头表示精确匹配如 A 中只匹配根目录结尾的请求，后面不能带任何字符串。</li>
+<li>^~ 开头表示uri以某个常规字符串开头，不是正则匹配</li>
+<li>~ 开头表示区分大小写的正则匹配;</li>
+<li>~* 开头表示不区分大小写的正则匹配</li>
+<li>/ 通用匹配, 如果没有其它匹配,任何请求都会匹配到</li>
+</ul>
+<p><strong>顺序or优先级</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(location =) &gt; (location 完整路径) &gt; (location ^~ 路径) &gt; (location ~,~* 正则顺序) &gt; (location 部分起始路径) &gt; (/)</span><br></pre></td></tr></table></figure>
+<p><strong>location解析过程如下图</strong>  </p>
+<p><img src="https://camo.githubusercontent.com/7df924e86acaa7b2d44f709bc86aec92d64444c0/687474703a2f2f692e696d6775722e636f6d2f655336424476622e706e67" alt="location解析过程"></p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>Nginx官网，<a href="http://nginx.org/en/docs/http/ngx_http_core_module.html#location" target="_blank" rel="noopener">Location Syntax</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.guangxiao.me/2016/12/12/Nginx的Location正则/" data-id="cjji2mxrk000cvus6btatk7as" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
+    <article id="post-Nginx的Location语法" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/07/Nginx的Location语法/" class="article-date">
+  <time datetime="2016-12-07T12:15:32.000Z" itemprop="datePublished">2016-12-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/07/Nginx的Location语法/">Nginx的Location语法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <p>location 有”定位”的意思, 根据URI来进行不同的定位.<br>在虚拟主机的配置中,是必不可少的,location可以把网站的不同部分,定位到不同的处理方式上.<br>比如, 碰到.php, 如何调用PHP解释器?  –这时就需要location</p>
+<h2 id="Location-的语法"><a href="#Location-的语法" class="headerlink" title="Location 的语法"></a>Location 的语法</h2><p>location 有”定位”的意思, 根据Uri来进行不同的定位. 在虚拟主机的配置中,是必不可少的,location可以把网站的不同部分,定位到不同的处理方式上. 比如, 碰到.php, 如何调用PHP解释器? –这时就需要location location 的语法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Syntax:	location [ = | ~ | ~* | ^~ ] uri &#123; ... &#125;</span><br><span class="line">location @name &#123; ... &#125;</span><br><span class="line">Default:	—</span><br><span class="line">Context:	server, location</span><br><span class="line"></span><br><span class="line">中括号可以不写任何参数,此时称为一般匹配,也可以写参数</span><br><span class="line">因此,大类型可以分为3种:</span><br><span class="line">location = patt &#123;&#125; [精准匹配]</span><br><span class="line">location patt&#123;&#125;  [一般匹配]</span><br><span class="line">location ~ patt&#123;&#125; [正则匹配]</span><br></pre></td></tr></table></figure>
+<p>location示例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">location = / &#123;</span><br><span class="line">    [ configuration A ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location / &#123;</span><br><span class="line">    [ configuration B ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /documents/ &#123;</span><br><span class="line">    [ configuration C ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ^~ /images/ &#123;</span><br><span class="line">    [ configuration D ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~* \.(gif|jpg|jpeg)$ &#123;</span><br><span class="line">    [ configuration E ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="如何发挥作用"><a href="#如何发挥作用" class="headerlink" title="如何发挥作用?"></a>如何发挥作用?</h3><p>首先看有没有精准匹配,如果有,则停止匹配过程.</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>如果 $uri == patt,匹配成功，使用configA</span><br><span class="line">location = / &#123;</span><br><span class="line">    root   /var/www/html/;</span><br><span class="line">    index  index.htm index.html;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line">  location / &#123;</span><br><span class="line">     root   /usr/local/nginx/html;</span><br><span class="line">    index  index.html index.htm;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果访问<a href="http://xxx.com/" target="_blank" rel="noopener">http://xxx.com/</a><br>定位流程是　</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1: 精准匹配中　”/”   ,得到index页为　　index.htm</span><br><span class="line">2: 再次访问 /index.htm , 此次内部转跳uri已经是”/index.htm” ,根目录为/usr/local/nginx/html</span><br><span class="line">3: 最终结果,访问了/usr/local/nginx/html/index.htm</span><br></pre></td></tr></table></figure>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>Nginx官网，<a href="http://nginx.org/en/docs/http/ngx_http_core_module.html#location" target="_blank" rel="noopener">Location Syntax</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.guangxiao.me/2016/12/07/Nginx的Location语法/" data-id="cjji2mxro000hvus6ph2k4hko" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
+    <article id="post-Nginx日志切割" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/03/Nginx日志切割/" class="article-date">
+  <time datetime="2016-12-03T11:45:33.000Z" itemprop="datePublished">2016-12-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/03/Nginx日志切割/">Nginx日志切割</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <h2 id="信号控制"><a href="#信号控制" class="headerlink" title="信号控制"></a>信号控制</h2><table>
+<thead>
+<tr>
+<th>TERM,INT</th>
+<th>Quick shutdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>QUIT</td>
+<td>Graceful shutdown  优雅的关闭进程,即等请求结束后再关闭</td>
+</tr>
+<tr>
+<td>HUP</td>
+<td>Configuration reload ,Start the new worker processes with a new configuration Gracefully shutdown the old worker processes 改变配置文件,平滑的重读配置文件</td>
+</tr>
+<tr>
+<td>USR1</td>
+<td>Reopen the log files 重读日志,在日志按月/日分割时有用</td>
+</tr>
+<tr>
+<td>USR2</td>
+<td>Upgrade Executable on the fly 平滑的升级</td>
+</tr>
+<tr>
+<td>WINCH</td>
+<td>Gracefully shutdown the worker processes 优雅关闭旧的进程(配合USR2来进行升级)</td>
+</tr>
+</tbody>
+</table>
+<p>示例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>具体语法:</span><br><span class="line">Kill -信号选项 nginx的主进程号</span><br><span class="line">Kill -HUP 4873</span><br><span class="line"> </span><br><span class="line">Kill -信号控制 `cat /xxx/path/log/nginx.pid`</span><br><span class="line"> </span><br><span class="line">Kill -USR1 `cat /xxx/path/log/nginx.pid`</span><br></pre></td></tr></table></figure>
+<h2 id="shell-定时任务-nginx信号管理-完成日志按日期存储"><a href="#shell-定时任务-nginx信号管理-完成日志按日期存储" class="headerlink" title="shell+定时任务+nginx信号管理,完成日志按日期存储"></a>shell+定时任务+nginx信号管理,完成日志按日期存储</h2><p>分析思路</p>
+<ul>
+<li>凌晨00:00:01,把昨天的日志重命名,放在相应的目录下</li>
+<li>再USR1信息号控制nginx重新生成新的日志文件</li>
+</ul>
+<p>脚本一</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>!/bin/bash</span><br><span class="line">base_path='/usr/local/nginx/logs'</span><br><span class="line">log_path=$(date -d yesterday +"%Y%m")</span><br><span class="line">day=$(date -d yesterday +"%d")</span><br><span class="line">mkdir -p $base_path/$log_path</span><br><span class="line">mv $base_path/access.log $base_path/$log_path/access_$day.log</span><br><span class="line"><span class="meta">#</span> echo $base_path/$log_path/access_$day.log</span><br><span class="line">kill -USR1 `cat /usr/local/nginx/logs/nginx.pid`</span><br></pre></td></tr></table></figure>
+<p>脚本二</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>!/bin/bash</span><br><span class="line">LOGPATH=/usr/local/nginx/logs/z.com.access.log</span><br><span class="line">BASEPATH=/data/$(date -d yesterday +%Y%m)</span><br><span class="line">mkdir -p $BASEPATH</span><br><span class="line">bak=$BASEPATH/$(date -d yesterday +%d%H%M).zcom.access.log</span><br><span class="line">mv $LOGPATH $bak</span><br><span class="line">touch $LOGPATH</span><br><span class="line">kill -USR1 `cat /usr/local/nginx/logs/nginx.pid`</span><br></pre></td></tr></table></figure>
+<h3 id="Crontab-编辑定时任务"><a href="#Crontab-编辑定时任务" class="headerlink" title="Crontab 编辑定时任务"></a>Crontab 编辑定时任务</h3><p>示例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">01 00 * * * /xxx/path/b.sh  #每天0时1分(建议在02-04点之间,系统负载小)</span><br></pre></td></tr></table></figure>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>Nginx官网, <a href="https://www.nginx.com/resources/wiki/start/topics/tutorials/commandline/" target="_blank" rel="noopener">Starting, Stopping, and Restarting NGINX</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.guangxiao.me/2016/12/03/Nginx日志切割/" data-id="cjji2mxr60004vus6xpd9wx5h" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
+    <article id="post-Nginx日志管理" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/11/27/Nginx日志管理/" class="article-date">
+  <time datetime="2016-11-27T09:45:03.000Z" itemprop="datePublished">2016-11-27</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/11/27/Nginx日志管理/">Nginx日志管理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <h2 id="Nginx-允许针对不同的server做不同的log"><a href="#Nginx-允许针对不同的server做不同的log" class="headerlink" title="Nginx 允许针对不同的server做不同的log"></a>Nginx 允许针对不同的server做不同的log</h2><p>我们观察nginx的server段,可以看到如下类似信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">access_log  logs/host.access.log  main;</span><br></pre></td></tr></table></figure>
+<p>这说明 该server, 它的访问日志的文件是  logs/host.access.log ,<br>使用的格式”main”格式.<br>除了main格式,你可以自定义其他格式.</p>
+<p>main格式是什么?</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">    '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">    '"$http_user_agent" "$http_x_forwarded_for"';</span><br></pre></td></tr></table></figure>
+<p>main格式是我们定义好一种日志的格式,并起个名字,便于引用.<br>以上面的例子, main类型的日志,记录的 remote_addr…. http_x_forwarded_for等选项.</p>
+<h3 id="日志格式-是指记录哪些选项"><a href="#日志格式-是指记录哪些选项" class="headerlink" title="日志格式 是指记录哪些选项"></a>日志格式 是指记录哪些选项</h3><p>默认的日志格式: main</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">    '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">	'"$http_user_agent" "$http_x_forwarded_for"';</span><br></pre></td></tr></table></figure>
+<p>如默认的main日志格式,记录这么几项<br>远程IP- 远程用户/用户时间 请求方法(如GET/POST) 请求体body长度 referer来源信息<br>http-user-agent用户代理/蜘蛛 ,被转发的请求的原始IP</p>
+<p>http_x_forwarded_for:在经过代理时,代理把你的本来IP加在此头信息中,传输你的原始IP</p>
+<p>例如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">58.132.169.60 - - [07/Oct/2015:11:40:19 +0800] "GET / HTTP/1.1" 200 30 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:41.0) Gecko/20100101 Firefox/41.0" "-"</span><br></pre></td></tr></table></figure>
+<h3 id="声明一个独特的log-format并命名"><a href="#声明一个独特的log-format并命名" class="headerlink" title="声明一个独特的log_format并命名"></a>声明一个独特的log_format并命名</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_format  mylog '$remote_addr- "$request" '</span><br><span class="line"> 	'$status $body_bytes_sent "$http_referer" '</span><br><span class="line">    '"$http_user_agent" "$http_x_forwarded_for"';</span><br></pre></td></tr></table></figure>
+<p>在下面的server/location,我们就可以引用 mylog</p>
+<p>在server段中,这样来声明<br>Nginx允许针对不同的server做不同的Log ,(有的web服务器不支持,如lighttp)</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">access_log logs/access_8080.log mylog;  </span><br><span class="line"><span class="meta">#</span>声明log   log位置          log格式;</span><br></pre></td></tr></table></figure>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_log_module.html" target="_blank" rel="noopener">Module ngx_http_log_module</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://blog.guangxiao.me/2016/11/27/Nginx日志管理/" data-id="cjji2mxr80005vus6nyp43kft" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
+
+
+  <nav id="page-nav">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">下一页&raquo;</a>
+  </nav>
 </section>
            
     <aside id="sidebar">
@@ -211,7 +873,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title categories">分类</h3>
     <div class="widget" id="categories">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li></ul>
     </div>
   </div>
 
@@ -221,7 +883,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title tagcloud">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/JavaScript/" style="font-size: 14px;">JavaScript</a>
+      <a href="/tags/JavaScript/" style="font-size: 14px;">JavaScript</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a>
     </div>
   </div>
 
@@ -233,11 +895,23 @@
       <ul>
         
           <li>
-            <a href="/2018/07/12/测试文章1/">测试文章1</a>
+            <a href="/2018/07/11/如何在疲劳的JS世界中持续学习？/">如何在疲劳的JS世界中持续学习？</a>
           </li>
         
           <li>
-            <a href="/2018/07/11/如何在疲劳的JS世界中持续学习？/">如何在疲劳的JS世界中持续学习？</a>
+            <a href="/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/">Nginx做负载均衡器以及proxy缓存配置</a>
+          </li>
+        
+          <li>
+            <a href="/2016/12/29/Nginx的Gzip配置/">Nginx的Gzip设置</a>
+          </li>
+        
+          <li>
+            <a href="/2016/12/26/Nginx的Expires缓存设置/">Expires缓存设置</a>
+          </li>
+        
+          <li>
+            <a href="/2016/12/18/Nginx-PHP的编译安装/">Nginx+PHP的编译安装</a>
           </li>
         
       </ul>
@@ -249,7 +923,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title archive">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li></ul>
     </div>
   </div>
 

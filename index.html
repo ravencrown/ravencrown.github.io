@@ -106,7 +106,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/07/11/理财小白的入门课/" data-id="cjjmxdrmf001e76s6kfp05yxr" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/07/11/理财小白的入门课/" data-id="cjjmzhxoi001m9nghfybm49bv" class="article-share-link">分享</a>
       
       
       
@@ -176,7 +176,107 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/07/11/如何在疲劳的JS世界中持续学习？/" data-id="cjjmxdrm5000y76s6sspfg4qw" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/07/11/如何在疲劳的JS世界中持续学习？/" data-id="cjjmzhxnw000y9ngh3k1hyy1g" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
+    <article id="post-现代JS框架存在的根本原因" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/06/04/现代JS框架存在的根本原因/" class="article-date">
+  <time datetime="2018-06-04T15:05:11.000Z" itemprop="datePublished">2018-06-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JavaScript/">JavaScript</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/04/现代JS框架存在的根本原因/">现代JS框架存在的根本原因【转载】</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <p><strong>【本文转载自 奇舞周刊 微信公众号】</strong></p>
+<p>我曾见过很多很多人盲目地使用（前端）框架，如 React，Angular 或 Vue等等。这些框架提供了许多有意思的东西，然而通常人们（自以为）使用框架是因为：</p>
+<ul>
+<li>它们支持组件化；</li>
+<li>它们有强大的社区支持；</li>
+<li>它们有很多（基于框架的）第三方库来解决问题；</li>
+<li>它们有很多（很好的）第三方组件;</li>
+<li>它们有浏览器扩展工具来帮助调试；</li>
+<li>它们适合做单页应用。</li>
+</ul>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_gif/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tiapMh3yNSjT3YSdLWh9FFhCibOEdzevK3v4gRsQ3pwmgKibMdX9j1pofpg/640?wx_fmt=gif&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
+<p>但这些都不是使用框架的根本原因。</p>
+<p>最最本质的原因是：</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tiahLqstvVxftIiakQcIX9Fpujq6JVMvzxQyS63q6q9icRnzk1EiagfsK2xA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
+<p>（UI 与状态同步非常困难）</p>
+<h2 id="是的，就是这原因，让我们来看看为什么"><a href="#是的，就是这原因，让我们来看看为什么" class="headerlink" title="是的，就是这原因，让我们来看看为什么"></a>是的，就是这原因，让我们来看看为什么</h2><p>假设你正在设计这样一个 Web 应用：用户可以通过群发电子邮件来邀请其他人（参加某活动）。UX/UI 设计师设计如下：（在用户填写任何邮箱地址之前，）有一个空白状态，并为此添加一些帮助信息；（当用户填写邮箱之后，）展示邮箱的地址，每个地址的右侧均有一个按钮用于删除对应的地址。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tiaoaU3nnzrphgqDspErIADltUUIkqcSVaQcUtM3nvjxcSLGz0BBBowMQ/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
+<p>这个表单的状态，可以被设计为一个数组，里面包含若干对象，对象由邮箱地址和唯一标识组成。开始的时候，数组为空。当（用户）输入邮箱地址并按下回车键之后，往数组中添加一项并更新 UI。当用户点击删除按钮时，删除（数组中对应的）邮箱地址并更新 UI。你感觉到了吗？每当你改变状态时，你都需要更新 UI。</p>
+<p>（你可能会说：）那又怎样？好吧，让我们看看如何在不用框架的情况下实现它：</p>
+<h2 id="用原生（JS）实现相对复杂的-UI"><a href="#用原生（JS）实现相对复杂的-UI" class="headerlink" title="用原生（JS）实现相对复杂的 UI"></a>用原生（JS）实现相对复杂的 UI</h2><p>以下代码很好地说明了使用原生 JavaScript 实现一个相对复杂的 UI 所需的工作量，使用像  jQuery 这样经典的库也需要差不多的工作量。</p>
+<p>在这个例子中，HTML 负责创建静态页面，JavaScript 通过 <code>document.createElement</code> 动态改变（DOM 结构）。这引来了第一个问题：构建 UI 相关的 JavaScript 代码并不直观易读，我们将 UI 构建分为了两部分（译者注：应该是指 HTML与 JavaScript 两部分）。尽管我们使用了 <code>innerHTML</code>，可读性是增强了，但降低了（页面的）性能，同时可能存在 CSRF 漏洞。我们也可以使用模板引擎，但如果是大面积地修改 DOM，会面临两个问题：效率不高与需要重新绑定事件处理器。</p>
+<p>但这也不是（不使用框架的）最大问题。最大的问题是 <strong>每当状态发生改变时都要（手动）更新 UI</strong> 。每次状态更新时，都需要很多代码来改变 UI。当添加电子邮件地址时，只需要两行代码来更新状态，但要十三行代码更新 UI。（此例中）我们已经让 UI （界面与逻辑）尽可能简单了！！</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tiaeYA8HkaRPxeIJe7G9TDricSzPQlLicPzWo9WiaSrgv20wrgiazg2TxQ7aw/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
+<p>代码既难写又难理解，更麻烦的是它非常脆弱。假设我们需要（添加）同步服务器数据到邮件地址列表的功能，我们需要对比服务器返回结果与数组中数据的差异。这涉及对比所有数据的标识与内容，（当用户修改后，）可能需要在内存中保留一份标识相同但内容不同的数据。</p>
+<p>为了高效地改变 DOM，我们需要编写大量点对点（译者注：指状态到 UI）的代码。<strong>但只要你犯下了很小的错误，UI 与状态将不再保持同步：</strong>（可能会出现）丢失或呈现错误的信息、不再响应用户的操作，更糟糕的是触发了错误的动作（如点了删除按钮后删除了非对应的一项）。</p>
+<p>因此，保持 UI 与状态同步，需要编写大量乏味且非常脆弱的代码。</p>
+<h2 id="响应式-UI-拯救一切"><a href="#响应式-UI-拯救一切" class="headerlink" title="响应式 UI 拯救一切"></a>响应式 UI 拯救一切</h2><p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tia7jq3Pl9sCUwpq4N37tFfN3mEfJGHmGHUFcCNWJwENxlDCTQEXIc1Ow/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
+<p>所以，（之所以使用框架，）不是因为社区，不是因为工具，不是因为生态，不是因为第三方库……</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">目前为止，框架最大的改进是（为我们）提供了应用内部状态与 UI 同步的可靠保证。</span><br></pre></td></tr></table></figure>
+<p>只要你清楚特定框架的某些（特定）规则（如不可变状态），就差不多（可以正常使用）了。</p>
+<p><strong>我们只需要定义一次 UI 界面，不再需要为每个操作编写特定的 UI 代码，同时，每个相同的状态均有相同的输出（译者注：指 UI 一致）：</strong>当状态改变后，框架自动更新（对应的）视图。</p>
+<h2 id="框架是如何工作的呢"><a href="#框架是如何工作的呢" class="headerlink" title="框架是如何工作的呢?"></a>框架是如何工作的呢?</h2><p>基于两个基本的策略：</p>
+<ul>
+<li><p>重新渲染整个组件，如React。当组件中的状态发生改变时，在内存中计算出（新的）DOM 结构后与已有的 DOM 结构进行对比。实际上，这是非常昂贵的。因而采取（将真实 DOM）映射为虚拟 DOM ，通过对比状态变化前后虚拟 DOM 的不同，计算出变化后再改变真实 DOM 结构。这个过程称为调和（reconciliation）。</p>
+</li>
+<li><p>通过（添加）观察者监测变化，如 Angular 和 Vue.js。应用中状态的属性会被监测，当它们发生变化时，只有依赖了（发生变化）属性的 DOM 元素会被重新渲染。</p>
+</li>
+</ul>
+<h2 id="那-Web-components-呢"><a href="#那-Web-components-呢" class="headerlink" title="那 Web components 呢?"></a>那 Web components 呢?</h2><p>很多时候，人们会把 React、 Angular 和 Vue.js （等框架）与 Web components 进行对比。这显然体现了人们并不理解这些框架所提供的最大好处：保持 UI 与状态同步。Web components 并不提供这种同步机制。它仅仅提供了一个\标签，但它不提供任何（状态与 UI 之间的）协调机制。<strong>如果你在应用中使用 Web components 时，想保持 UI 与内部状态同步，则需要（开发者）手工完成，或者使用如 Stencil.js (内部和 React一样，使用虚拟 DOM)之类的库。</strong></p>
+<p>让我们明确一点：框架表现出的巨大潜力并不体现在组件化上，保持 UI 与状态同步才是具体的体现。Web components 并未提供相关的功能，你必须手工或使用第三方库去解决（同步的）问题。使用原生 JavaScript 去编写复杂、高效且易于维护的 UI 界面基本上是不可能的。<strong>这就是你需要使用现代 JavaScript 框架的根本原因。</strong></p>
+<h2 id="自己动手，丰衣足食"><a href="#自己动手，丰衣足食" class="headerlink" title="自己动手，丰衣足食"></a>自己动手，丰衣足食</h2><p>如果热衷于了解底层原理，想知道虚拟 DOM 的具体实现。那，为何不试着在不使用框架的情况下，仅使用虚拟 DOM 来重写原生 UI呢？</p>
+<p>这里是框架的核心，所有组件的基础类。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tiaWK03oaKQ5dERI5nvat5miaPHGaWsATm4zNjGWP91D5hxq9vIJGbPsDA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
+<p>这里是重写后的 AddressList 组件（借助 babel 来支持 JSX 的转换）。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tias3EN6vcN2cPIrqFwLgbbvzaiadnknbsoq5rCbI2YKibMvbIicrUf50wicQ/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
+<p><strong>现在 UI 是声明式的</strong>，我们并未使用任何框架。我们能任意添加新逻辑来改变状态的同时，不需要编写额外的代码来保持 UI 同步。问题解决了！</p>
+<p>现在，除了事件处理之外，这看起来就像个 React 应用对吧？我们有<code>haverender()</code> 、<code>componentDidMount()</code> 、<code>setState()</code> 等等。一旦解决了保持应用内 UI 与状态的同步问题，所有东西就会很自然地叠加起来（形成组件）。</p>
+<p>可以在这个 Github (<a href="https://github.com/gimenete/ui-state-sync" target="_blank" rel="noopener">https://github.com/gimenete/ui-state-sync</a>) 仓库中找到完整的源代码。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><ul>
+<li>现代 js 框架解决的主要问题是保持 UI 与状态同步。</li>
+<li>使用原生 JavaScript 编写复杂、高效而又易于维护的 UI 界面几乎是不可能的。</li>
+<li>Web components 并未提供解决同步问题的方案。</li>
+<li>使用现有的虚拟 DOM 库去搭建自己的框架并不困难。但并不建议这么做！</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2018/06/04/现代JS框架存在的根本原因/" data-id="cjjmzhxnz00139nghfx9cr746" class="article-share-link">分享</a>
       
       
       
@@ -227,78 +327,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2017/07/12/京东入职篇章/" data-id="cjjmxdrm0000v76s6npcijnj8" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2017/07/12/京东入职篇章/" data-id="cjjmzhxnu000v9nghkxxd8mzo" class="article-share-link">分享</a>
       
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
- 
-
-
-  
-    <article id="post-Nginx的Gzip配置" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/12/29/Nginx的Gzip配置/" class="article-date">
-  <time datetime="2016-12-29T15:02:24.000Z" itemprop="datePublished">2016-12-29</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/12/29/Nginx的Gzip配置/">Nginx的Gzip设置</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <!-- Table of Contents -->
-        
-        <h2 id="Gzip配置参数"><a href="#Gzip配置参数" class="headerlink" title="Gzip配置参数"></a>Gzip配置参数</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">gzip配置的常用参数</span><br><span class="line">gzip on|off;  #是否开启gzip</span><br><span class="line">gzip_buffers 32 4K| 16 8K #缓冲(压缩在内存中缓冲几块? 每块多大?)</span><br><span class="line">gzip_comp_level [1-9] #推荐6 压缩级别(级别越高,压的越小,越浪费CPU计算资源)</span><br><span class="line">gzip_disable #正则匹配UA 什么样的Uri不进行gzip</span><br><span class="line">gzip_min_length 200 # 开始压缩的最小长度(再小就不要压缩了,意义不在)</span><br><span class="line">gzip_http_version 1.0|1.1 # 开始压缩的http协议版本(可以不设置,目前几乎全是1.1协议)</span><br><span class="line">gzip_proxied          # 设置请求者代理服务器,该如何缓存内容</span><br><span class="line">gzip_types text/plain  application/xml # 对哪些类型的文件用压缩 如txt,xml,html ,css</span><br><span class="line">gzip_vary on|off  # 是否传输gzip压缩标志 Vary是用来标志缓存的依据.</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>注意:</span><br><span class="line"><span class="meta">#</span>图片/mp3这样的二进制文件,不必压缩</span><br><span class="line"><span class="meta">#</span>因为压缩率比较小, 比如100-&gt;80字节,而且压缩也是耗费CPU资源的.</span><br><span class="line"><span class="meta">#</span>比较小的文件不必压缩,</span><br></pre></td></tr></table></figure>
-<p><strong>思考:</strong></p>
-<ul>
-<li>如果2个人,一个浏览器支持gzip,一个浏览器不支持gzip2个同时请求同个页面, chinaCache缓存压缩后,还是未压缩的?</li>
-<li>如果1人,再次请求页面,chinaCache返回压缩后的缓存内容,还是压缩前的缓存内容?</li>
-</ul>
-<p>这个时候 Vary的作用体现出来.即——缓存的内容受 Accept-Encoding头信息的影响.  </p>
-<p>所以如果<br>请求时,不支持gzip, 缓存服务器将会生成一份未gzip的内容.<br>请求时,支持gzip, 缓存服务器将会生成一份gzip的内容.  </p>
-<p>下次再请求时, 缓存服务器会考虑客户端的Accept-Encoding因素,并合理的返回信息  </p>
-<p>Nginx对于图片,js等静态文件的缓存设置<br>注:这个缓存是指针对浏览器所做的缓存,不是指服务器端的数据缓存.  </p>
-<p>主要知识点: location expires指令  </p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">location ~ \.(jpg|jpeg|png|gif)$ &#123;</span><br><span class="line">    expires 1d;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~ \.js$ &#123;</span><br><span class="line">    expires 1h;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>设置并载入新配置文件,用firebug观察,<br>会发现 图片内容,没有再次产生新的请求,原因–利用了本地缓存的效果.  </p>
-<p><strong>注: 在大型的新闻站,或文章站中,图片变动的可能性很小,建议做1周左右的缓存Js,css等小时级的缓存.</strong></p>
-<p>如果信息流动比较快,也可以不用expires指令,<br>用last_modified, etag功能(主流的web服务器都支持这2个头信息)  </p>
-<p>原理是:<br>响应: 计算响应内容的签名, etag 和 上次修改时间<br>请求: 发送 etatg, If-Modified-Since 头信息.<br>服务器收到后,判断etag是否一致, 最后修改时间是否大于if-Modifiled-Since<br>如果监测到服务器的内容有变化,则返回304,<br>浏览器就知道,内容没变,直接用缓存.  </p>
-<p><strong>304 比起上面的expires 指令多了1次请求,但是比200状态,少了传输内容.</strong></p>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
-<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_gzip_module.html" target="_blank" rel="noopener">Nginx Gzip Module</a></li>
-<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html" target="_blank" rel="noopener">Nginx Gzip Static Module</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/29/Nginx的Gzip配置/" data-id="cjjmxdrm8001176s6x0pejaog" class="article-share-link">分享</a>
-      
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
 
     </footer>
   </div>
@@ -396,7 +429,74 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/" data-id="cjjmxdrjq000176s6h97f5sre" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/" data-id="cjjmzhxnb000a9nghkg9yn9g3" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
+    <article id="post-Nginx的Gzip配置" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/29/Nginx的Gzip配置/" class="article-date">
+  <time datetime="2016-12-29T15:02:24.000Z" itemprop="datePublished">2016-12-29</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/29/Nginx的Gzip配置/">Nginx的Gzip设置</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <h2 id="Gzip配置参数"><a href="#Gzip配置参数" class="headerlink" title="Gzip配置参数"></a>Gzip配置参数</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">gzip配置的常用参数</span><br><span class="line">gzip on|off;  #是否开启gzip</span><br><span class="line">gzip_buffers 32 4K| 16 8K #缓冲(压缩在内存中缓冲几块? 每块多大?)</span><br><span class="line">gzip_comp_level [1-9] #推荐6 压缩级别(级别越高,压的越小,越浪费CPU计算资源)</span><br><span class="line">gzip_disable #正则匹配UA 什么样的Uri不进行gzip</span><br><span class="line">gzip_min_length 200 # 开始压缩的最小长度(再小就不要压缩了,意义不在)</span><br><span class="line">gzip_http_version 1.0|1.1 # 开始压缩的http协议版本(可以不设置,目前几乎全是1.1协议)</span><br><span class="line">gzip_proxied          # 设置请求者代理服务器,该如何缓存内容</span><br><span class="line">gzip_types text/plain  application/xml # 对哪些类型的文件用压缩 如txt,xml,html ,css</span><br><span class="line">gzip_vary on|off  # 是否传输gzip压缩标志 Vary是用来标志缓存的依据.</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>注意:</span><br><span class="line"><span class="meta">#</span>图片/mp3这样的二进制文件,不必压缩</span><br><span class="line"><span class="meta">#</span>因为压缩率比较小, 比如100-&gt;80字节,而且压缩也是耗费CPU资源的.</span><br><span class="line"><span class="meta">#</span>比较小的文件不必压缩,</span><br></pre></td></tr></table></figure>
+<p><strong>思考:</strong></p>
+<ul>
+<li>如果2个人,一个浏览器支持gzip,一个浏览器不支持gzip2个同时请求同个页面, chinaCache缓存压缩后,还是未压缩的?</li>
+<li>如果1人,再次请求页面,chinaCache返回压缩后的缓存内容,还是压缩前的缓存内容?</li>
+</ul>
+<p>这个时候 Vary的作用体现出来.即——缓存的内容受 Accept-Encoding头信息的影响.  </p>
+<p>所以如果<br>请求时,不支持gzip, 缓存服务器将会生成一份未gzip的内容.<br>请求时,支持gzip, 缓存服务器将会生成一份gzip的内容.  </p>
+<p>下次再请求时, 缓存服务器会考虑客户端的Accept-Encoding因素,并合理的返回信息  </p>
+<p>Nginx对于图片,js等静态文件的缓存设置<br>注:这个缓存是指针对浏览器所做的缓存,不是指服务器端的数据缓存.  </p>
+<p>主要知识点: location expires指令  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">location ~ \.(jpg|jpeg|png|gif)$ &#123;</span><br><span class="line">    expires 1d;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~ \.js$ &#123;</span><br><span class="line">    expires 1h;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>设置并载入新配置文件,用firebug观察,<br>会发现 图片内容,没有再次产生新的请求,原因–利用了本地缓存的效果.  </p>
+<p><strong>注: 在大型的新闻站,或文章站中,图片变动的可能性很小,建议做1周左右的缓存Js,css等小时级的缓存.</strong></p>
+<p>如果信息流动比较快,也可以不用expires指令,<br>用last_modified, etag功能(主流的web服务器都支持这2个头信息)  </p>
+<p>原理是:<br>响应: 计算响应内容的签名, etag 和 上次修改时间<br>请求: 发送 etatg, If-Modified-Since 头信息.<br>服务器收到后,判断etag是否一致, 最后修改时间是否大于if-Modifiled-Since<br>如果监测到服务器的内容有变化,则返回304,<br>浏览器就知道,内容没变,直接用缓存.  </p>
+<p><strong>304 比起上面的expires 指令多了1次请求,但是比200状态,少了传输内容.</strong></p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_gzip_module.html" target="_blank" rel="noopener">Nginx Gzip Module</a></li>
+<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html" target="_blank" rel="noopener">Nginx Gzip Static Module</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2016/12/29/Nginx的Gzip配置/" data-id="cjjmzhxng000c9nghur7jx6c9" class="article-share-link">分享</a>
       
       
       
@@ -458,7 +558,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/26/Nginx的Expires缓存设置/" data-id="cjjmxdrkw000676s6e7yq9saz" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/26/Nginx的Expires缓存设置/" data-id="cjjmzhxn600069ngh4pw9wblj" class="article-share-link">分享</a>
       
       
       
@@ -512,7 +612,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/18/Nginx-PHP的编译安装/" data-id="cjjmxdrjj000076s6tq9utb8p" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/18/Nginx-PHP的编译安装/" data-id="cjjmzhxmt00019ngh0zj09vty" class="article-share-link">分享</a>
       
       
       
@@ -644,7 +744,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/17/Nginx重定向Rewrite/" data-id="cjjmxdrlr000k76s6i61qx8ai" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/17/Nginx重定向Rewrite/" data-id="cjjmzhxoh001l9ngh6rok7dwd" class="article-share-link">分享</a>
       
       
       
@@ -711,65 +811,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/12/Nginx的Location正则/" data-id="cjjmxdrl3000a76s6jv5gx9oe" class="article-share-link">分享</a>
-      
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
- 
-
-
-  
-    <article id="post-Nginx的Location语法" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/12/07/Nginx的Location语法/" class="article-date">
-  <time datetime="2016-12-07T12:15:32.000Z" itemprop="datePublished">2016-12-07</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/12/07/Nginx的Location语法/">Nginx的Location语法</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <!-- Table of Contents -->
-        
-        <p>location 有”定位”的意思, 根据URI来进行不同的定位.<br>在虚拟主机的配置中,是必不可少的,location可以把网站的不同部分,定位到不同的处理方式上.<br>比如, 碰到.php, 如何调用PHP解释器?  –这时就需要location</p>
-<h2 id="Location-的语法"><a href="#Location-的语法" class="headerlink" title="Location 的语法"></a>Location 的语法</h2><p>location 有”定位”的意思, 根据Uri来进行不同的定位. 在虚拟主机的配置中,是必不可少的,location可以把网站的不同部分,定位到不同的处理方式上. 比如, 碰到.php, 如何调用PHP解释器? –这时就需要location location 的语法</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Syntax:	location [ = | ~ | ~* | ^~ ] uri &#123; ... &#125;</span><br><span class="line">location @name &#123; ... &#125;</span><br><span class="line">Default:	—</span><br><span class="line">Context:	server, location</span><br><span class="line"></span><br><span class="line">中括号可以不写任何参数,此时称为一般匹配,也可以写参数</span><br><span class="line">因此,大类型可以分为3种:</span><br><span class="line">location = patt &#123;&#125; [精准匹配]</span><br><span class="line">location patt&#123;&#125;  [一般匹配]</span><br><span class="line">location ~ patt&#123;&#125; [正则匹配]</span><br></pre></td></tr></table></figure>
-<p>location示例</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">location = / &#123;</span><br><span class="line">    [ configuration A ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location / &#123;</span><br><span class="line">    [ configuration B ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /documents/ &#123;</span><br><span class="line">    [ configuration C ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ^~ /images/ &#123;</span><br><span class="line">    [ configuration D ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~* \.(gif|jpg|jpeg)$ &#123;</span><br><span class="line">    [ configuration E ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="如何发挥作用"><a href="#如何发挥作用" class="headerlink" title="如何发挥作用?"></a>如何发挥作用?</h3><p>首先看有没有精准匹配,如果有,则停止匹配过程.</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>如果 $uri == patt,匹配成功，使用configA</span><br><span class="line">location = / &#123;</span><br><span class="line">    root   /var/www/html/;</span><br><span class="line">    index  index.htm index.html;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line">  location / &#123;</span><br><span class="line">     root   /usr/local/nginx/html;</span><br><span class="line">    index  index.html index.htm;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果访问<a href="http://xxx.com/" target="_blank" rel="noopener">http://xxx.com/</a><br>定位流程是　</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1: 精准匹配中　”/”   ,得到index页为　　index.htm</span><br><span class="line">2: 再次访问 /index.htm , 此次内部转跳uri已经是”/index.htm” ,根目录为/usr/local/nginx/html</span><br><span class="line">3: 最终结果,访问了/usr/local/nginx/html/index.htm</span><br></pre></td></tr></table></figure>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
-<li>Nginx官网，<a href="http://nginx.org/en/docs/http/ngx_http_core_module.html#location" target="_blank" rel="noopener">Location Syntax</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/07/Nginx的Location语法/" data-id="cjjmxdrlc000h76s6iqkb7td7" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/12/Nginx的Location正则/" data-id="cjjmzhxnp000n9ngh7yt0dflt" class="article-share-link">分享</a>
       
       
       
@@ -821,7 +863,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title categories">分类</h3>
     <div class="widget" id="categories">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/理财/">理财</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/理财/">理财</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -831,7 +873,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title tagcloud">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/JavaScript/" style="font-size: 19.5px;">JavaScript</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a> <a href="/tags/理财/" style="font-size: 14px;">理财</a> <a href="/tags/随笔/" style="font-size: 19.5px;">随笔</a>
+      <a href="/tags/JavaScript/" style="font-size: 21.33px;">JavaScript</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a> <a href="/tags/理财/" style="font-size: 14px;">理财</a> <a href="/tags/随笔/" style="font-size: 17.67px;">随笔</a>
     </div>
   </div>
 
@@ -851,11 +893,11 @@
           </li>
         
           <li>
-            <a href="/2017/07/12/京东入职篇章/">京东入职新篇</a>
+            <a href="/2018/06/04/现代JS框架存在的根本原因/">现代JS框架存在的根本原因【转载】</a>
           </li>
         
           <li>
-            <a href="/2016/12/29/Nginx的Gzip配置/">Nginx的Gzip设置</a>
+            <a href="/2017/07/12/京东入职篇章/">京东入职新篇</a>
           </li>
         
           <li>
@@ -871,7 +913,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title archive">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 

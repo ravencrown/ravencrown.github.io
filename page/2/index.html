@@ -67,6 +67,64 @@
         <section id="main">
 
   
+    <article id="post-Nginx的Location语法" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/07/Nginx的Location语法/" class="article-date">
+  <time datetime="2016-12-07T12:15:32.000Z" itemprop="datePublished">2016-12-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/07/Nginx的Location语法/">Nginx的Location语法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <p>location 有”定位”的意思, 根据URI来进行不同的定位.<br>在虚拟主机的配置中,是必不可少的,location可以把网站的不同部分,定位到不同的处理方式上.<br>比如, 碰到.php, 如何调用PHP解释器?  –这时就需要location</p>
+<h2 id="Location-的语法"><a href="#Location-的语法" class="headerlink" title="Location 的语法"></a>Location 的语法</h2><p>location 有”定位”的意思, 根据Uri来进行不同的定位. 在虚拟主机的配置中,是必不可少的,location可以把网站的不同部分,定位到不同的处理方式上. 比如, 碰到.php, 如何调用PHP解释器? –这时就需要location location 的语法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Syntax:	location [ = | ~ | ~* | ^~ ] uri &#123; ... &#125;</span><br><span class="line">location @name &#123; ... &#125;</span><br><span class="line">Default:	—</span><br><span class="line">Context:	server, location</span><br><span class="line"></span><br><span class="line">中括号可以不写任何参数,此时称为一般匹配,也可以写参数</span><br><span class="line">因此,大类型可以分为3种:</span><br><span class="line">location = patt &#123;&#125; [精准匹配]</span><br><span class="line">location patt&#123;&#125;  [一般匹配]</span><br><span class="line">location ~ patt&#123;&#125; [正则匹配]</span><br></pre></td></tr></table></figure>
+<p>location示例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">location = / &#123;</span><br><span class="line">    [ configuration A ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location / &#123;</span><br><span class="line">    [ configuration B ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /documents/ &#123;</span><br><span class="line">    [ configuration C ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ^~ /images/ &#123;</span><br><span class="line">    [ configuration D ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~* \.(gif|jpg|jpeg)$ &#123;</span><br><span class="line">    [ configuration E ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="如何发挥作用"><a href="#如何发挥作用" class="headerlink" title="如何发挥作用?"></a>如何发挥作用?</h3><p>首先看有没有精准匹配,如果有,则停止匹配过程.</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>如果 $uri == patt,匹配成功，使用configA</span><br><span class="line">location = / &#123;</span><br><span class="line">    root   /var/www/html/;</span><br><span class="line">    index  index.htm index.html;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line">  location / &#123;</span><br><span class="line">     root   /usr/local/nginx/html;</span><br><span class="line">    index  index.html index.htm;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果访问<a href="http://xxx.com/" target="_blank" rel="noopener">http://xxx.com/</a><br>定位流程是　</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1: 精准匹配中　”/”   ,得到index页为　　index.htm</span><br><span class="line">2: 再次访问 /index.htm , 此次内部转跳uri已经是”/index.htm” ,根目录为/usr/local/nginx/html</span><br><span class="line">3: 最终结果,访问了/usr/local/nginx/html/index.htm</span><br></pre></td></tr></table></figure>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>Nginx官网，<a href="http://nginx.org/en/docs/http/ngx_http_core_module.html#location" target="_blank" rel="noopener">Location Syntax</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2016/12/07/Nginx的Location语法/" data-id="cjjmzhxn200059ngh6h4hihfm" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
     <article id="post-Nginx日志切割" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/12/03/Nginx日志切割/" class="article-date">
@@ -145,7 +203,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/03/Nginx日志切割/" data-id="cjjmxdrk5000476s6m7l3youu" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/03/Nginx日志切割/" data-id="cjjmzhxmo00009ngh0mycku5r" class="article-share-link">分享</a>
       
       
       
@@ -210,7 +268,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/11/27/Nginx日志管理/" data-id="cjjmxdrkn000576s6qi660bl0" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/11/27/Nginx日志管理/" data-id="cjjmzhxmz00049ngh7w7rpr7p" class="article-share-link">分享</a>
       
       
       
@@ -264,7 +322,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/11/09/Nginx虚拟主机配置/" data-id="cjjmxdrl7000c76s6a5j8cxir" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/11/09/Nginx虚拟主机配置/" data-id="cjjmzhxnj000h9ngh4ha48zf9" class="article-share-link">分享</a>
       
       
       
@@ -388,7 +446,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/11/02/Nginx的编译安装/" data-id="cjjmxdrma001676s6sct5gzbj" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/11/02/Nginx的编译安装/" data-id="cjjmzhxo100169nghp832gntg" class="article-share-link">分享</a>
       
       
       
@@ -438,7 +496,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/09/27/乐视入职篇章/" data-id="cjjmxdrlw000q76s68uzonrk6" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/09/27/乐视入职篇章/" data-id="cjjmzhxns000s9nghxtk31vjd" class="article-share-link">分享</a>
       
       
       
@@ -496,7 +554,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/05/12/jQuery源码分析/" data-id="cjjmxdrlv000n76s69n65oerc" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/05/12/jQuery源码分析/" data-id="cjjmzhxnm000k9nghnjqjysrz" class="article-share-link">分享</a>
       
       
       
@@ -544,11 +602,11 @@
           </li>
         
           <li>
-            <a href="/2017/07/12/京东入职篇章/">京东入职新篇</a>
+            <a href="/2018/06/04/现代JS框架存在的根本原因/">现代JS框架存在的根本原因【转载】</a>
           </li>
         
           <li>
-            <a href="/2016/12/29/Nginx的Gzip配置/">Nginx的Gzip设置</a>
+            <a href="/2017/07/12/京东入职篇章/">京东入职新篇</a>
           </li>
         
           <li>

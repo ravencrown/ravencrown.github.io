@@ -79,5 +79,5 @@ theme: cafe
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git 
-  repo: git@github.com:guangxiao/guangxiao.github.io.git
+  repo: git@github.com:ravencrown/ravencrown.github.io.git
   branch: master

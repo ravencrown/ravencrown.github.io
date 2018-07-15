@@ -65,6 +65,99 @@
 </header>
       <div class="outer">
         <section id="main">
+
+  
+    <article id="post-Nginx日志切割" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/03/Nginx日志切割/" class="article-date">
+  <time datetime="2016-12-03T11:45:33.000Z" itemprop="datePublished">2016-12-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/03/Nginx日志切割/">Nginx日志切割</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <h2 id="信号控制"><a href="#信号控制" class="headerlink" title="信号控制"></a>信号控制</h2><table>
+<thead>
+<tr>
+<th>TERM,INT</th>
+<th>Quick shutdown</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>QUIT</td>
+<td>Graceful shutdown  优雅的关闭进程,即等请求结束后再关闭</td>
+</tr>
+<tr>
+<td>HUP</td>
+<td>Configuration reload ,Start the new worker processes with a new configuration Gracefully shutdown the old worker processes 改变配置文件,平滑的重读配置文件</td>
+</tr>
+<tr>
+<td>USR1</td>
+<td>Reopen the log files 重读日志,在日志按月/日分割时有用</td>
+</tr>
+<tr>
+<td>USR2</td>
+<td>Upgrade Executable on the fly 平滑的升级</td>
+</tr>
+<tr>
+<td>WINCH</td>
+<td>Gracefully shutdown the worker processes 优雅关闭旧的进程(配合USR2来进行升级)</td>
+</tr>
+</tbody>
+</table>
+<p>示例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>具体语法:</span><br><span class="line">Kill -信号选项 nginx的主进程号</span><br><span class="line">Kill -HUP 4873</span><br><span class="line"> </span><br><span class="line">Kill -信号控制 `cat /xxx/path/log/nginx.pid`</span><br><span class="line"> </span><br><span class="line">Kill -USR1 `cat /xxx/path/log/nginx.pid`</span><br></pre></td></tr></table></figure>
+<h2 id="shell-定时任务-nginx信号管理-完成日志按日期存储"><a href="#shell-定时任务-nginx信号管理-完成日志按日期存储" class="headerlink" title="shell+定时任务+nginx信号管理,完成日志按日期存储"></a>shell+定时任务+nginx信号管理,完成日志按日期存储</h2><p>分析思路</p>
+<ul>
+<li>凌晨00:00:01,把昨天的日志重命名,放在相应的目录下</li>
+<li>再USR1信息号控制nginx重新生成新的日志文件</li>
+</ul>
+<p>脚本一</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>!/bin/bash</span><br><span class="line">base_path='/usr/local/nginx/logs'</span><br><span class="line">log_path=$(date -d yesterday +"%Y%m")</span><br><span class="line">day=$(date -d yesterday +"%d")</span><br><span class="line">mkdir -p $base_path/$log_path</span><br><span class="line">mv $base_path/access.log $base_path/$log_path/access_$day.log</span><br><span class="line"><span class="meta">#</span> echo $base_path/$log_path/access_$day.log</span><br><span class="line">kill -USR1 `cat /usr/local/nginx/logs/nginx.pid`</span><br></pre></td></tr></table></figure>
+<p>脚本二</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>!/bin/bash</span><br><span class="line">LOGPATH=/usr/local/nginx/logs/z.com.access.log</span><br><span class="line">BASEPATH=/data/$(date -d yesterday +%Y%m)</span><br><span class="line">mkdir -p $BASEPATH</span><br><span class="line">bak=$BASEPATH/$(date -d yesterday +%d%H%M).zcom.access.log</span><br><span class="line">mv $LOGPATH $bak</span><br><span class="line">touch $LOGPATH</span><br><span class="line">kill -USR1 `cat /usr/local/nginx/logs/nginx.pid`</span><br></pre></td></tr></table></figure>
+<h3 id="Crontab-编辑定时任务"><a href="#Crontab-编辑定时任务" class="headerlink" title="Crontab 编辑定时任务"></a>Crontab 编辑定时任务</h3><p>示例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">01 00 * * * /xxx/path/b.sh  #每天0时1分(建议在02-04点之间,系统负载小)</span><br></pre></td></tr></table></figure>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>Nginx官网, <a href="https://www.nginx.com/resources/wiki/start/topics/tutorials/commandline/" target="_blank" rel="noopener">Starting, Stopping, and Restarting NGINX</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2016/12/03/Nginx日志切割/" data-id="cjjmxdrk5000476s6m7l3youu" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
   
     <article id="post-Nginx日志管理" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -117,7 +210,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/11/27/Nginx日志管理/" data-id="cjjijijy90005r6s6shem4q4r" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/11/27/Nginx日志管理/" data-id="cjjmxdrkn000576s6qi660bl0" class="article-share-link">分享</a>
       
       
       
@@ -171,7 +264,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/11/09/Nginx虚拟主机配置/" data-id="cjjijijys000kr6s6boe3l5j5" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/11/09/Nginx虚拟主机配置/" data-id="cjjmxdrl7000c76s6a5j8cxir" class="article-share-link">分享</a>
       
       
       
@@ -295,7 +388,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/11/02/Nginx的编译安装/" data-id="cjjijijyx000nr6s6hd5yeorq" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/11/02/Nginx的编译安装/" data-id="cjjmxdrma001676s6sct5gzbj" class="article-share-link">分享</a>
       
       
       
@@ -345,7 +438,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/09/27/乐视入职篇章/" data-id="cjjijo41w0000yus6mrg3nf1b" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/09/27/乐视入职篇章/" data-id="cjjmxdrlw000q76s68uzonrk6" class="article-share-link">分享</a>
       
       
       
@@ -403,85 +496,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/05/12/jQuery源码分析/" data-id="cjjijijz7000wr6s63igi322r" class="article-share-link">分享</a>
-      
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
- 
-
-
-  
-    <article id="post-如何正确学习JavaScript" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/01/20/如何正确学习JavaScript/" class="article-date">
-  <time datetime="2016-01-20T14:53:12.000Z" itemprop="datePublished">2016-01-20</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/JavaScript/">JavaScript</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/01/20/如何正确学习JavaScript/">如何正确学习JavaScript</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <!-- Table of Contents -->
-        
-        <p>最近刚入职了搜狐研发中心部门，在那边开始我的新的旅程，之前实习一直在做 Java 以及和云计算相关的东西，这次开始新的岗位：<code>前端开发攻城狮</code>…[嘿嘿😋]</p>
-<p>于是，开始了 JavaScript 新的旅程。入手了基本觉得不错的书籍，在这里分享下</p>
-<ul>
-<li><a href="https://item.jd.com/10951037.html" target="_blank" rel="noopener">《JavaScript 高级程序设计》</a></li>
-<li><a href="https://item.jd.com/11676671.html" target="_blank" rel="noopener">《你不知道的JavaScript上卷》</a></li>
-</ul>
-<p><code>红本</code>对于新手入门非常不错，特别是面向对象的章节，通俗易懂。</p>
-<p><code>《你不知道的JavaScript》</code>这本书比较深入，不过非常助于理解JavaScript的闭包/作用域/this/原型…</p>
-<p>还有一些相关的JavaScript相关的学习资料，一一列出😄</p>
-<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
-<li><a href="http://www.ruanyifeng.com/blog/javascript/" target="_blank" rel="noopener">阮一峰关于JavaScript的文章</a></li>
-<li><a href="http://www.cnblogs.com/TomXu/tag/JavaScript/" target="_blank" rel="noopener">汤姆大叔的JavaScript系列</a></li>
-<li><a href="https://github.com/AlloyTeam/CodeGuide" target="_blank" rel="noopener">腾讯Alloyteam代码规范</a></li>
-<li><a href="https://github.com/JacksonTian/fks" target="_blank" rel="noopener">前端技能汇总</a></li>
-</ul>
-<h3 id="国内前端大牛Github汇总"><a href="#国内前端大牛Github汇总" class="headerlink" title="国内前端大牛Github汇总"></a>国内前端大牛Github汇总</h3><ul>
-<li><a href="https://github.com/ruanyf" target="_blank" rel="noopener">https://github.com/ruanyf</a></li>
-<li><a href="https://github.com/cssmagic" target="_blank" rel="noopener">CSS魔法</a></li>
-<li><a href="https://github.com/bailicangdu" target="_blank" rel="noopener">bailicangdu</a></li>
-<li><a href="https://github.com/phodal" target="_blank" rel="noopener">phodal</a></li>
-<li><a href="https://github.com/yanhaijing" target="_blank" rel="noopener">颜海镜</a></li>
-<li><a href="https://github.com/RubyLouvre" target="_blank" rel="noopener">司徒正美</a></li>
-<li><a href="https://github.com/i5ting" target="_blank" rel="noopener">狼叔</a></li>
-<li><a href="https://github.com/youngwind" target="_blank" rel="noopener">梁少峰</a></li>
-<li><a href="https://github.com/justjavac" target="_blank" rel="noopener">justjavac</a></li>
-<li><a href="https://github.com/JacksonTian" target="_blank" rel="noopener">JacksonTian</a></li>
-<li><a href="https://github.com/brianway" target="_blank" rel="noopener">魏楚阳</a></li>
-<li><a href="https://github.com/yyx990803" target="_blank" rel="noopener">尤雨溪</a></li>
-<li><a href="https://github.com/Jinjiang" target="_blank" rel="noopener">勾三股四</a></li>
-<li><a href="https://github.com/xufei" target="_blank" rel="noopener">xufei</a></li>
-<li><a href="https://github.com/xinyu198736" target="_blank" rel="noopener">芋头</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/01/20/如何正确学习JavaScript/" data-id="cjjijijzb0014r6s6unzwqzn7" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/05/12/jQuery源码分析/" data-id="cjjmxdrlv000n76s69n65oerc" class="article-share-link">分享</a>
       
       
       
@@ -521,6 +536,10 @@
       <ul>
         
           <li>
+            <a href="/2018/07/11/理财小白的入门课/">理财小白的入门课</a>
+          </li>
+        
+          <li>
             <a href="/2018/07/11/如何在疲劳的JS世界中持续学习？/">如何在疲劳的JS世界中持续学习？</a>
           </li>
         
@@ -534,10 +553,6 @@
         
           <li>
             <a href="/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/">Nginx做负载均衡器以及proxy缓存配置</a>
-          </li>
-        
-          <li>
-            <a href="/2016/12/26/Nginx的Expires缓存设置/">Expires缓存设置</a>
           </li>
         
       </ul>

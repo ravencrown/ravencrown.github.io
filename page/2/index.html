@@ -67,6 +67,73 @@
         <section id="main">
 
   
+    <article id="post-Nginx的Location正则" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/12/Nginx的Location正则/" class="article-date">
+  <time datetime="2016-12-12T02:15:34.000Z" itemprop="datePublished">2016-12-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/12/Nginx的Location正则/">Nginx的Location正则</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <h2 id="Location正则"><a href="#Location正则" class="headerlink" title="Location正则"></a>Location正则</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    root   /usr/local/nginx/html;</span><br><span class="line">    index  index.html index.htm;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">location ~ image &#123;</span><br><span class="line">    root /var/www/image;</span><br><span class="line">    index index.html;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果我们访问  <a href="http://xx.com/image/logo.png" target="_blank" rel="noopener">http://xx.com/image/logo.png</a><br>此时, “/” 与”/image/logo.png” 匹配<br>同时,”image”正则 与”image/logo.png”也能匹配,谁发挥作用?<br>正则表达式的成果将会使用.  </p>
+<p>图片真正会访问 /var/www/image/logo.png  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    root	/usr/local/nginx/html;</span><br><span class="line">    index	index.html index.htm;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">location /foo &#123;</span><br><span class="line">    root	/var/www/html;</span><br><span class="line">    index	index.html;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们访问<a href="http://xxx.com/foo" target="_blank" rel="noopener">http://xxx.com/foo</a><br> 对于uri “/foo”,   两个location的patt,都能匹配他们<br>即 ‘/’能从左前缀匹配 ‘/foo’, ‘/foo’也能左前缀匹配’/foo’,<br>此时, 真正访问 /var/www/html/index.html<br>原因:’/foo’匹配的更长,因此使用之.;  </p>
+<p><strong>Location的正则写法</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">location  = / &#123;</span><br><span class="line">    # 精确匹配 / ，主机名后面不能带任何字符串</span><br><span class="line">    [ configuration A ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location  / &#123;</span><br><span class="line">    # 因为所有的地址都以 / 开头，所以这条规则将匹配到所有请求</span><br><span class="line">    # 但是正则和最长字符串会优先匹配</span><br><span class="line">    [ configuration B ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /documents/ &#123;</span><br><span class="line">    # 匹配任何以 /documents/ 开头的地址，匹配符合以后，还要继续往下搜索</span><br><span class="line">    # 只有后面的正则表达式没有匹配到时，这一条才会采用这一条</span><br><span class="line">    [ configuration C ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~ /documents/Abc &#123;</span><br><span class="line">    # 匹配任何以 /documents/ 开头的地址，匹配符合以后，还要继续往下搜索</span><br><span class="line">    # 只有后面的正则表达式没有匹配到时，这一条才会采用这一条</span><br><span class="line">    [ configuration CC ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ^~ /images/ &#123;</span><br><span class="line">    # 匹配任何以 /images/ 开头的地址，匹配符合以后，停止往下搜索正则，采用这一条。</span><br><span class="line">    [ configuration D ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~* \.(gif|jpg|jpeg)$ &#123;</span><br><span class="line">    # 匹配所有以 gif,jpg或jpeg 结尾的请求</span><br><span class="line">    # 然而，所有请求 /images/ 下的图片会被 config D 处理，因为 ^~ 到达不了这一条正则</span><br><span class="line">    [ configuration E ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /images/ &#123;</span><br><span class="line">    # 字符匹配到 /images/，继续往下，会发现 ^~ 存在</span><br><span class="line">    [ configuration F ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /images/abc &#123;</span><br><span class="line">    # 最长字符匹配到 /images/abc，继续往下，会发现 ^~ 存在</span><br><span class="line">    # F与G的放置顺序是没有关系的</span><br><span class="line">    [ configuration G ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~ /images/abc/ &#123;</span><br><span class="line">    # 只有去掉 config D 才有效：先最长匹配 config G 开头的地址，继续往下搜索，匹配到这一条正则，采用</span><br><span class="line">    [ configuration H ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~* /js/.*/\.js</span><br></pre></td></tr></table></figure>
+<ul>
+<li>以=开头表示精确匹配如 A 中只匹配根目录结尾的请求，后面不能带任何字符串。</li>
+<li>^~ 开头表示uri以某个常规字符串开头，不是正则匹配</li>
+<li>~ 开头表示区分大小写的正则匹配;</li>
+<li>~* 开头表示不区分大小写的正则匹配</li>
+<li>/ 通用匹配, 如果没有其它匹配,任何请求都会匹配到</li>
+</ul>
+<p><strong>顺序or优先级</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(location =) &gt; (location 完整路径) &gt; (location ^~ 路径) &gt; (location ~,~* 正则顺序) &gt; (location 部分起始路径) &gt; (/)</span><br></pre></td></tr></table></figure>
+<p><strong>location解析过程如下图</strong>  </p>
+<p><img src="https://camo.githubusercontent.com/7df924e86acaa7b2d44f709bc86aec92d64444c0/687474703a2f2f692e696d6775722e636f6d2f655336424476622e706e67" alt="location解析过程"></p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>Nginx官网，<a href="http://nginx.org/en/docs/http/ngx_http_core_module.html#location" target="_blank" rel="noopener">Location Syntax</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2016/12/12/Nginx的Location正则/" data-id="cjjoc32up000cazs6j0ow449u" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
     <article id="post-Nginx的Location语法" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/12/07/Nginx的Location语法/" class="article-date">
@@ -111,7 +178,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/07/Nginx的Location语法/" data-id="cjjmzhxn200059ngh6h4hihfm" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/07/Nginx的Location语法/" data-id="cjjoc32us000hazs6en1uqpsy" class="article-share-link">分享</a>
       
       
       
@@ -203,7 +270,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/03/Nginx日志切割/" data-id="cjjmzhxmo00009ngh0mycku5r" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/03/Nginx日志切割/" data-id="cjjoc32ug0004azs6dhyio3p8" class="article-share-link">分享</a>
       
       
       
@@ -268,7 +335,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/11/27/Nginx日志管理/" data-id="cjjmzhxmz00049ngh7w7rpr7p" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/11/27/Nginx日志管理/" data-id="cjjoc32ui0005azs6jd7iu7xg" class="article-share-link">分享</a>
       
       
       
@@ -322,7 +389,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/11/09/Nginx虚拟主机配置/" data-id="cjjmzhxnj000h9ngh4ha48zf9" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/11/09/Nginx虚拟主机配置/" data-id="cjjoc32uy000nazs6zihyklfh" class="article-share-link">分享</a>
       
       
       
@@ -446,7 +513,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/11/02/Nginx的编译安装/" data-id="cjjmzhxo100169nghp832gntg" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/11/02/Nginx的编译安装/" data-id="cjjoc32v4000vazs69zi8ut5r" class="article-share-link">分享</a>
       
       
       
@@ -496,7 +563,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/09/27/乐视入职篇章/" data-id="cjjmzhxns000s9nghxtk31vjd" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/09/27/乐视入职篇章/" data-id="cjjoc32v90016azs6vedx8slf" class="article-share-link">分享</a>
       
       
       
@@ -554,7 +621,92 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/05/12/jQuery源码分析/" data-id="cjjmzhxnm000k9nghnjqjysrz" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/05/12/jQuery源码分析/" data-id="cjjoc32v0000sazs6x39w0t8j" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
+    <article id="post-如何正确学习JavaScript" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/01/20/如何正确学习JavaScript/" class="article-date">
+  <time datetime="2016-01-20T14:53:12.000Z" itemprop="datePublished">2016-01-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JavaScript/">JavaScript</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/01/20/如何正确学习JavaScript/">如何正确学习JavaScript</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <p>最近刚入职了搜狐研发中心部门，在那边开始我的新的旅程，之前实习一直在做 Java 以及和云计算相关的东西，这次开始新的岗位：<code>前端开发攻城狮</code>…[嘿嘿😋]</p>
+<p>于是，开始了 JavaScript 新的旅程。入手了基本觉得不错的书籍，在这里分享下</p>
+<ul>
+<li><a href="https://item.jd.com/10951037.html" target="_blank" rel="noopener">《JavaScript 高级程序设计》</a></li>
+<li><a href="https://item.jd.com/11676671.html" target="_blank" rel="noopener">《你不知道的JavaScript上卷》</a></li>
+</ul>
+<p><code>红本</code>对于新手入门非常不错，特别是面向对象的章节，通俗易懂。</p>
+<p><code>《你不知道的JavaScript》</code>这本书比较深入，不过非常助于理解JavaScript的闭包/作用域/this/原型…</p>
+<p>还有一些相关的JavaScript相关的学习资料，一一列出😄</p>
+<h3 id="顶级博客"><a href="#顶级博客" class="headerlink" title="顶级博客"></a>顶级博客</h3><ul>
+<li><a href="https://xcoder.in/" target="_blank" rel="noopener">死月</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/" target="_blank" rel="noopener">阮一峰</a></li>
+<li><a href="https://75team.com/" target="_blank" rel="noopener">奇舞团</a></li>
+<li><a href="https://imququ.com/" target="_blank" rel="noopener">Jerry Qu</a></li>
+</ul>
+<h3 id="国内前端大牛Github汇总"><a href="#国内前端大牛Github汇总" class="headerlink" title="国内前端大牛Github汇总"></a>国内前端大牛Github汇总</h3><ul>
+<li><a href="https://github.com/XadillaX" target="_blank" rel="noopener">死月</a></li>
+<li><a href="https://github.com/ruanyf" target="_blank" rel="noopener">https://github.com/ruanyf</a></li>
+<li><a href="https://github.com/cssmagic" target="_blank" rel="noopener">CSS魔法</a></li>
+<li><a href="https://github.com/bailicangdu" target="_blank" rel="noopener">bailicangdu</a></li>
+<li><a href="https://github.com/phodal" target="_blank" rel="noopener">phodal</a></li>
+<li><a href="https://github.com/yanhaijing" target="_blank" rel="noopener">颜海镜</a></li>
+<li><a href="https://github.com/RubyLouvre" target="_blank" rel="noopener">司徒正美</a></li>
+<li><a href="https://github.com/i5ting" target="_blank" rel="noopener">狼叔</a></li>
+<li><a href="https://github.com/youngwind" target="_blank" rel="noopener">梁少峰</a></li>
+<li><a href="https://github.com/justjavac" target="_blank" rel="noopener">justjavac</a></li>
+<li><a href="https://github.com/JacksonTian" target="_blank" rel="noopener">JacksonTian</a></li>
+<li><a href="https://github.com/brianway" target="_blank" rel="noopener">魏楚阳</a></li>
+<li><a href="https://github.com/yyx990803" target="_blank" rel="noopener">尤雨溪</a></li>
+<li><a href="https://github.com/Jinjiang" target="_blank" rel="noopener">勾三股四</a></li>
+<li><a href="https://github.com/xufei" target="_blank" rel="noopener">xufei</a></li>
+<li><a href="https://github.com/xinyu198736" target="_blank" rel="noopener">芋头</a></li>
+</ul>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
+<li><a href="http://www.ruanyifeng.com/blog/javascript/" target="_blank" rel="noopener">阮一峰关于JavaScript的文章</a></li>
+<li><a href="http://www.cnblogs.com/TomXu/tag/JavaScript/" target="_blank" rel="noopener">汤姆大叔的JavaScript系列</a></li>
+<li><a href="https://github.com/AlloyTeam/CodeGuide" target="_blank" rel="noopener">腾讯Alloyteam代码规范</a></li>
+<li><a href="https://github.com/JacksonTian/fks" target="_blank" rel="noopener">前端技能汇总</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2016/01/20/如何正确学习JavaScript/" data-id="cjjocgxzq001yazs6kv3ycs9q" class="article-share-link">分享</a>
       
       
       
@@ -594,15 +746,15 @@
       <ul>
         
           <li>
-            <a href="/2018/07/11/理财小白的入门课/">理财小白的入门课</a>
-          </li>
-        
-          <li>
             <a href="/2018/07/11/如何在疲劳的JS世界中持续学习？/">如何在疲劳的JS世界中持续学习？</a>
           </li>
         
           <li>
-            <a href="/2018/06/04/现代JS框架存在的根本原因/">现代JS框架存在的根本原因【转载】</a>
+            <a href="/2018/07/11/理财小白的入门课/">理财小白的入门课</a>
+          </li>
+        
+          <li>
+            <a href="/2018/06/04/现代JS框架存在的根本原因/">现代JS框架存在的根本原因</a>
           </li>
         
           <li>
@@ -610,7 +762,7 @@
           </li>
         
           <li>
-            <a href="/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/">Nginx做负载均衡器以及proxy缓存配置</a>
+            <a href="/2017/05/24/V8入门/">Chrome V8引擎入门</a>
           </li>
         
       </ul>

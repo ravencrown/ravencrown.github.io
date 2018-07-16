@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 现代JS框架存在的根本原因【转载】
+title: 现代JS框架存在的根本原因
 date: 2018-06-04 23:05:11
 tags: JavaScript
 categories: JavaScript

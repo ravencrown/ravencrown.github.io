@@ -3,20 +3,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>jQuery源码分析 | 陈广宵的网络日志</title>
+  <title>陈广宵的网络日志</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="jQuery 源码分析的资料可以参考 Aaron 大神的《jQuery源码分析系列》文章,以及他的 githut 地址 备注：喜欢 Aaron 大神那句名言 - 以大多数人的努力程度之低，根本轮不到拼天赋…  jQuery源码分析系列 jQuery源码分析系列 github 地址  关于 jQuery 的一些设计思想和用法，可以参考 阮一峰 老师的几篇文章  jQuery设计思想 jQuery最佳">
-<meta name="keywords" content="JavaScript">
-<meta property="og:type" content="article">
-<meta property="og:title" content="jQuery源码分析">
-<meta property="og:url" content="http://www.xbroder.com/2016/05/12/jQuery源码分析/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="陈广宵的网络日志">
+<meta property="og:url" content="http://www.xbroder.com/page/3/index.html">
 <meta property="og:site_name" content="陈广宵的网络日志">
-<meta property="og:description" content="jQuery 源码分析的资料可以参考 Aaron 大神的《jQuery源码分析系列》文章,以及他的 githut 地址 备注：喜欢 Aaron 大神那句名言 - 以大多数人的努力程度之低，根本轮不到拼天赋…  jQuery源码分析系列 jQuery源码分析系列 github 地址  关于 jQuery 的一些设计思想和用法，可以参考 阮一峰 老师的几篇文章  jQuery设计思想 jQuery最佳">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-07-12T13:19:45.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="jQuery源码分析">
-<meta name="twitter:description" content="jQuery 源码分析的资料可以参考 Aaron 大神的《jQuery源码分析系列》文章,以及他的 githut 地址 备注：喜欢 Aaron 大神那句名言 - 以大多数人的努力程度之低，根本轮不到拼天赋…  jQuery源码分析系列 jQuery源码分析系列 github 地址  关于 jQuery 的一些设计思想和用法，可以参考 阮一峰 老师的几篇文章  jQuery设计思想 jQuery最佳">
+<meta name="twitter:title" content="陈广宵的网络日志">
   
     <link rel="alternate" href="/atom.xml" title="陈广宵的网络日志" type="application/atom+xml">
   
@@ -69,7 +64,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-jQuery源码分析" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main">
+
+  
+    <article id="post-jQuery源码分析" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/05/12/jQuery源码分析/" class="article-date">
   <time datetime="2016-05-12T12:05:11.000Z" itemprop="datePublished">2016-05-12</time>
@@ -86,8 +84,8 @@
       <header class="article-header">
         
   
-    <h1 class="article-title" itemprop="name">
-      jQuery源码分析
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/05/12/jQuery源码分析/">jQuery源码分析</a>
     </h1>
   
 
@@ -122,85 +120,101 @@
     </footer>
   </div>
   
+</article>
+ 
+
+
+  
+    <article id="post-如何正确学习JavaScript" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/01/20/如何正确学习JavaScript/" class="article-date">
+  <time datetime="2016-01-20T14:53:12.000Z" itemprop="datePublished">2016-01-20</time>
+</a>
     
- <script src="/jquery/jquery.min.js"></script>
-  <div id="random_posts">
-    <h2>推荐文章</h2>
-    <div class="random_posts_ul">
-      <script>
-          var random_count =4
-          var site = {BASE_URI:'/'};
-          function load_random_posts(obj) {
-              var arr=site.posts;
-              if (!obj) return;
-              // var count = $(obj).attr('data-count') || 6;
-              for (var i, tmp, n = arr.length; n; i = Math.floor(Math.random() * n), tmp = arr[--n], arr[n] = arr[i], arr[i] = tmp);
-              arr = arr.slice(0, random_count);
-              var html = '<ul>';
-            
-              for(var j=0;j<arr.length;j++){
-                var item=arr[j];
-                html += '<li><strong>' + 
-                item.date + ':&nbsp;&nbsp;<a href="' + (site.BASE_URI+item.uri) + '">' + 
-                (item.title || item.uri) + '</a></strong>';
-                if(item.excerpt){
-                  html +='<div class="post-excerpt">'+item.excerpt+'</div>';
-                }
-                html +='</li>';
-                
-              }
-              $(obj).html(html + '</ul>');
-          }
-          $('.random_posts_ul').each(function () {
-              var c = this;
-              if (!site.posts || !site.posts.length){
-                  $.getJSON(site.BASE_URI + 'js/posts.js',function(json){site.posts = json;load_random_posts(c)});
-              } 
-               else{
-                load_random_posts(c);
-              }
-          });
-      </script>
-    </div>
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JavaScript/">JavaScript</a>
   </div>
 
+  </div>
+  <div class="article-inner">
     
-<nav id="article-nav">
-  
-    <a href="/2016/09/27/乐视入职篇章/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">上一篇</strong>
-      <div class="article-nav-title">
+    
+      <header class="article-header">
         
-          乐视体育入职篇章
-        
-      </div>
-    </a>
   
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/01/20/如何正确学习JavaScript/">如何正确学习JavaScript</a>
+    </h1>
   
-    <a href="/2016/01/20/如何正确学习JavaScript/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title">如何正确学习JavaScript</div>
-    </a>
-  
-</nav>
 
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <p>最近刚入职了搜狐研发中心部门，在那边开始我的新的旅程，之前实习一直在做 Java 以及和云计算相关的东西，这次开始新的岗位：<code>前端开发攻城狮</code>…[嘿嘿😋]</p>
+<p>于是，开始了 JavaScript 新的旅程。入手了基本觉得不错的书籍，在这里分享下</p>
+<ul>
+<li><a href="https://item.jd.com/10951037.html" target="_blank" rel="noopener">《JavaScript 高级程序设计》</a></li>
+<li><a href="https://item.jd.com/11676671.html" target="_blank" rel="noopener">《你不知道的JavaScript上卷》</a></li>
+</ul>
+<p><code>红本</code>对于新手入门非常不错，特别是面向对象的章节，通俗易懂。</p>
+<p><code>《你不知道的JavaScript》</code>这本书比较深入，不过非常助于理解JavaScript的闭包/作用域/this/原型…</p>
+<p>还有一些相关的JavaScript相关的学习资料，一一列出😄</p>
+<h3 id="顶级博客"><a href="#顶级博客" class="headerlink" title="顶级博客"></a>顶级博客</h3><ul>
+<li><a href="https://xcoder.in/" target="_blank" rel="noopener">死月</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/" target="_blank" rel="noopener">阮一峰</a></li>
+<li><a href="https://75team.com/" target="_blank" rel="noopener">奇舞团</a></li>
+<li><a href="https://imququ.com/" target="_blank" rel="noopener">Jerry Qu</a></li>
+</ul>
+<h3 id="国内前端大牛Github汇总"><a href="#国内前端大牛Github汇总" class="headerlink" title="国内前端大牛Github汇总"></a>国内前端大牛Github汇总</h3><ul>
+<li><a href="https://github.com/XadillaX" target="_blank" rel="noopener">死月</a></li>
+<li><a href="https://github.com/ruanyf" target="_blank" rel="noopener">https://github.com/ruanyf</a></li>
+<li><a href="https://github.com/cssmagic" target="_blank" rel="noopener">CSS魔法</a></li>
+<li><a href="https://github.com/bailicangdu" target="_blank" rel="noopener">bailicangdu</a></li>
+<li><a href="https://github.com/phodal" target="_blank" rel="noopener">phodal</a></li>
+<li><a href="https://github.com/yanhaijing" target="_blank" rel="noopener">颜海镜</a></li>
+<li><a href="https://github.com/RubyLouvre" target="_blank" rel="noopener">司徒正美</a></li>
+<li><a href="https://github.com/i5ting" target="_blank" rel="noopener">狼叔</a></li>
+<li><a href="https://github.com/youngwind" target="_blank" rel="noopener">梁少峰</a></li>
+<li><a href="https://github.com/justjavac" target="_blank" rel="noopener">justjavac</a></li>
+<li><a href="https://github.com/JacksonTian" target="_blank" rel="noopener">JacksonTian</a></li>
+<li><a href="https://github.com/brianway" target="_blank" rel="noopener">魏楚阳</a></li>
+<li><a href="https://github.com/yyx990803" target="_blank" rel="noopener">尤雨溪</a></li>
+<li><a href="https://github.com/Jinjiang" target="_blank" rel="noopener">勾三股四</a></li>
+<li><a href="https://github.com/xufei" target="_blank" rel="noopener">xufei</a></li>
+<li><a href="https://github.com/xinyu198736" target="_blank" rel="noopener">芋头</a></li>
+</ul>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
+<li><a href="http://www.ruanyifeng.com/blog/javascript/" target="_blank" rel="noopener">阮一峰关于JavaScript的文章</a></li>
+<li><a href="http://www.cnblogs.com/TomXu/tag/JavaScript/" target="_blank" rel="noopener">汤姆大叔的JavaScript系列</a></li>
+<li><a href="https://github.com/AlloyTeam/CodeGuide" target="_blank" rel="noopener">腾讯Alloyteam代码规范</a></li>
+<li><a href="https://github.com/JacksonTian/fks" target="_blank" rel="noopener">前端技能汇总</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2016/01/20/如何正确学习JavaScript/" data-id="cjjvk74tl001q8cs6tk4osbqt" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
   
 </article>
  
-     
-  <div class="comments" id="comments">
-    
-     
-       
-      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
-    
-       
-      
-      
-  </div>
- 
+
+
   
 
+
+  <nav id="page-nav">
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo; 上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
+  </nav>
 </section>
            
     <aside id="sidebar">

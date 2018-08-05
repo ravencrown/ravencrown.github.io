@@ -67,6 +67,403 @@
         <section id="main">
 
   
+    <article id="post-webpack01" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/05/webpack01/" class="article-date">
+  <time datetime="2018-08-05T08:30:36.000Z" itemprop="datePublished">2018-08-05</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/JavaScript/">JavaScript</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/05/webpack01/">Webpack 入门（一）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <p><code>webpack</code> 是一个现代 <code>JavaScript</code> 应用程序的静态模块打包器(<code>module bundler</code>)<br>在打包过程中，会从入口开始递归地构建一个依赖关系图，其中包含应用程序需要用到的每个模块，<br>然后将这些模块打包成一个或多个<code>bundle</code></p>
+<p>webpack 处理前端的资源文件：JS、CSS、图片，将源文件转成浏览器能识别的</p>
+<p>ES6 – (loader/plugin) –&gt; ES5<br>SASS/LESS/Stylus – (loader/plugin) –&gt; CSS<br>image – (loader/plugin) –&gt; 压缩、转base64格式<br>Coffee/ts – (loader/plugin) –&gt; js<br>ETC…</p>
+<h2 id="四个核心概念"><a href="#四个核心概念" class="headerlink" title="四个核心概念"></a>四个核心概念</h2><ul>
+<li>entry 入口源文件</li>
+<li>输出 生成文件</li>
+<li>loader 编译文件</li>
+<li>plugin 比loader更强大，能使用更多webpack的api</li>
+</ul>
+<h3 id="入口-Entry"><a href="#入口-Entry" class="headerlink" title="入口 Entry"></a>入口 Entry</h3><p>入口起点(<code>entry</code>)指示 webpack 应该使用哪个模块，来作为构建其内部依赖图的开始。进入入口起点后，webpack 会找出有哪些模块和库是入口起点（直接和间接）依赖的。每个依赖项随即被处理，最后输出到称之为 <code>bundles</code> 的文件中</p>
+<p>简单说：就是 HTML 直接引用的 JS 文件，其他非入口文件则作为直接或间接的依赖引入</p>
+<p><strong>用法</strong><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// entry: string|Array&lt;string&gt;</span></span><br><span class="line"><span class="comment">// 传数组的时候，可以将多个依赖文件导向一个 chunk，打包到一个 bundle 文件，参考 CommonsChunkPlugin 插件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 单页面</span></span><br><span class="line"><span class="keyword">const</span> config = &#123;</span><br><span class="line">  entry: <span class="string">'./path/to/my/entry/file.js'</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 多页面：根据经验每个页面一个入口</span></span><br><span class="line"><span class="keyword">const</span> config = &#123;</span><br><span class="line">  entry: &#123;</span><br><span class="line">    pageOne: <span class="string">'./src/pageOne/index.js'</span>,</span><br><span class="line">    pageTwo: <span class="string">'./src/pageTwo/index.js'</span>,</span><br><span class="line">    pageThree: <span class="string">'./src/pageThree/index.js'</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h3 id="输出-output"><a href="#输出-output" class="headerlink" title="输出 output"></a>输出 output</h3><p>打包之后输出的配置，只能有一个</p>
+<p>示例<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">output: &#123;</span><br><span class="line">    path: path.resolve(__dirname + <span class="string">'/dist'</span>),  <span class="comment">// webpack3 之后使用绝对路径</span></span><br><span class="line">    filename: <span class="string">'js/[name]-[chunkhash].js'</span>,</span><br><span class="line">    publicPath: <span class="string">'http://cdn.com/'</span></span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></p>
+<p><strong>filename 占位符</strong></p>
+<ul>
+<li>name 模块名称。 例上面入口的 pageOne，pageTwo，pageThree</li>
+<li>hash 模块编译后的（整体）Hash值</li>
+<li>chunkhash 分片的Hash值（每个模块的hash）</li>
+</ul>
+<p><img width="792" alt="d28ab5fd-b360-4185-9ba5-8d4a1b16c92a" src="https://user-images.githubusercontent.com/9835391/34867635-d818c624-f7bb-11e7-9e16-546f9f84efd0.png"></p>
+<h2 id="核心概念：Loader"><a href="#核心概念：Loader" class="headerlink" title="核心概念：Loader"></a>核心概念：Loader</h2><p>loader 它是指用来将一段代码转换成另一段代码。loader 可以使你在 import 或”加载”模块时预处理文件。因此，loader 类似于其他构建工具中“任务(task)”</p>
+<p>例如：比如在 <code>require(&#39;a.coffee&#39;)</code> 的时候，webpack 自动先编译成 JS 文件，再引入进来</p>
+<p>类似 gulp 中的 task 任务</p>
+<h3 id="loader的特性"><a href="#loader的特性" class="headerlink" title="loader的特性"></a>loader的特性</h3><ul>
+<li>loader 可以是串联方式的，例如 <code>style-loader!css-loader</code></li>
+<li>loader 可以是同步也可以是异步的</li>
+<li>loader 可以运行在 Node.js 中，并且可以执行任何操作</li>
+<li>loader 可以接受查询参数（query）</li>
+<li><p>loader 在命令行中是通过 –module-bind（webpack -h） 的方式绑定，也可以在配置文件中通过正则表达式指定某个后缀名的文件由哪个 loader 来执行</p>
+</li>
+<li><p>loader 可以通过 NPM 安装/发布</p>
+</li>
+<li>loader 可以获取到 webpack 的配置</li>
+<li>plugin 可以给予 loader 更多的特性</li>
+<li>loader 可以产生一个额外的任意文件</li>
+</ul>
+<h3 id="loader-的使用"><a href="#loader-的使用" class="headerlink" title="loader 的使用"></a>loader 的使用</h3><p>三种方式</p>
+<ol>
+<li>在 require 或者 import 声明中指定</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Styles <span class="keyword">from</span> <span class="string">'style-loader!css-loader?modules!./styles.css'</span>;</span><br><span class="line"><span class="comment">//or</span></span><br><span class="line"><span class="built_in">require</span>(<span class="string">"style-loader!css-loader?modules!./styles.css"</span>);</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>通过配置文件</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>: &#123;</span><br><span class="line">   rules: [</span><br><span class="line">     &#123;</span><br><span class="line">       <span class="comment">// test 是对资源的正则匹配，如果匹配到了，就应用下面的 loader 对匹配到的资源进行处理</span></span><br><span class="line">       test: <span class="regexp">/\.css$/</span>,</span><br><span class="line">       use: [</span><br><span class="line">         &#123; <span class="attr">loader</span>: <span class="string">'style-loader'</span> &#125;,</span><br><span class="line">         &#123;</span><br><span class="line">           loader: <span class="string">'css-loader'</span>,</span><br><span class="line">           options: &#123;</span><br><span class="line">             modules: <span class="literal">true</span></span><br><span class="line">           &#125;</span><br><span class="line">         &#125;</span><br><span class="line">       ]</span><br><span class="line">     &#125;</span><br><span class="line">   ]</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>通过命令行 CLI</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// webpack 执行一次开发时的编译</span></span><br><span class="line"><span class="comment">// webpack -p 执行一次生成环境的编译（压缩）</span></span><br><span class="line"><span class="comment">// webpack --watch 在开发时持续监控增量编译（很快）</span></span><br><span class="line"><span class="comment">// webpack -d 让他生成SourceMaps</span></span><br><span class="line"><span class="comment">// webpack --progress 显示编译进度</span></span><br><span class="line"><span class="comment">// webpack --colors 加个颜色，变漂亮</span></span><br><span class="line"><span class="comment">// webpack --sort-modules-by, --sort-chunks-by, --sort-assets-by 将modules/chunks/assets进行列表排序</span></span><br><span class="line"><span class="comment">// webpack --display-chunks 展示编译后的分块</span></span><br><span class="line"><span class="comment">// webpack --display-reasons 显示更多引用模块原因</span></span><br><span class="line"><span class="comment">// webapck --display-error-details 显示更多报错信息</span></span><br><span class="line"></span><br><span class="line">$ webpack --<span class="built_in">module</span>-bind jade-loader --<span class="built_in">module</span>-bind css=style-loader!css-loader</span><br></pre></td></tr></table></figure>
+<h2 id="使用-babel-loader-转换-ES6-代码"><a href="#使用-babel-loader-转换-ES6-代码" class="headerlink" title="使用 babel-loader 转换 ES6 代码"></a>使用 babel-loader 转换 ES6 代码</h2><p>安装 babel 参考 <a href="http://babeljs.io/docs/setup/#installation" target="_blank" rel="noopener">http://babeljs.io/docs/setup/#installation</a></p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install --save-dev babel-loader babel-core</span><br></pre></td></tr></table></figure>
+<h3 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Via config</span></span><br><span class="line"><span class="built_in">module</span>: &#123;</span><br><span class="line">  rules: [</span><br><span class="line">    &#123; </span><br><span class="line">        test: <span class="regexp">/\.js$/</span>, </span><br><span class="line">        exclude: <span class="regexp">/node_modules/</span>, </span><br><span class="line">        loader: <span class="string">"babel-loader"</span> </span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Via loader</span></span><br><span class="line"><span class="keyword">var</span> Person = <span class="built_in">require</span>(<span class="string">"babel!./Person.js"</span>).default;</span><br><span class="line"><span class="keyword">new</span> Person();</span><br></pre></td></tr></table></figure>
+<h3 id="配置文件-babelrc"><a href="#配置文件-babelrc" class="headerlink" title="配置文件 .babelrc"></a>配置文件 <code>.babelrc</code></h3><p><strong>在 <code>.babelrc</code> 文件中定义</strong><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"presets"</span>: [<span class="string">"env"</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="presets-是干什么用的？"><a href="#presets-是干什么用的？" class="headerlink" title="presets 是干什么用的？"></a>presets 是干什么用的？</h3><p>设置转码规则，版本参考 <a href="https://babeljs.cn/docs/plugins/" target="_blank" rel="noopener">https://babeljs.cn/docs/plugins/</a></p>
+<p>转换对应模块参考图<br><img src="https://user-images.githubusercontent.com/9835391/34867649-eafcdadc-f7bb-11e7-92b0-512151410ee4.png" alt="6147470b-73c6-4ba1-96d6-3c536beff662"></p>
+<p>例如<br><code>const和let现在一律转换成var</code><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 转换前</span></span><br><span class="line"><span class="keyword">var</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">let</span> b = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">const</span> c = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//转换后</span></span><br><span class="line"><span class="keyword">var</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">var</span> b = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">var</span> c = <span class="number">3</span>;</span><br></pre></td></tr></table></figure></p>
+<p><code>let 的块级作用域如何体现</code><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 转换前</span></span><br><span class="line"><span class="keyword">let</span> a1 = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">let</span> a2 = <span class="number">6</span>;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">let</span> a1 = <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">let</span> a2 = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">let</span> a1 = <span class="number">4</span>;</span><br><span class="line">        <span class="keyword">let</span> a2 = <span class="number">5</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">a1 = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转换后</span></span><br><span class="line"><span class="keyword">var</span> a1 = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">var</span> a2 = <span class="number">6</span>;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> _a1 = <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">var</span> _a2 = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> _a3 = <span class="number">4</span>;</span><br><span class="line">        <span class="keyword">var</span> _a4 = <span class="number">5</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">a1 = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实质就是在块级作用域改变一下变量名，使之与外层不同</span></span><br></pre></td></tr></table></figure></p>
+<p><code>赋值解构转换</code><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 转换前</span></span><br><span class="line"><span class="keyword">var</span> props = &#123;</span><br><span class="line">    name: <span class="string">"heyli"</span>,</span><br><span class="line">    getName: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;,</span><br><span class="line">    setName: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">let</span> &#123; name, getName, setName &#125; = <span class="keyword">this</span>.props;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转换后</span></span><br><span class="line"><span class="keyword">var</span> props = &#123;</span><br><span class="line">    name: <span class="string">"heyli"</span>,</span><br><span class="line">    getName: <span class="function"><span class="keyword">function</span> <span class="title">getName</span>(<span class="params"></span>) </span>&#123;&#125;,</span><br><span class="line">    setName: <span class="function"><span class="keyword">function</span> <span class="title">setName</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> name = props.name;</span><br><span class="line"><span class="keyword">var</span> getName = props.getName;</span><br><span class="line"><span class="keyword">var</span> setName = props.setName;</span><br></pre></td></tr></table></figure></p>
+<p><code>扩展运算符</code><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 转换前</span></span><br><span class="line"><span class="comment">// ...y代表它接收了剩下的参数。也就是arguments除了第一个标号的参数之外剩余的参数。</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">func</span>(<span class="params">x, ...y</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(x);</span><br><span class="line">    <span class="built_in">console</span>.log(y);</span><br><span class="line">    <span class="keyword">return</span> x * y.length;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转换后</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">func</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(x);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> _len = <span class="built_in">arguments</span>.length, y = <span class="built_in">Array</span>(_len &gt; <span class="number">1</span> ? _len - <span class="number">1</span> : <span class="number">0</span>), _key = <span class="number">1</span>; _key &lt; _len; _key++) &#123;</span><br><span class="line">        y[_key - <span class="number">1</span>] = <span class="built_in">arguments</span>[_key];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">console</span>.log(y);</span><br><span class="line">    <span class="keyword">return</span> x * y.length;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>配置 presets 的三种方式</strong></p>
+<ol>
+<li><p>在webpack 配置文件 loader 中直接配置</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    test: <span class="regexp">/\.js$/</span>,</span><br><span class="line">    loader: <span class="string">'babel'</span>,</span><br><span class="line">    query: &#123;</span><br><span class="line">        presets: [<span class="string">'lastest'</span>]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>.babelrc</code> 配置文件中配置</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    presets: [<span class="string">'lastest'</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在 package.json 中配置</p>
+</li>
+</ol>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">"babel": &#123;</span><br><span class="line">    "presets": ["lastest"]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="常用的-Loader"><a href="#常用的-Loader" class="headerlink" title="常用的 Loader"></a>常用的 Loader</h3><ul>
+<li>处理样式：<code>less-loader, sass-loader, style-loader, postcss-loader</code></li>
+<li>图片处理：<code>url-loader, file-loader</code></li>
+<li>js: <code>babel-loader，babel-preset-es2015，babel-preset-react</code> 等等</li>
+<li>将js模块暴露到全局：<code>expose-loader</code></li>
+</ul>
+<h3 id="module-loaders"><a href="#module-loaders" class="headerlink" title="module.loaders"></a>module.loaders</h3><p>module.loaders 可配置的参数</p>
+<ul>
+<li>test: 正则匹配方式</li>
+<li>exclude: loader 处理的资源的排除的范围</li>
+<li>include: loader 处理包含的范围，可以是正则、数组、绝对路径</li>
+<li>loader: 使用 “!” 分割 loader，从后往前处理</li>
+<li>loaders: 以 loader 组成的 数组</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">loaders: [</span><br><span class="line">    &#123;</span><br><span class="line">        test: <span class="regexp">/\.js$/</span>,</span><br><span class="line">        loader: <span class="string">'babel-loader'</span>,</span><br><span class="line">        <span class="comment">// 指定 exclude，include 可以提升打包速度</span></span><br><span class="line">        exclude: path.resolve(__dirname, <span class="string">'/node_modules/'</span>),</span><br><span class="line">        include: path.resolve(__dirname, <span class="string">'/src/'</span>),</span><br><span class="line">        query: &#123;</span><br><span class="line">            <span class="string">"presets"</span>: [<span class="string">"latest"</span>]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        test: <span class="regexp">/\.css$/</span>,</span><br><span class="line">        loader: <span class="string">'style-loader!css-loader!postcss-loader'</span>,</span><br><span class="line">        loaders: [</span><br><span class="line">            <span class="string">'style-loader'</span>,</span><br><span class="line">            <span class="string">'css-loader'</span>,</span><br><span class="line">            <span class="string">'postcss-loader'</span></span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h2 id="webpack-处理项目中的-CSS-文件"><a href="#webpack-处理项目中的-CSS-文件" class="headerlink" title="webpack 处理项目中的 CSS 文件"></a>webpack 处理项目中的 CSS 文件</h2><ul>
+<li>css-loader: 支持 css 文件作为模块引入 js 中（require/import） 方式</li>
+<li>style-loader: 为了在html中以style的方式嵌入css</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    test: <span class="regexp">/\.css$/</span>,</span><br><span class="line">    <span class="comment">// 处理顺序，从右到左</span></span><br><span class="line">    <span class="comment">// importLoaders=1 的作用</span></span><br><span class="line">    loader: <span class="string">'style-loader!css-loader?importLoaders=1'</span></span><br><span class="line">&#125;,</span><br><span class="line">&#123;</span><br><span class="line">    test: <span class="regexp">/\.css$/</span>,</span><br><span class="line">    loader: <span class="string">'postcss-loader'</span>,</span><br><span class="line">    options: &#123;</span><br><span class="line">        plugins() &#123;</span><br><span class="line">            <span class="keyword">return</span> [</span><br><span class="line">                <span class="built_in">require</span>(<span class="string">'autoprefixer'</span>)(&#123;</span><br><span class="line">                    browsers: [</span><br><span class="line">                        <span class="string">'&gt;1%'</span>,</span><br><span class="line">                        <span class="string">'last 2 versions'</span>,</span><br><span class="line">                        <span class="string">'Firefox ESR'</span>,</span><br><span class="line">                        <span class="string">'not ie &lt; 9'</span></span><br><span class="line">                    ]</span><br><span class="line">                &#125;)</span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="webpack-处理项目中的-LESS-SASS-文件"><a href="#webpack-处理项目中的-LESS-SASS-文件" class="headerlink" title="webpack 处理项目中的 LESS/SASS 文件"></a>webpack 处理项目中的 LESS/SASS 文件</h2><p>less-loader<br>sass-loader</p>
+<h1 id="webpack-处理项目中的模板文件"><a href="#webpack-处理项目中的模板文件" class="headerlink" title="webpack 处理项目中的模板文件"></a>webpack 处理项目中的模板文件</h1><p>html-loader 看图</p>
+<p><img src="https://user-images.githubusercontent.com/9835391/34867665-f72bc8d6-f7bb-11e7-9e57-8827b2034043.png" alt="23222d21-dc2a-40a5-8462-344bb48d8ac3"></p>
+<p>ejs-loader</p>
+<p><a href="https://doc.webpack-china.org/loaders/" target="_blank" rel="noopener">https://doc.webpack-china.org/loaders/</a>    <code>模板(Templating)</code></p>
+<h2 id="核心概念：Plugins"><a href="#核心概念：Plugins" class="headerlink" title="核心概念：Plugins"></a>核心概念：Plugins</h2><p>加强版 Loader,可以使用 webpack 的API，需要通过require()引入并将插件实例添加到plugins数组中<br>如果还记得，可以介绍下 html-webpack-plugin</p>
+<ul>
+<li>代码热替换, HotModuleReplacementPlugin (开发的时候无需刷新页面即可看到更新)</li>
+<li>生成 html 文件，HtmlWebpackPlugin</li>
+<li>将 CSS 成生文件，而非内联，ExtractTextPlugin</li>
+<li>代码丑化，UglifyJsPlugin，开发过程中不建议打开</li>
+<li>多个 html共用一个 js 文件 (chunk)，可用 CommonsChunkPlugin,</li>
+<li>webpack-bundle-analyzer: 用视图的形式分析bundle.js中的每个模块</li>
+<li>清理文件夹，Clean</li>
+<li>报错但不退出webpack进程，NoErrorsPlugin</li>
+<li>调用模块的别名 ProvidePlugin，例如想在 js 中用 $，如果通过 webpack 加载，需要将 $ 与 jQuery 对应起来</li>
+</ul>
+<p><img width="780" alt="55cdd3e7-c74c-471f-b072-b7d96e9a5f5a" src="https://user-images.githubusercontent.com/9835391/34867687-08ec271e-f7bc-11e7-976e-afec483c62a0.png"></p>
+<p><img src="https://user-images.githubusercontent.com/9835391/34867723-2501ee7a-f7bc-11e7-95c8-c2d09440145a.png" alt="d2efe2b5-97d8-4fc5-b4b3-f5b221336f21"></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a href="https://github.com/ruanyf/webpack-demos" target="_blank" rel="noopener">阮一峰 Webpack Demos</a> △</li>
+<li><a href="https://github.com/postcss/postcss" target="_blank" rel="noopener">postcss github</a></li>
+<li><a href="http://babeljs.io/docs/plugins/" target="_blank" rel="noopener">参考 babel 官网</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2016/01/babel.html" target="_blank" rel="noopener">阮一峰 Babel 入门教程</a></li>
+<li><a href="https://doc.webpack-china.org/contribute/writing-a-plugin/#-" target="_blank" rel="noopener">如何编写一个Plugin</a></li>
+<li><a href="https://doc.webpack-china.org/contribute/writing-a-loader/#-" target="_blank" rel="noopener">如何编写一个Loader</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2018/08/05/webpack01/" data-id="cjkglbz3u000y10s6zuiq4zhd" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Webpack/">Webpack</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
+    <article id="post-HTTPS安全" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/07/31/HTTPS安全/" class="article-date">
+  <time datetime="2018-07-31T03:20:45.000Z" itemprop="datePublished">2018-07-31</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/网络/">网络</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/31/HTTPS安全/">HTTPS安全</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <p><strong>【本文转载自 <a href="https://zhuanlan.zhihu.com/p/22142170" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/22142170</a> 】</strong></p>
+<h3 id="http为什么不安全？"><a href="#http为什么不安全？" class="headerlink" title="http为什么不安全？"></a>http为什么不安全？</h3><p>http协议属于明文传输协议，交互过程以及数据传输都没有进行加密，通信双方也没有进行任何认证，通信过程非常容易遭遇劫持、监听、篡改，严重情况下，会造成恶意的流量劫持等问题，甚至造成个人隐私泄露（比如银行卡卡号和密码泄露）等严重的安全问题。</p>
+<p>可以把http通信比喻成寄送信件一样，A给B寄信，信件在寄送过程中，会经过很多的邮递员之手，他们可以拆开信读取里面的内容（因为http是明文传输的）。A的信件里面的任何内容（包括各类账号和密码）都会被轻易窃取。除此之外，邮递员们还可以伪造或者修改信件的内容，导致B接收到的信件内容是假的。</p>
+<p>比如常见的，在http通信过程中，“中间人”将广告链接嵌入到服务器发给用户的http报文里，导致用户界面出现很多不良链接； 或者是修改用户的请求头URL，导致用户的请求被劫持到另外一个网站，用户的请求永远到不了真正的服务器。这些都会导致用户得不到正确的服务，甚至是损失惨重。</p>
+<h3 id="https如何保证安全？"><a href="#https如何保证安全？" class="headerlink" title="https如何保证安全？"></a>https如何保证安全？</h3><p>要解决http带来的问题，就要引入加密以及身份验证机制。</p>
+<p>如果Server（以后简称服务器）给Client（以后简称 客户端）的消息是密文的，只有服务器和客户端才能读懂，就可以保证数据的保密性。同时，在交换数据之前，验证一下对方的合法身份，就可以保证通信双方的安全。那么，问题来了，服务器把数据加密后，客户端如何读懂这些数据呢？这时服务器必须要把加密的密钥（对称密钥，后面会详细说明）告诉客户端，客户端才能利用对称密钥解开密文的内容。但是，服务器如果将这个对称密钥以明文的方式给客户端，还是会被中间人截获，中间人也会知道对称密钥，依然无法保证通信的保密性。但是，如果服务器以密文的方式将对称密钥发给客户端，客户端又如何解开这个密文，得到其中的对称密钥呢？</p>
+<p>说到这里，大家是不是有点儿糊涂了？一会儿密钥，一会儿对称密钥，都有点儿被搞晕的节奏。在这里，提前给大家普及一下，这里的密钥，指的是非对称加解密的密钥，是用于TLS握手阶段的； 对称密钥，指的是对称加解密的密钥，是用于后续传输数据加解密的。下面将详细说明。</p>
+<p>这时，我们引入了非对称加解密的概念。在非对称加解密算法里，公钥加密的数据，有且只有唯一的私钥才能够解密，所以服务器只要把公钥发给客户端，客户端就可以用这个公钥来加密进行数据传输的对称密钥。客户端利用公钥将对称密钥发给服务器时，即使中间人截取了信息，也无法解密，因为私钥只部署在服务器，其他任何人都没有私钥，因此，只有服务器才能够解密。服务器拿到客户端的信息并用私钥解密之后，就可以拿到加解密数据用的对称密钥，通过这个对称密钥来进行后续通信的数据加解密。除此之外，非对称加密可以很好的管理对称密钥，保证每次数据加密的对称密钥都是不相同的，这样子的话，即使客户端病毒拉取到通信缓存信息，也无法窃取正常通信内容。</p>
+<p>上述通信过程，可以画成以下交互图：</p>
+<p><img src="https://pic2.zhimg.com/5c09960e4b42cc41cc058cd7d7b27d8d_b.png" alt=""></p>
+<p>但是这样似乎还不够，如果通信过程中，在三次握手或者客户端发起HTTP请求过程中，客户端的请求被中间人劫持，那么中间人就可以伪装成“假冒客户端”和服务器通信；中间人又可以伪装成“假冒服务器”和客户端通信。接下来，我们详细阐述中间人获取对称密钥的过程：</p>
+<p>中间人在收到服务器发送给客户端的公钥（这里是“正确的公钥”）后，并没有发给客户端，而是中间人将自己的公钥（这里中间人也会有一对公钥和私钥，这里称呼为“伪造公钥”）发给客户端。之后，客户端把对称密钥用这个“伪造公钥”加密后，发送过程中经过了中间人，中间人就可以用自己的私钥解密数据并拿到对称密钥，此时中间人再把对称密钥用“正确的公钥”加密发回给服务器。此时，客户端、中间人、服务器都拥有了一样的对称密钥，后续客户端和服务器的所有加密数据，中间人都可以通过对称密钥解密出来。</p>
+<p>中间人获取对称密钥的过程如下：</p>
+<p><img src="https://pic4.zhimg.com/83296008f1e7d679cd8a99a61944fbbb_b.png" alt=""></p>
+<p>为了解决此问题，我们引入了数字证书的概念。服务器首先生成公私钥，将公钥提供给相关机构（CA），CA将公钥放入数字证书并将数字证书颁布给服务器，此时服务器就不是简单的把公钥给客户端，而是给客户端一个数字证书，数字证书中加入了一些数字签名的机制，保证了数字证书一定是服务器给客户端的。中间人发送的伪造证书，不能够获得CA的认证，此时，客户端和服务器就知道通信被劫持了。加入了CA数字签名认证的SSL会话过程如下所示：</p>
+<p><img src="https://pic4.zhimg.com/0d635fd33e0c9a8da972e14c83ec094b_b.png" alt=""></p>
+<p>所以综合以上三点：非对称加密算法（公钥和私钥）交换对称密钥+数字证书验证身份（验证公钥是否是伪造的）+利用对称密钥加解密后续传输的数据=安全</p>
+<p><img src="https://pic4.zhimg.com/bbb86e2b373fcf8c61dc7b1b09b80cf7_b.png" alt=""></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2018/07/31/HTTPS安全/" data-id="cjkglen1a00009ps6xg86kzac" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTPS/">HTTPS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
+    <article id="post-富爸爸穷爸爸笔记" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/07/22/富爸爸穷爸爸笔记/" class="article-date">
+  <time datetime="2018-07-22T07:08:28.000Z" itemprop="datePublished">2018-07-22</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/理财/">理财</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/22/富爸爸穷爸爸笔记/">富爸爸穷爸爸笔记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <p>《富爸爸穷爸爸》系列对一个人提高财商非常用帮助，读完《富爸爸穷爸爸》会用人用一种立马去创业的冲动。又跑去买了《富爸爸穷爸爸》系列的其他几本书，后面读完会补充上笔记。以下是《富爸爸穷爸爸》的一些句子摘录</p>
+<ul>
+<li>富人之所以越来越富，穷人之所以越来越穷，中产阶级之所以总是在债务的泥潭中挣扎，其中一个主要原因就是，他们对金钱的认识不是来自学校，而是来自家庭。大多数人都是从父母那儿了解钱是怎么回事的。</li>
+</ul>
+<ul>
+<li><p>“那是学校教你们的法子，”他笑着说，“但生活可不是这样教你的。我得说生活才是最好的老师。大多数时候，生活不会和你说什么，它只是推着你转，每一次推，它都像是在说：‘喂，醒一醒，我要让你学点东西。’”</p>
+</li>
+<li><p>假如你学会了生活这门课程，做任何事情你都会游刃有余。如果你学不会，生活照样会推着你转。人们通常会做两件事，一些人在生活推着他转的同时，抓住生活赐予的每个机会；而另一些人则非常生气，去与生活抗争。他们与老板抗争，与工作抗争，甚至与自己的配偶抗争，他们不知道生活同时也给了他们机会。”</p>
+</li>
+<li><p>“生活推着我们所有的人，有些人放弃了，有些人在抗争。少数人学会了这门课程，取得了进步，他们欢迎生活来推动他们，对他们来说，这种推动意味着他们需要并愿意去学习一些东西。他们学习，然后取得进步。但大多数人放弃了，还有一部分人像你一样在抗争。”</p>
+</li>
+<li><p>如果你认为是我的问题，你就会想改变我；如果你认为问题在你那儿，你就会改变自己，学习一些东西让自己变得更聪明。大多数人认为世界上除了自己外，其他人都应该改变。让我告诉你吧，改变自己比改变他人更容易。”</p>
+</li>
+<li><p>有些人会这么做，只因为他们和他们的家庭需要钱而接受这份工资。但他们所做的也只是等待，等待加薪，因为他们认为更多的钱能解决问题。大部分人接受这样的工资，还有一些人会再找一份工作，仍旧干得很努力，但仍只能得到很少的报酬。”</p>
+</li>
+<li><p>学习怎样让钱为你工作是一个持续终生的过程。大多数人上了4年大学后，学习也就到头了。可我知道我会用一辈子去研究钱这东西，因为我研究得越深，就越发现我还有更多的东西要学习。大多数人从不研究这个问题，他们去上班，挣工资，平衡收支，仅此而已，他们不明白自己为什么老缺钱，于是以为多挣点钱就能解决问题，但几乎没有人意识到缺乏财商教育才是问题的关键。”</p>
+</li>
+</ul>
+<ul>
+<li><p>“起床，上班，付账，再起床，再上班，再付账……他们的生活从此被这两种感觉所控制：恐惧和贪婪。给他们更多的钱，他们就会以更高的开支重复这种循环。这就是我所说的‘老鼠赛跑’。”</p>
+</li>
+<li><p>永远不要忘记，你有两种感情——恐惧和欲望，如果你让它们来控制你的思想，你就会落入一生中最大的陷阱。一直生活在恐惧中，从不追求自己的梦想，这是残酷的。为钱拼命工作，以为钱能买来快乐，这也是残酷的。</p>
+</li>
+<li><p>如果你们想学，我就会把你们带上这条布满荆棘的道路，大多数人都会选择避开它。我会带你们去大多数人都害怕去的地方，跟着我，你们就要抛弃为钱工作的观念，学习如何让钱为你们工作。”</p>
+</li>
+</ul>
+<ul>
+<li><p>据说，对很多人来说在公众面前讲话比死还可怕。精神病学认为，害怕在公众面前说话是因为害怕被排斥、害怕冒尖、害怕被批评、害怕被嘲笑、害怕被别人所不容。简言之，是害怕与别人不同。这种心理阻碍了人们去想新办法来解决问题。</p>
+</li>
+<li><p>同时还要注意降低负债和支出，这也会让你有更多的钱投入资产项。很快，你就会有钱来考虑进行一些投资了</p>
+</li>
+<li><p>只要你拥有足够的财务知识，你就不必害怕去“冒险”</p>
+</li>
+<li><p>如果你盲从于别人，你的财务状况就会像下图展示的那样。作为一个自己有房子的雇员，你努力工作的结果如下：</p>
+</li>
+<li><p>假如你决定集中精力创建自己的事业，又该怎样确立目标呢？对大多数人而言，他们的目标是保住他们的工作并靠工资取得他们想要的资产。</p>
+</li>
+<li><p>大多数人在努力致富时，总是试图在15厘米厚的混凝土上建造帝国大厦。</p>
+</li>
+<li><p>“富人获得资产，而穷人和中产阶级获得负债，只不过他们以为那些负债就是资产。”</p>
+</li>
+<li><p>资产就是能把钱放进你口袋里的东西, 负债是把钱从你口袋里取走的东西。</p>
+</li>
+</ul>
+<ul>
+<li><p>第三个秘诀是：“关注自己的事业。”存在财务问题的人经常耗费一生为别人工作，其中许多人在他们不能工作时就变得一无所有。</p>
+</li>
+<li><p>从事你所学的专业的可怕后果在于，它会让你忘记关注自己的事业。人们耗尽一生去关注别人的事业并使他人致富。</p>
+</li>
+<li><p>为了财务安全，人们需要关注自己的事业。你的事业的重心是你的资产项，而不是你的收入项</p>
+</li>
+<li><p>对成年人而言，把支出保持在低水平、减少借款并勤劳地工作会帮你打下一个稳固的资产基础</p>
+</li>
+<li><p>我见过许多年轻夫妇，在结婚后不久就陷入了即使工作多年也无法摆脱债务的生活方式中。</p>
+</li>
+</ul>
+<ul>
+<li><p>如果你对法律一无所知，就很容易被欺负；如果你了解法律，你就有还击的机会。这也是富爸爸高薪雇用聪明的会计师和律师的原因</p>
+</li>
+<li><p>第一是会计，也就是我说的财务知识。如果你想建立一个自己的商业帝国，财务知识是非常重要的。你管理的钱越多，就越要精确，否则这幢大厦就会倒塌。这需要左脑来处理，是细节的部分。财务知识能帮助你读懂财务报表，还能让你辨别一项生意的优势和劣势。</p>
+</li>
+<li><p>第二是投资，我把它称为钱生钱的科学。投资涉及策略和方案，这要右脑来做，是属于创造的部分。</p>
+</li>
+<li><p>第三是了解市场，它是供给与需求的科学。这要求了解受感情驱动的市场的“技术面”</p>
+</li>
+<li><p>第四是法律。例如：利用一个具有会计、投资和市场运营的企业会使你的财富实现爆炸性地增长。了解减税优惠政策和公司法的人会比雇员和小业主更快致富。这就像一个人在走，而另一个人却在飞，久而久之这种差距就</p>
+</li>
+<li><p>雇员挣钱、纳税，并靠剩下的钱为生；企业挣钱、花钱，并只为剩下来的钱缴税。</p>
+</li>
+<li><p>《开公司致富》，就对私营公司所具有的能力提供了很好的看法。</p>
+</li>
+<li><p>原因很简单，这是我生命中最快乐的事情，我更喜欢变化而不是害怕变化，我更喜欢能挣到数百万美元而不是去担心能不能升职。当今我们所处的时代是历史上从未有过的最激动人心的时代，当后人回顾今天这段历史时，他们一定会感叹这是一个让人心情激荡的时代。旧的东西消亡了，新的东西产生了，到处都在发生翻天覆地的变化，这的确让人兴奋不已。</p>
+</li>
+<li><p>那么究竟为什么要努力提高自己的财商呢？如果你这样做了，你就会获得巨大的成功；如果不这样做，对你来说，这个时代就会让你恐慌。你会发现一些人勇敢地走在了时代的前面，而另一些人却只能紧紧地抓住生活的救生圈。</p>
+</li>
+<li><p>300年前，土地是一种财富，所以，谁拥有土地，谁就拥有财富。后来，美国依靠工厂和工业产品上升为世界头号强国，工业家占有了财富。今天，信息便是财富。问题是，信息以光一样的速度在全世界迅速传播，这种新的财富不再像土地和工厂那样具有明确的范围和界限。变化会越来越快，越来越显著，百万富翁的人数会极大地增加，同样，也会有许多人被远远地抛在后面。</p>
+</li>
+<li><p>他们没有意识到已有的某种思想或方法在昨天还是一种资产，今天却已经变成了负债。</p>
+</li>
+<li><p>富人往往更富有创造性，愿意经过精心筹划后再去冒险。</p>
+</li>
+<li><p>我知道在现实生活中他们也会做同样的事情——眼看着有许多大生意可做，手头上却没有钱。</p>
+</li>
+<li><p>拥有理财能力就意味着拥有更多的选择机会。如果机会并没按你的预想降临，那么你还能做点什么来改善自己的财务状况呢？如果机会降临了，你却没有钱，银行也不帮你，那你又该做些什么来利用这一机会使自己受益呢？如果你的预感是错误的，你所预计的事情并没有发生，你又如何将一笔小钱变成数百万美元？这就是理财能力。当你想要的没有出现时，你能想出多少种理财方法来把一笔小钱变成数百万美元。这就要看你在解决财务问题上有怎样的创造性了。</p>
+</li>
+<li><p>那么，为什么你想提高自己的理财能力呢？因为你想成为能够自己创造机遇的人。你能够坦然地接受发生的任何事情，并努力使事情变得更好。很</p>
+</li>
+<li><p>我发展自己的财商是因为我想参加这场世界上最快、最大的金钱游戏。以我自己的观点来看，我愿意加入这场史无前例的人性革命的洪流，并投身到这个靠脑力而不是体力来工作的时代。除此之外，这也是一场行动，正在发生，紧追猛赶，惊险且充满乐趣。</p>
+</li>
+<li><p>1．辛苦工作，薪水的50%用于缴税，省下的钱拿去储蓄。你的存款利率为5%，而且利息还要再缴税。<br>2．花些时间来提高你的财商，增强你的动脑能力，从而增加你的资产。</p>
+</li>
+<li><p>1.财务知识。即阅读理解数字的能力。2．投资策略。即以钱生钱的科学。3．市场、供给与需求。贝尔提供了市场所需要的东西，比尔·盖茨也是如此。用2万美元买了一套值7.5万美元的房子，以6万美元的价格卖出，也就是抓住了市场所创造的机会。在市场上，总是有买方，就有卖方。</p>
+</li>
+<li><p>我之所以想不断地提高自己的财商，是因为每当市场发生变化时，一些人会去乞求保住一份工作，而另一些人会接到生活抛给他们的酸柠檬——我们每个人偶尔都会有这样的坏运气——然后将其变成数以百万计的美元。这就是财商。</p>
+</li>
+<li><p>下面是我用例证的5个原因：<br>1．激励人们学习更多的知识；<br>2．告诉人们如果打好基础，将来的道路就会平坦很多；<br>3．告诉人们每个人都能获得巨大的财富；<br>4．告诉人们条条大路通罗马；<br>5．告诉人们财务知识并不深奥。</p>
+</li>
+<li><p>在任何一项投资中，成功的办法都是运用你的技术知识、智慧以及对于这个游戏的热爱来减少意外、降低风险。当然，风险总是存在的，但你的财商可以提高你应付意外的能力</p>
+</li>
+</ul>
+<ul>
+<li><p>大部分人无法致富仅仅是因为他们没有受到理财训练，因而不知道机会其实就在眼前。</p>
+</li>
+<li><p>致富也是同样的道理，但不幸的是，大部分人贫穷的主要原因就在于他们太担心失去。胜利者不害怕失败，但失败者害怕。失败是成功过程中的一个组成部分，如果避开失败，也就不会成功。</p>
+</li>
+<li><p>1．第一类也是最普遍的一类，即进行一揽子投资的人。他们联系一家从事经营个人投资。2．第二类是自己创造投资机会的投资者。</p>
+</li>
+<li><p>如何寻找其他人都忽视的机会。</p>
+</li>
+<li><p>大多数人眼睁睁地让缺少资金阻止了他们去达成交易，如果你能越过这个障碍，你就能比那些没能掌握这些技能的人早一步成为百万富翁</p>
+</li>
+<li><p>怎样把精明的人组织起来？</p>
+</li>
+</ul>
+<ul>
+<li><p>正如一句格言所说：“工作（job）一词就是‘比破产强一点’（justoverbroke）</p>
+</li>
+<li><p>相反，我劝告年轻人在找工作时要看能从中学到什么，而不是只看能挣多少钱。在选择某种职业或陷入“老鼠赛跑”的陷阱之前，要仔细看看脚下的路，弄清楚自己到底想获得什么技能。</p>
+</li>
+<li><p>我经常向人们提一个问题：“你终日忙碌的目的是什么？”就像那只小老鼠一样，我想知道人们是否会想一想，这样辛苦地工作到头来究竟是为了什么？未来的日子又会怎样呢？</p>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2018/07/22/富爸爸穷爸爸笔记/" data-id="cjkglbz43001g10s67mucj8jq" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/理财/">理财</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
     <article id="post-小狗钱钱笔记" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/07/21/小狗钱钱笔记/" class="article-date">
@@ -95,7 +492,8 @@
       
         <!-- Table of Contents -->
         
-        <ul>
+        <p>以下是《小狗钱钱》摘取的一些我觉得可以记录的句子。如果早几年前开始关注提高财商，我的财务问题也许比今天好多了。</p>
+<ul>
 <li><p>不是试试看，而是去切实行动！如果你只是抱着试试看的心态，那么你之后以失败告终，你会一事无成。“尝试”纯粹是一种借口，你还没有做，就已经给自己想好了退路。不能试验，你只有两个选择 – 做或者不做。</p>
 </li>
 <li><p>是否能挣到钱，最关键的并不是你有没有好点子，也不是你有多聪明，而是你的自信程度。</p>
@@ -114,66 +512,20 @@
 </li>
 <li><p>你的喜悦让你忘记了该做的事情。你看，有成千上万的事情可能让你分心，因此你每天应该在固定的时间里，有规律地做这些事情。</p>
 </li>
-<li></li>
+<li><p>当你决定做一件事情的时候，你必须在72小时之内完成，否则你很可能永远不会再做了。</p>
+</li>
+<li><p>第一个忠告：欠债的人应该毁掉所有的信用卡；第二个忠告：应当尽可能少地偿还贷款 – 也就是所谓的分期付款。也许这个忠告听起来有点儿可笑，但你要知道，分期额度越高，每个月剩下的生活费就越少。</p>
+</li>
+<li><p>最珍贵的礼物是争取来的。克服了丢面子的恐惧，世界就会向你敞开大门。</p>
+</li>
+<li><p>你不能在困难面前逃跑。困难、犯错误、和丢面子引起的恐惧已经破坏了无所人的生活。</p>
+</li>
 </ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/07/21/小狗钱钱笔记/" data-id="cjjvk74tg001g8cs68s6pxs6j" class="article-share-link">分享</a>
-      
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/理财/">理财</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
- 
-
-
-  
-    <article id="post-理财小白的入门课" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/07/11/理财小白的入门课/" class="article-date">
-  <time datetime="2018-07-11T03:46:51.000Z" itemprop="datePublished">2018-07-11</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/理财/">理财</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/11/理财小白的入门课/">理财小白的入门课</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <!-- Table of Contents -->
-        
-        <p>先列出一些培养财商的书单，读完非常有感触，下次会出一些相关的读书笔记</p>
-<h3 id="《小狗钱钱》"><a href="#《小狗钱钱》" class="headerlink" title="《小狗钱钱》"></a>《小狗钱钱》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9QFicffPibVHjPtj0nFJc3SaUmK1DV1ebs39mOibxhymVgSQn5MmfLUibeA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《小狗钱钱》"></p>
-<h3 id="《富爸爸，穷爸爸》"><a href="#《富爸爸，穷爸爸》" class="headerlink" title="《富爸爸，穷爸爸》"></a>《富爸爸，穷爸爸》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN99C0y5MhENWGXicCkwWLKhib4GiaXZOwM3bqQ2ribADqyu1Dclk4Nj7Pfag/640?wx_fmt=jpeg&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《富爸爸，穷爸爸》"></p>
-<h3 id="《财报就像一本故事书》"><a href="#《财报就像一本故事书》" class="headerlink" title="《财报就像一本故事书》"></a>《财报就像一本故事书》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9f0kBAcuo7Sm7VrsicgjljA1icDsCjyOpfwoApLrlQCvdgZjBjkXwzA6Q/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《财报就像一本故事书》"></p>
-<h3 id="《世界上最简单的会计书》"><a href="#《世界上最简单的会计书》" class="headerlink" title="《世界上最简单的会计书》"></a>《世界上最简单的会计书》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9JMETCfkJXd1cxP7Kic6Ku561XZCfJCgjshJric7wBE86cYKRficuDdObQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《世界上最简单的会计书》"></p>
-<h3 id="《聪明的投资者》"><a href="#《聪明的投资者》" class="headerlink" title="《聪明的投资者》"></a>《聪明的投资者》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9eLwUnIQzhoC7l9ODlqzMiaSayl1kf9U04IRUibeGnicgtS0zLkwJQf1gQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《聪明的投资者》"></p>
-<h3 id="《巴菲特的护城河》"><a href="#《巴菲特的护城河》" class="headerlink" title="《巴菲特的护城河》"></a>《巴菲特的护城河》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9mM2ibZroJgMAbK4Jqb2Poaq827DicvmscmwY4HU4BHURQkkt43Ud6LJQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《巴菲特的护城河》"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/07/11/理财小白的入门课/" data-id="cjjvk74ts001x8cs62rbmcnmy" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/07/21/小狗钱钱笔记/" data-id="cjkglbz5f002b10s6pbq0duji" class="article-share-link">分享</a>
       
       
       
@@ -243,11 +595,64 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/07/11/如何在疲劳的JS世界中持续学习？/" data-id="cjjvk74ti001k8cs6b8vqfo1r" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/07/11/如何在疲劳的JS世界中持续学习？/" data-id="cjkglbz3y001410s6oigle74b" class="article-share-link">分享</a>
       
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
+    <article id="post-理财小白的入门课" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/07/11/理财小白的入门课/" class="article-date">
+  <time datetime="2018-07-11T03:46:51.000Z" itemprop="datePublished">2018-07-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/理财/">理财</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/11/理财小白的入门课/">理财小白的入门课</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <p>先列出一些培养财商的书单，读完非常有感触，下次会出一些相关的读书笔记</p>
+<h3 id="《小狗钱钱》"><a href="#《小狗钱钱》" class="headerlink" title="《小狗钱钱》"></a>《小狗钱钱》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9QFicffPibVHjPtj0nFJc3SaUmK1DV1ebs39mOibxhymVgSQn5MmfLUibeA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《小狗钱钱》"></p>
+<h3 id="《富爸爸，穷爸爸》"><a href="#《富爸爸，穷爸爸》" class="headerlink" title="《富爸爸，穷爸爸》"></a>《富爸爸，穷爸爸》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN99C0y5MhENWGXicCkwWLKhib4GiaXZOwM3bqQ2ribADqyu1Dclk4Nj7Pfag/640?wx_fmt=jpeg&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《富爸爸，穷爸爸》"></p>
+<h3 id="《财报就像一本故事书》"><a href="#《财报就像一本故事书》" class="headerlink" title="《财报就像一本故事书》"></a>《财报就像一本故事书》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9f0kBAcuo7Sm7VrsicgjljA1icDsCjyOpfwoApLrlQCvdgZjBjkXwzA6Q/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《财报就像一本故事书》"></p>
+<h3 id="《世界上最简单的会计书》"><a href="#《世界上最简单的会计书》" class="headerlink" title="《世界上最简单的会计书》"></a>《世界上最简单的会计书》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9JMETCfkJXd1cxP7Kic6Ku561XZCfJCgjshJric7wBE86cYKRficuDdObQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《世界上最简单的会计书》"></p>
+<h3 id="《聪明的投资者》"><a href="#《聪明的投资者》" class="headerlink" title="《聪明的投资者》"></a>《聪明的投资者》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9eLwUnIQzhoC7l9ODlqzMiaSayl1kf9U04IRUibeGnicgtS0zLkwJQf1gQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《聪明的投资者》"></p>
+<h3 id="《巴菲特的护城河》"><a href="#《巴菲特的护城河》" class="headerlink" title="《巴菲特的护城河》"></a>《巴菲特的护城河》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9mM2ibZroJgMAbK4Jqb2Poaq827DicvmscmwY4HU4BHURQkkt43Ud6LJQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《巴菲特的护城河》"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2018/07/11/理财小白的入门课/" data-id="cjkglbz48001r10s63ugo8zs1" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/理财/">理财</a></li></ul>
 
     </footer>
   </div>
@@ -343,7 +748,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/06/04/现代JS框架存在的根本原因/" data-id="cjjvk74tq001s8cs634na1jg4" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/06/04/现代JS框架存在的根本原因/" data-id="cjkglbz47001o10s6rbjlckbj" class="article-share-link">分享</a>
       
       
       
@@ -394,7 +799,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2017/07/12/京东入职篇章/" data-id="cjjvk74tc001d8cs60j7hb9bh" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2017/07/12/京东入职篇章/" data-id="cjkglbz3w001110s673i4zl7o" class="article-share-link">分享</a>
       
       
       
@@ -443,7 +848,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2017/06/23/C-环境搭建/" data-id="cjjvk74rv00008cs6bcm3rv1g" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2017/06/23/C-环境搭建/" data-id="cjkglbz40001910s610nrqvn6" class="article-share-link">分享</a>
       
       
       
@@ -515,233 +920,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2017/06/23/如何正确学习C++/" data-id="cjjvk74tk001l8cs6m9etegva" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2017/06/23/如何正确学习C++/" data-id="cjkglbz5m002i10s6eohdupx6" class="article-share-link">分享</a>
       
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/">C++</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
- 
-
-
-  
-    <article id="post-V8入门" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/05/24/V8入门/" class="article-date">
-  <time datetime="2017-05-24T14:11:32.000Z" itemprop="datePublished">2017-05-24</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/V8引擎/">V8引擎</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/05/24/V8入门/">Chrome V8引擎入门</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <!-- Table of Contents -->
-        
-        <p>Chrome V8引擎是基于 C++ 语言编写的项目。学习 V8 引擎需要对 C++ 有一个初步的认识。</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
-<li><a href="https://github.com/v8/v8" target="_blank" rel="noopener">github 地址</a></li>
-<li><a href="https://github.com/v8/v8/wiki" target="_blank" rel="noopener">V8 Wiki</a></li>
-<li><a href="https://chromium.googlesource.com/v8/v8.git" target="_blank" rel="noopener">V8 Git仓库的官方镜像</a></li>
-<li><a href="https://v8docs.nodesource.com/" target="_blank" rel="noopener">V8 文档</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2017/05/24/V8入门/" data-id="cjjvk74t800168cs63fr8rkrf" class="article-share-link">分享</a>
-      
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
- 
-
-
-  
-    <article id="post-Nginx的Gzip配置" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/12/29/Nginx的Gzip配置/" class="article-date">
-  <time datetime="2016-12-29T15:02:24.000Z" itemprop="datePublished">2016-12-29</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/12/29/Nginx的Gzip配置/">Nginx的Gzip设置</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <!-- Table of Contents -->
-        
-        <h2 id="Gzip配置参数"><a href="#Gzip配置参数" class="headerlink" title="Gzip配置参数"></a>Gzip配置参数</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">gzip配置的常用参数</span><br><span class="line">gzip on|off;  #是否开启gzip</span><br><span class="line">gzip_buffers 32 4K| 16 8K #缓冲(压缩在内存中缓冲几块? 每块多大?)</span><br><span class="line">gzip_comp_level [1-9] #推荐6 压缩级别(级别越高,压的越小,越浪费CPU计算资源)</span><br><span class="line">gzip_disable #正则匹配UA 什么样的Uri不进行gzip</span><br><span class="line">gzip_min_length 200 # 开始压缩的最小长度(再小就不要压缩了,意义不在)</span><br><span class="line">gzip_http_version 1.0|1.1 # 开始压缩的http协议版本(可以不设置,目前几乎全是1.1协议)</span><br><span class="line">gzip_proxied          # 设置请求者代理服务器,该如何缓存内容</span><br><span class="line">gzip_types text/plain  application/xml # 对哪些类型的文件用压缩 如txt,xml,html ,css</span><br><span class="line">gzip_vary on|off  # 是否传输gzip压缩标志 Vary是用来标志缓存的依据.</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>注意:</span><br><span class="line"><span class="meta">#</span>图片/mp3这样的二进制文件,不必压缩</span><br><span class="line"><span class="meta">#</span>因为压缩率比较小, 比如100-&gt;80字节,而且压缩也是耗费CPU资源的.</span><br><span class="line"><span class="meta">#</span>比较小的文件不必压缩,</span><br></pre></td></tr></table></figure>
-<p><strong>思考:</strong></p>
-<ul>
-<li>如果2个人,一个浏览器支持gzip,一个浏览器不支持gzip2个同时请求同个页面, chinaCache缓存压缩后,还是未压缩的?</li>
-<li>如果1人,再次请求页面,chinaCache返回压缩后的缓存内容,还是压缩前的缓存内容?</li>
-</ul>
-<p>这个时候 Vary的作用体现出来.即——缓存的内容受 Accept-Encoding头信息的影响.  </p>
-<p>所以如果<br>请求时,不支持gzip, 缓存服务器将会生成一份未gzip的内容.<br>请求时,支持gzip, 缓存服务器将会生成一份gzip的内容.  </p>
-<p>下次再请求时, 缓存服务器会考虑客户端的Accept-Encoding因素,并合理的返回信息  </p>
-<p>Nginx对于图片,js等静态文件的缓存设置<br>注:这个缓存是指针对浏览器所做的缓存,不是指服务器端的数据缓存.  </p>
-<p>主要知识点: location expires指令  </p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">location ~ \.(jpg|jpeg|png|gif)$ &#123;</span><br><span class="line">    expires 1d;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~ \.js$ &#123;</span><br><span class="line">    expires 1h;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>设置并载入新配置文件,用firebug观察,<br>会发现 图片内容,没有再次产生新的请求,原因–利用了本地缓存的效果.  </p>
-<p><strong>注: 在大型的新闻站,或文章站中,图片变动的可能性很小,建议做1周左右的缓存Js,css等小时级的缓存.</strong></p>
-<p>如果信息流动比较快,也可以不用expires指令,<br>用last_modified, etag功能(主流的web服务器都支持这2个头信息)  </p>
-<p>原理是:<br>响应: 计算响应内容的签名, etag 和 上次修改时间<br>请求: 发送 etatg, If-Modified-Since 头信息.<br>服务器收到后,判断etag是否一致, 最后修改时间是否大于if-Modifiled-Since<br>如果监测到服务器的内容有变化,则返回304,<br>浏览器就知道,内容没变,直接用缓存.  </p>
-<p><strong>304 比起上面的expires 指令多了1次请求,但是比200状态,少了传输内容.</strong></p>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
-<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_gzip_module.html" target="_blank" rel="noopener">Nginx Gzip Module</a></li>
-<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html" target="_blank" rel="noopener">Nginx Gzip Static Module</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/29/Nginx的Gzip配置/" data-id="cjjvk74s9000a8cs6f30adjop" class="article-share-link">分享</a>
-      
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
- 
-
-
-  
-    <article id="post-Nginx做负载均衡器以及proxy缓存配置" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/" class="article-date">
-  <time datetime="2016-12-29T15:02:24.000Z" itemprop="datePublished">2016-12-29</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/">Nginx做负载均衡器以及proxy缓存配置</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <!-- Table of Contents -->
-        
-        <h2 id="nginx-sticky-module"><a href="#nginx-sticky-module" class="headerlink" title="nginx-sticky-module"></a>nginx-sticky-module</h2><p>本文主要是完成一下几个功能</p>
-<ul>
-<li>结合proxy和upstream模块实现nginx负载均衡</li>
-<li>结合nginx_upstream_check_module模块实现后端服务器的健康检查</li>
-<li>使用nginx-sticky-module扩展模块实现Cookie会话黏贴（session-sticky效果）</li>
-<li>使用proxy模块实现静态文件缓存</li>
-<li>使用ngx_cache_purge实现更强大的缓存清除功能</li>
-</ul>
-<p>项目地址 <a href="https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng" target="_blank" rel="noopener">https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng</a>  </p>
-<p>这个模块的作用是通过cookie黏贴的方式将来自同一个客户端（浏览器）的请求发送到同一个后端服务器上处理，这样一定程度上可以解决多个backend servers的session同步的问题 —— 因为不再需要同步，而RR轮询模式必须要运维人员自己考虑session同步的实现。  </p>
-<p>另外内置的 ip_hash 也可以实现根据客户端IP来分发请求，但它很容易造成负载不均衡的情况，而如果nginx前面有CDN网络或者来自同一局域网的访问，它接收的客户端IP是一样的，容易造成负载不均衡现象。淘宝Tengine的 ngx_http_upstream_session_sticky_module 也是类似的功能。nginx-sticky-module的cookie过期时间，默认浏览器关闭就过期，也就是会话方式。  </p>
-<p>这个模块并不合适不支持 Cookie 或手动禁用了cookie的浏览器，此时默认sticky就会切换成RR。它不能与ip_hash同时使用。  </p>
-<p><img src="http://7q5fot.com1.z0.glb.clouddn.com/nginx-lb-sticky.jpg" alt="img1">  </p>
-<h3 id="sticky配置"><a href="#sticky配置" class="headerlink" title="sticky配置"></a>sticky配置</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 语法</span><br><span class="line"><span class="meta">#</span> sticky [name=route] [domain=.foo.bar] [path=/] [expires=1h] [hash=index|md5|sha1] [no_fallback]</span><br><span class="line"><span class="meta">#</span> name: 可以为任何的 string 字符,默认是 route</span><br><span class="line"><span class="meta">#</span> domain：哪些域名下可以使用这个 cookie</span><br><span class="line"><span class="meta">#</span> path：哪些路径对启用 sticky，例如 path/test，那么只有 test 这个目录才会使用 sticky 做负载均衡</span><br><span class="line"><span class="meta">#</span> expires：cookie 过期时间，默认浏览器关闭就过期，也就是会话方式。</span><br><span class="line"><span class="meta">#</span> no_fallbackup：如果设置了这个，cookie 对应的服务器宕机了，那么将会返回502（bad gateway 或者 proxy error），建议不启用</span><br><span class="line"></span><br><span class="line">upstream backend &#123;</span><br><span class="line">    server 192.168.1.100:8080 weight=1;</span><br><span class="line">    server 192.168.1.101:8080 weight=1;</span><br><span class="line">    sticky;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>配置起来超级简单，一般来说一个sticky指令就够了。  </p>
-<p>你在查看官方文档可能会注意到里面也有个 sticky 指令，要说它们的作用几乎是一样的，但是你可能注意到This directive is available as part of our commercial subscription.的说明 —— 这是nginx商业版本里才有的特性。包括后面的check指令，在nginx的商业版本里也有对应的health_check（配在 location ）实现几乎一样的监控检查功能。  </p>
-<h3 id="load-balance其它调度方案"><a href="#load-balance其它调度方案" class="headerlink" title="load-balance其它调度方案"></a>load-balance其它调度方案</h3><p>这里顺带介绍一下nginx的负载均衡模块支持的其它调度算法：</p>
-<ul>
-<li>轮询（默认） ： 每个请求按时间顺序逐一分配到不同的后端服务器，如果后端某台服务器宕机，故障系统被自动剔除，使用户访问不受影响。Weight 指定轮询权值，Weight值越大，分配到的访问机率越高，主要用于后端每个服务器性能不均的情况下。</li>
-<li>ip_hash ： 每个请求按访问IP的hash结果分配，这样来自同一个IP的访客固定访问一个后端服务器，有效解决了动态网页存在的session共享问题。当然如果这个节点不可用了，会发到下个节点，而此时没有session同步的话就注销掉了。</li>
-<li>least_conn ： 请求被发送到当前活跃连接最少的realserver上。会考虑weight的值。</li>
-<li>url_hash ： 此方法按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，可以进一步提高后端缓存服务器的效率。Nginx本身是不支持url_hash的，如果需要使用这种调度算法，必须安装Nginx 的hash软件包 nginx_upstream_hash 。</li>
-<li>fair ： 这是比上面两个更加智能的负载均衡算法。此种算法可以依据页面大小和加载时间长短智能地进行负载均衡，也就是根据后端服务器的响应时间来分配请求，响应时间短的优先分配。Nginx本身是不支持fair的，如果需要使用这种调度算法，必须下载Nginx的 upstream_fair 模块。</li>
-</ul>
-<h2 id="负载均衡与健康检查"><a href="#负载均衡与健康检查" class="headerlink" title="负载均衡与健康检查"></a>负载均衡与健康检查</h2><p>严格来说，nginx自带是没有针对负载均衡后端节点的健康检查的，但是可以通过默认自带的 ngx_http_proxy_module 模块和 ngx_http_upstream_module 模块中的相关指令来完成当后端节点出现故障时，自动切换到下一个节点来提供访问。  </p>
-<p>示例</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> weight ： 轮询权值也是可以用在ip_hash的，默认值为1</span><br><span class="line"><span class="meta">#</span> max_fails ： 允许请求失败的次数，默认为1。当超过最大次数时，返回proxy_next_upstream 模块定义的错误。</span><br><span class="line"><span class="meta">#</span> fail_timeout ： 有两层含义，一是在 30s 时间内最多容许 2 次失败；二是在经历了 2 次失败以后，30s时间内不分配请求到这台服务器。</span><br><span class="line"><span class="meta">#</span> backup ： 预留的备份机器。当其他所有的非backup机器出现故障的时候，才会请求backup机器，因此这台机器的压力最轻。（为什么我的1.6.3版本里配置backup启动nginx时说invalid parameter "backup"？）</span><br><span class="line"><span class="meta">#</span> max_conns： 限制同时连接到某台后端服务器的连接数，默认为0即无限制。因为queue指令是commercial，所以还是保持默认吧。</span><br><span class="line"><span class="meta">#</span> proxy_next_upstream ： 这个指令属于 http_proxy 模块的，指定后端返回什么样的异常响应时，使用另一个realserver</span><br><span class="line"></span><br><span class="line">upstream backend &#123;</span><br><span class="line">    ip_hash;</span><br><span class="line">    server 192.168.1.101:8080:8080 weight 2;</span><br><span class="line">    server 192.168.1.101:8080 weight=1 max_fails=2 fail_timeout=30s;</span><br><span class="line">    server 192.168.1.102:8080 backup;</span><br><span class="line">&#125;</span><br><span class="line">server &#123;</span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass http://backend;</span><br><span class="line">        proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="nginx-upstream-check-module"><a href="#nginx-upstream-check-module" class="headerlink" title="nginx_upstream_check_module"></a>nginx_upstream_check_module</h2><p>nginx_upstream_check_module 是专门提供负载均衡器内节点的健康检查的外部模块，由淘宝的姚伟斌大神开发，通过它可以用来检测后端 realserver 的健康状态。如果后端 realserver 不可用，则后面的请求就不会转发到该节点上，并持续检查几点的状态。在淘宝自己的 tengine 上是自带了该模块。项目地址  </p>
-<p><a href="https://github.com/yaoweibin/nginx_upstream_check_module" target="_blank" rel="noopener">https://github.com/yaoweibin/nginx_upstream_check_module</a>  </p>
-<p>下面的是一个带后端监控检查的 nginx.conf 配置：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">upstream backend &#123;</span><br><span class="line"><span class="meta">	#</span> interval ： 向后端发送的健康检查包的间隔。</span><br><span class="line"><span class="meta">	#</span> fall ： 如果连续失败次数达到fall_count，服务器就被认为是down。</span><br><span class="line"><span class="meta">	#</span> rise ： 如果连续成功次数达到rise_count，服务器就被认为是up。</span><br><span class="line"><span class="meta">	#</span> timeout ： 后端健康请求的超时时间。</span><br><span class="line"><span class="meta">	#</span> default_down ： 设定初始时服务器的状态，如果是true，就说明默认是down的，如果是false，就是up的。默认值是true，也就是一开始服务器认为是不可用，要等健康检查包达到一定成功次数以后才会被认为是健康的。</span><br><span class="line"><span class="meta">	#</span> type：健康检查包的类型，现在支持以下多种类型</span><br><span class="line"><span class="meta">		#</span> tcp：简单的tcp连接，如果连接成功，就说明后端正常。</span><br><span class="line"><span class="meta">		#</span> http：发送HTTP请求，通过后端的回复包的状态来判断后端是否存活。</span><br><span class="line"><span class="meta">		#</span> ajp：向后端发送AJP协议的Cping包，通过接收Cpong包来判断后端是否存活。</span><br><span class="line"><span class="meta">		#</span> ssl_hello：发送一个初始的SSL hello包并接受服务器的SSL hello包。</span><br><span class="line"><span class="meta">		#</span> mysql: 向mysql服务器连接，通过接收服务器的greeting包来判断后端是否存活。</span><br><span class="line"><span class="meta">		#</span> fastcgi：发送一个fastcgi请求，通过接受解析fastcgi响应来判断后端是否存活</span><br><span class="line"><span class="meta">	#</span> port: 指定后端服务器的检查端口。你可以指定不同于真实服务的后端服务器的端口，比如后端提供的是443端口的应用，你可以去检查80端口的状态来判断后端健康状况。默认是0，表示跟后端server提供真实服务的端口一样。该选项出现于Tengine-1.4.0。</span><br><span class="line">    sticky;     # or simple round-robin</span><br><span class="line">    server 192.168.1.101:8080 weight=2;</span><br><span class="line">    server 192.168.1.101:8081 weight=1 max_fails=2 fail_timeout=30s ;</span><br><span class="line">    server 192.168.1.102:8080 weight=1 max_fails=2 fail_timeout=30s ;</span><br><span class="line">    server 192.168.1.102:8081;</span><br><span class="line">    </span><br><span class="line">    check interval=5000 rise=2 fall=3 timeout=1000 type=http;</span><br><span class="line">    check_http_send "HEAD / HTTP/1.0\r\n\r\n";</span><br><span class="line">    check_http_expect_alive http_2xx http_3xx;</span><br><span class="line">&#125;</span><br><span class="line">server &#123;</span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass http://backend;</span><br><span class="line">    &#125;</span><br><span class="line">    location /status &#123;</span><br><span class="line">        check_status;</span><br><span class="line">        access_log   off;</span><br><span class="line">        allow 172.29.73.23;</span><br><span class="line">        deny all;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面配置的意思是，对name这个负载均衡条目中的所有节点，每个5秒检测一次，请求2次正常则标记 realserver状态为up，如果检测 3 次都失败，则标记 realserver的状态为down，超时时间为1秒。  </p>
-<p>check指令只能出现在upstream中  </p>
-<p>如果 type 为 http ，你还可以使用check_http_send来配置http监控检查包发送的请求内容，为了减少传输数据量，推荐采用 HEAD 方法。当采用长连接进行健康检查时，需在该指令中添加keep-alive请求头，如： HEAD / HTTP/1.1\r\nConnection: keep-alive\r\n\r\n 。当采用 GET 方法的情况下，请求uri的size不宜过大，确保可以在1个interval内传输完成，否则会被健康检查模块视为后端服务器或网络异常。  </p>
-<p>check_http_expect_alive指定HTTP回复的成功状态，默认认为 2XX 和 3XX 的状态是健康的。  </p>
-<h2 id="Nginx的proxy缓存使用"><a href="#Nginx的proxy缓存使用" class="headerlink" title="Nginx的proxy缓存使用"></a>Nginx的proxy缓存使用</h2><p>nginx的页面缓存功能与上面的负载均衡和健康检查是没有关系的，放在这里一是因为懒得再起一篇文章，二是再有load-balance的地方一般都会启用缓存的。  </p>
-<p>缓存也就是将js、css、image等静态文件从tomcat缓存到nginx指定的缓存目录下，既可以减轻tomcat负担，也可以加快访问速度，但这样缓存及时清理成为了一个问题，所以需要 ngx_cache_purge 这个模块来在过期时间未到之前，手动清理缓存。（这里有篇 文章，对比使用缓存、不使用缓存、使用动静分离三种情况下，高并发性能比较。使用代理缓存功能性能会高出很多倍）  </p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> proxy_temp_path ： 缓存临时目录。后端的响应并不直接返回客户端，而是先写到一个临时文件中，然后被rename一下当做缓存放在 proxy_cache_path 。0.8.9版本以后允许temp和cache两个目录在不同文件系统上（分区），然而为了减少性能损失还是建议把它们设成一个文件系统上。</span><br><span class="line"><span class="meta">#</span> proxy_cache_path ... ： 设置缓存目录，目录里的文件名是 cache_key 的MD5值。levels=1:2 keys_zone=cache_one:50m表示采用2级目录结构，Web缓存区名称为cache_one，内存缓存空间大小为100MB，这个缓冲zone可以被多次使用。文件系统上看到的缓存文件名类似于 /usr/local/nginx-1.6/proxy_cache/c/29/b7f54b2df7773722d382f4809d65029c 。inactive=2d max_size=2g表示2天没有被访问的内容自动清除，硬盘最大缓存空间为2GB，超过这个大学将清除最近最少使用的数据。</span><br><span class="line"><span class="meta">#</span> proxy_cache ： 引用前面定义的缓存区 cache_one</span><br><span class="line"><span class="meta">#</span> proxy_cache_key ： 定义cache_key</span><br><span class="line"><span class="meta">#</span> proxy_cache_valid ： 为不同的响应状态码设置不同的缓存时间，比如200、302等正常结果可以缓存的时间长点，而404、500等缓存时间设置短一些，这个时间到了文件就会过期，而不论是否刚被访问过。</span><br><span class="line"><span class="meta">#</span> expires ： 在响应头里设置Expires:或Cache-Control:max-age，返回给客户端的浏览器缓存失效时间。</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    ... // $upstream_cache_status记录缓存命中率</span><br><span class="line">    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">                      '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">                      '"$http_user_agent" "$http_x_forwarded_for"'</span><br><span class="line">                      '"$upstream_cache_status"';</span><br><span class="line"></span><br><span class="line">    proxy_temp_path   /usr/local/nginx-1.6/proxy_temp;</span><br><span class="line">    proxy_cache_path /usr/local/nginx-1.6/proxy_cache levels=1:2 keys_zone=cache_one:100m inactive=2d max_size=2g;</span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        listen       80; </span><br><span class="line">        server_name  ittest.example.com;</span><br><span class="line">        root   html;</span><br><span class="line">        index  index.html index.htm index.jsp;</span><br><span class="line"></span><br><span class="line">        location ~ .*\.(gif|jpg|png|html|css|js|ico|swf|pdf)(.*) &#123;</span><br><span class="line">            proxy_pass  http://backend;</span><br><span class="line">            proxy_redirect off;</span><br><span class="line">            proxy_set_header Host $host;</span><br><span class="line">            proxy_set_header   X-Real-IP   $remote_addr;</span><br><span class="line">            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line"></span><br><span class="line">            proxy_cache cache_one;</span><br><span class="line">            add_header Nginx-Cache $upstream_cache_status;</span><br><span class="line">            proxy_cache_valid  200 304 301 302 8h;</span><br><span class="line">            proxy_cache_valid 404 1m;</span><br><span class="line">            proxy_cache_valid  any 2d;</span><br><span class="line">            proxy_cache_key $host$uri$is_args$args;</span><br><span class="line">            expires 30d;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        location ~ /purge(/.*) &#123;</span><br><span class="line">            #设置只允许指定的IP或IP段才可以清除URL缓存。</span><br><span class="line">            allow   127.0.0.1;</span><br><span class="line">            allow   172.29.73.0/24;</span><br><span class="line">            deny    all;</span><br><span class="line">            proxy_cache_purge  cache_one $host$1$is_args$args;</span><br><span class="line">            error_page 405 =200 /purge$1;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>关于缓存的失效期限上面有三个选项：X-Accel-Expires、inactive、proxy_cache_valid、expires，它们之间是有优先级的，按上面的顺序如果在header里设置 X-Accel-Expires 则它的优先级最高，否则inactive优先级最高。更多资料请参考 nginx缓存优先级 或这里。</p>
-<p><img src="http://7q5fot.com1.z0.glb.clouddn.com/nginx-cache-hit.png" alt="http://7q5fot.com1.z0.glb.clouddn.com/nginx-cache-hit.png"></p>
-<h2 id="清除缓存"><a href="#清除缓存" class="headerlink" title="清除缓存"></a>清除缓存</h2><p>上述配置的proxy_cache_purge指令用于方便的清除缓存，但必须按照第三方的 ngx_cache_purge 模块才能使用，项目地址:<br><a href="https://github.com/FRiCKLE/ngx_cache_purge" target="_blank" rel="noopener">https://github.com/FRiCKLE/ngx_cache_purge</a>  </p>
-<p>使用 ngx_cache_purge 模块清除缓存有2种办法（直接删除缓存目录下的文件也算一种办法）：</p>
-<ul>
-<li>echo发送PURGE指令: proxy_cache_purge PURGE from 127.0.0.1表示只允许在来自本地的清除指令</li>
-<li>GET方式请求URL: 即使用配置文件中的location ~ /purge(/.*)，浏览器访问<a href="http://ittest.example.com/purge/your/may/path来清除缓存，或者echo" target="_blank" rel="noopener">http://ittest.example.com/purge/your/may/path来清除缓存，或者echo</a> -e ‘GET /purge/ HTTP/1.0\r\n’ | nc ittest.example.com 80  </li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo -e 'PURGE / HTTP/1.0\r\n' | nc 127.0.0.1 80</span><br></pre></td></tr></table></figure>
-<p><img src="http://7q5fot.com1.z0.glb.clouddn.com/nginx-cache-purge.png" alt="http://7q5fot.com1.z0.glb.clouddn.com/nginx-cache-purge.png">  </p>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
-<li>official documentation, <a href="http://nginx.org/en/docs/http/ngx_http_upstream_module.html" target="_blank" rel="noopener">official documentation</a></li>
-<li>Nginx实战系列之功能篇—-后端节点健康检查, <a href="http://nolinux.blog.51cto.com/4824967/1594029" target="_blank" rel="noopener">Nginx实战系列之功能篇—-后端节点健康检查</a></li>
-<li>Tengine, <a href="http://tengine.taobao.org/document_cn/http_upstream_check_cn.html" target="_blank" rel="noopener">Tengine nginx_upstream_check_module</a></li>
-<li>nginx反向代理tomcat集群做负载均衡缓存, <a href="http://quenlang.blog.51cto.com/4813803/1570352" target="_blank" rel="noopener">nginx反向代理tomcat集群做负载均衡缓存</a></li>
-<li>web内容缓存 nginx高性能缓存详解, <a href="http://www.ttlsa.com/nginx/nginx-high-performance-caching/" target="_blank" rel="noopener">web内容缓存 nginx高性能缓存详解</a></li>
-<li>使用nginx sticky实现基于cookie的负载均衡, <a href="http://www.ttlsa.com/nginx/nginx-modules-nginx-sticky-module/" target="_blank" rel="noopener">使用nginx sticky实现基于cookie的负载均衡</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/" data-id="cjjvk74s600058cs66wb0exsz" class="article-share-link">分享</a>
-      
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
 
     </footer>
   </div>
@@ -789,7 +972,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title categories">分类</h3>
     <div class="widget" id="categories">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/V8引擎/">V8引擎</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/理财/">理财</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/V8引擎/">V8引擎</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/理财/">理财</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络/">网络</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -799,7 +982,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title tagcloud">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 14px;">C++</a> <a href="/tags/JavaScript/" style="font-size: 19.5px;">JavaScript</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a> <a href="/tags/理财/" style="font-size: 14px;">理财</a> <a href="/tags/随笔/" style="font-size: 14px;">随笔</a>
+      <a href="/tags/C/" style="font-size: 16.75px;">C++</a> <a href="/tags/HTTPS/" style="font-size: 14px;">HTTPS</a> <a href="/tags/JavaScript/" style="font-size: 22.25px;">JavaScript</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a> <a href="/tags/Webpack/" style="font-size: 14px;">Webpack</a> <a href="/tags/理财/" style="font-size: 19.5px;">理财</a> <a href="/tags/随笔/" style="font-size: 16.75px;">随笔</a>
     </div>
   </div>
 
@@ -811,23 +994,23 @@
       <ul>
         
           <li>
+            <a href="/2018/08/05/webpack01/">Webpack 入门（一）</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/31/HTTPS安全/">HTTPS安全</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/22/富爸爸穷爸爸笔记/">富爸爸穷爸爸笔记</a>
+          </li>
+        
+          <li>
             <a href="/2018/07/21/小狗钱钱笔记/">小狗钱钱笔记</a>
           </li>
         
           <li>
-            <a href="/2018/07/11/理财小白的入门课/">理财小白的入门课</a>
-          </li>
-        
-          <li>
             <a href="/2018/07/11/如何在疲劳的JS世界中持续学习？/">如何在疲劳的JS世界中持续学习？</a>
-          </li>
-        
-          <li>
-            <a href="/2018/06/04/现代JS框架存在的根本原因/">现代JS框架存在的根本原因</a>
-          </li>
-        
-          <li>
-            <a href="/2017/07/12/京东入职篇章/">京东入职新篇</a>
           </li>
         
       </ul>
@@ -839,7 +1022,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title archive">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 

@@ -2,7 +2,7 @@
 layout: post
 title: jQuery源码分析
 date: 2016-05-12 20:05:11
-tags: JavaScript
+tags: jQuery
 categories: JavaScript
 ---
 

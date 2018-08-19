@@ -196,7 +196,7 @@ props 指外部传入的数据，state 是组件内部的一个状态。但一�
 
 - [JSX 在线转义](https://babeljs.io/repl/#?babili=false&browsers=&build=&builtIns=false&spec=false&loose=false&code_lz=DwEwlgbgfAUABAuwBGBXALug9gOzugTwAcBTAXgCIBnVZAWzHQtkTgEgBlAQwhJjeAB6NJlywh4aEA&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=false&fileSize=false&sourceType=module&lineWrap=false&presets=react&prettier=false&targets=&version=6.26.0&envVersion=)
 
-
+- [知乎Live：帮助你深入理解 React](https://github.com/Bian2017/Blog/issues/16)
 
 
 

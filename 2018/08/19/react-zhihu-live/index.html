@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Live - 帮助你深入理解 React | 陈广宵的网络日志</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本笔记是知乎程墨的《帮助你深入理解React》 Live 的笔记 课程主要是介绍 React 的  深入理解 React 工作原理 JSX 优势和局限 Props 和 State 的用法 React 生命周期 为什么尽量使用无状态组件 高阶组件 组件之间的通信  理解React的工作原理React 本质有三个主要的方面  UI = f(data) 一切都是组件 声明式变成（Declarative">
+<meta name="keywords" content="React">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Live - 帮助你深入理解 React">
+<meta property="og:url" content="http://www.xbroder.com/2018/08/19/react-zhihu-live/index.html">
+<meta property="og:site_name" content="陈广宵的网络日志">
+<meta property="og:description" content="本笔记是知乎程墨的《帮助你深入理解React》 Live 的笔记 课程主要是介绍 React 的  深入理解 React 工作原理 JSX 优势和局限 Props 和 State 的用法 React 生命周期 为什么尽量使用无状态组件 高阶组件 组件之间的通信  理解React的工作原理React 本质有三个主要的方面  UI = f(data) 一切都是组件 声明式变成（Declarative">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://pic2.zhimg.com/v2-bebdaf74d8718a2ce99cec7b45d36d2b_b.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/v2-ff242173690d56f59d3f2f22ed4d8f3a_b.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/v2-a00f34c33ca9989cc0cecc6ffeb47833_r.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/v2-5ca6f25ea1ceddeea7bd57ac492193e7_b.jpg">
+<meta property="og:updated_time" content="2018-08-19T15:47:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Live - 帮助你深入理解 React">
+<meta name="twitter:description" content="本笔记是知乎程墨的《帮助你深入理解React》 Live 的笔记 课程主要是介绍 React 的  深入理解 React 工作原理 JSX 优势和局限 Props 和 State 的用法 React 生命周期 为什么尽量使用无状态组件 高阶组件 组件之间的通信  理解React的工作原理React 本质有三个主要的方面  UI = f(data) 一切都是组件 声明式变成（Declarative">
+<meta name="twitter:image" content="https://pic2.zhimg.com/v2-bebdaf74d8718a2ce99cec7b45d36d2b_b.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="陈广宵的网络日志" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    
+    <div id="header-inner" class="inner">
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://www.xbroder.com"></form>
+      </div>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+      
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">陈广宵的网络日志</a>
+      </h1>
+      
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-react-zhihu-live" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/19/react-zhihu-live/" class="article-date">
+  <time datetime="2018-08-19T04:51:34.000Z" itemprop="datePublished">2018-08-19</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/React/">React</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Live - 帮助你深入理解 React
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <p>本笔记是知乎程墨的《帮助你深入理解React》 Live 的笔记</p>
+<p>课程主要是介绍 React 的</p>
+<ul>
+<li>深入理解 React 工作原理</li>
+<li>JSX 优势和局限</li>
+<li>Props 和 State 的用法</li>
+<li>React 生命周期</li>
+<li>为什么尽量使用无状态组件</li>
+<li>高阶组件</li>
+<li>组件之间的通信</li>
+</ul>
+<h2 id="理解React的工作原理"><a href="#理解React的工作原理" class="headerlink" title="理解React的工作原理"></a>理解React的工作原理</h2><p>React 本质有三个主要的方面</p>
+<ol>
+<li>UI = f(data)</li>
+<li>一切都是组件</li>
+<li>声明式变成（Declarative Programming)</li>
+</ol>
+<h3 id="UI-f-data"><a href="#UI-f-data" class="headerlink" title="UI = f(data)"></a>UI = f(data)</h3><p>改变UI的作用，实际上是通过改变 data, 让 data 驱动 function, function 影响 UI 的渲染。这个 data 实际上就是我们所说的 Props 和 State</p>
+<h3 id="a-virtual-dom"><a href="#a-virtual-dom" class="headerlink" title="a) virtual-dom"></a>a) virtual-dom</h3><ol>
+<li>传统diff 算法背后原理, 类似git diff的功能，传统的 diff 时间复杂度为 O(n2)</li>
+<li>React 的 diff 原理时间复杂度在 O(n), 采用 mount 和 unmount 的过程。例如图一, 当 A 节点移动的时候，A 节点有 unmount 和 mount 的过程，在 React 里面，不认为 A移动了，只认为 A 废掉了， unmount了，然后在 B 节点上重新 mount 过来，这样时间复杂度只在 O(n)。原理就是从根节点开始比对，然后以递归的方式逐步的往下比对。</li>
+</ol>
+<p><img src="https://pic2.zhimg.com/v2-bebdaf74d8718a2ce99cec7b45d36d2b_b.jpg" alt="图一"></p>
+<p>例如，现在有两个节点要比对，第一步先看两个节点的类型是否一样，如果类型不相同，一个是 div, 一个是 p,那就直接认为彻底改变了，有 diff 的情况，然后节点就放弃掉，执行 unmount 和 mount。如果类型相同，那就根据 update 的生命周期来判断</p>
+<p>现在有个例子，如图二，R 节点上有 ABC 三个组件，类型都一样，现在中间插了 X 的组件，这时候需要开发人员协助，因为 React 完全不知道 ABC 和 X 之间有什么关系。这个时候每个组件需要一个 key, 例如 ABC 的 key 分别是 abc, 新组件 X 的 key 是 x, 这样 React 根据 key 的对比知道只不过是加了一个新的组件 X。</p>
+<p><strong>key 的要素：唯一、稳定的（组件 A 的 key 整个过程的 key 是不变的）</strong></p>
+<p>动态子组件是由一个数组来产生的。所以有很多开发人员经常用数组的下标作为 key，但是这样 key 就不稳定了。</p>
+<p><img src="https://pic2.zhimg.com/v2-ff242173690d56f59d3f2f22ed4d8f3a_b.jpg" alt="图二"></p>
+<p>三元运算符组件是否需要 key, 如以下代码</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>hello<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    &#123;</span><br><span class="line">        someCondition? <span class="tag">&lt;<span class="name">p</span>&gt;</span>what?<span class="tag">&lt;/<span class="name">p</span>&gt;</span> : null</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>world<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>答案是不需要，三元运算符不需要加 key, 只有数组才需要加 key</p>
+<p>如图三</p>
+<p><img src="https://pic2.zhimg.com/v2-a00f34c33ca9989cc0cecc6ffeb47833_r.jpg" alt="图三"></p>
+<h3 id="React中一切皆为组件-Component"><a href="#React中一切皆为组件-Component" class="headerlink" title="React中一切皆为组件(Component)"></a>React中一切皆为组件(Component)</h3><h3 id="声明式编程-（Declarative-Programming"><a href="#声明式编程-（Declarative-Programming" class="headerlink" title="声明式编程 （Declarative Programming)"></a>声明式编程 （Declarative Programming)</h3><p>大致意思是不会根据 React 的 API 的改动修改 Code, 不像 jQuery 一样，需要根据 API 的更新改动原来写好的代码，例如以前用的是 delegate，之后 API 更新了，有了 on，原来的代码就要把所有的 delegate 更新成 on。jQuery 的编程是命名式编程。React 的代码不太可能主动去调用系统级的 API，相反是实现函数，例如 render，componentDidMount等等，这样子 React 的实现方式可能会改变，但是不需要改变 code。</p>
+<h2 id="JSX-的优势与局限"><a href="#JSX-的优势与局限" class="headerlink" title="JSX 的优势与局限"></a>JSX 的优势与局限</h2><p>render函数是个纯函数，不做任何直接渲染的事情。只是返回了一些指令，由React对这些指令做真正DOM操作。</p>
+<h3 id="JSX-在线转义"><a href="#JSX-在线转义" class="headerlink" title="JSX 在线转义"></a>JSX 在线转义</h3><p>例如</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">JSX:</span><br><span class="line">&lt;button type=<span class="string">"submit"</span>&gt;</span><br><span class="line">    Save</span><br><span class="line">&lt;<span class="regexp">/button&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面这段代码，babel 转义之后变成下面这段代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Transpiled JS:</span><br><span class="line">React.createElement(</span><br><span class="line">    <span class="string">"button"</span>,</span><br><span class="line">    &#123; <span class="attr">type</span>: <span class="string">"submit"</span> &#125;,</span><br><span class="line">    <span class="string">"Save"</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>React.createElement返回的是一个对DOM的描述，并不是真正去修改DOM。然后由React对描述做Virtual DOM的比对和修改动作。实际上你可以不用JSX定义自己的一套函数</p>
+<p>可以看看下面的这段伪代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// h 函数可以看做 React.createElement</span></span><br><span class="line">h(<span class="string">'div.someclass'</span>, [</span><br><span class="line">    h(<span class="string">'p'</span>, <span class="string">'Child One'</span>),</span><br><span class="line">    h(<span class="string">'p'</span>, &#123;<span class="attr">onClick</span>: <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'Got click.'</span>)&#125;, <span class="string">'Child Two'</span>),</span><br><span class="line">    h(SomeComponent, <span class="string">'Child Three'</span>),</span><br><span class="line">    h(<span class="string">'p'</span>, &#123;<span class="attr">className</span>: <span class="string">'anotherClass'</span>, <span class="attr">key</span>: <span class="string">'four'</span>&#125;, <span class="string">'Child Four'</span>),</span><br><span class="line">]);</span><br></pre></td></tr></table></figure>
+<p><strong>render 函数到目前为止只能返回一个 JSX，或者 null/undefined，但是在 v16以后，render 函数可以返回一个数组</strong></p>
+<p>JSX 可以包含花括号，花括号里面最后都是一个 JavaScript 表达式，实际上都是 createElement 的某个参数。正因为它是参数，所以它必须是表达式，它不能是语句。故不可能有for、while循环，因为二者一出现，就表示这是语句，不是表达式。</p>
+<p>可以看看以下转义前和转义后的代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">JSX：</span><br><span class="line">&lt;div&gt;</span><br><span class="line">  &#123;</span><br><span class="line">    arr.map(<span class="function"><span class="params">x</span> =&gt;</span> &lt;div&gt;x&lt;<span class="regexp">/div&gt;)</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&lt;/</span>div&gt;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Transpiled JavaScript:</span><br><span class="line">React.createElement(</span><br><span class="line">  <span class="string">"div"</span>,</span><br><span class="line">  <span class="literal">null</span>,</span><br><span class="line">  arr.map(<span class="function"><span class="params">x</span> =&gt;</span> React.createElement(</span><br><span class="line">    <span class="string">"div"</span>,</span><br><span class="line">    <span class="literal">null</span>,</span><br><span class="line">    <span class="string">"x"</span></span><br><span class="line">  ))</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>可以对比 arr.maps 里面的参数。<code>x =&gt; &lt;div&gt;x&lt;/div&gt;</code> 是一个参数，所以不能是语句，只能是表达式。在这里表达式可以是 map/reduce/filter/concat 这些函数，也可以使用三元云算法。</p>
+<p>在 React 的 render 函数，不要使用 push/reverse 这种数组的函数。因为 render 函数应该是纯函数，它不应该有任何副作用。渲染的东西最后是 data，这个 data 可能是 state 或者 props。如果用了 push 或者 reverse，实际上改的是 props 或者 state，最后产生的结果不可预料，因为你不是纯函数。</p>
+<h2 id="使用props还是state"><a href="#使用props还是state" class="headerlink" title="使用props还是state"></a>使用props还是state</h2><p>props 指外部传入的数据，state 是组件内部的一个状态。但一个组件它自己的 state 可以作为传递给它子组件的props的一个数据来源。如图四</p>
+<p>一个组件要改变自己的状态，怎么做呢？只能通过 setState 改变自己的状态。一个组件绝对不可能说修改自己的 props 来引发自己的更新状态，传递过来的 props 不应该被修改。</p>
+<p><img src="https://pic2.zhimg.com/v2-5ca6f25ea1ceddeea7bd57ac492193e7_b.jpg" alt="图四"></p>
+<p>尽量应该让一个组件做的事情少一点，让它state尽量少，所以提倡一个没有state的Component。但凡props能搞定的事情，就不要牵扯到state，最好把state往外堆，堆到系统边缘的地方。</p>
+<p><code>问：我将父级所传递的props，作为子级的state，是否会产生值引用对象影响问题？也就是我更改子级state，父级props被相应更改</code></p>
+<p><strong>答：会产生引用对象问题。因为React不会做深度拷贝事情。结果不可预知。</strong></p>
+<h2 id="详解React组件的生命周期"><a href="#详解React组件的生命周期" class="headerlink" title="详解React组件的生命周期"></a>详解React组件的生命周期</h2><p>三种过程 </p>
+<ol>
+<li>mount - 组件从无到有的过程</li>
+<li>update - 又分为state change引发的和props引发的。state/props 改变之后组件重新绘制一遍<ul>
+<li>组件内部自己的 state 导致的重绘</li>
+<li>父组件传给它的 props 改变引发的</li>
+</ul>
+</li>
+<li>unmount - 组件从有到无</li>
+</ol>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="https://babeljs.io/repl/#?babili=false&amp;browsers=&amp;build=&amp;builtIns=false&amp;spec=false&amp;loose=false&amp;code_lz=DwEwlgbgfAUABAuwBGBXALug9gOzugTwAcBTAXgCIBnVZAWzHQtkTgEgBlAQwhJjeAB6NJlywh4aEA&amp;debug=false&amp;forceAllTransforms=false&amp;shippedProposals=false&amp;circleciRepo=&amp;evaluate=false&amp;fileSize=false&amp;sourceType=module&amp;lineWrap=false&amp;presets=react&amp;prettier=false&amp;targets=&amp;version=6.26.0&amp;envVersion=" target="_blank" rel="noopener">JSX 在线转义</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2018/08/19/react-zhihu-live/" data-id="cjl0dnam4000y6ds6p4s4pxvv" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/React/">React</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+ <script src="/jquery/jquery.min.js"></script>
+  <div id="random_posts">
+    <h2>推荐文章</h2>
+    <div class="random_posts_ul">
+      <script>
+          var random_count =4
+          var site = {BASE_URI:'/'};
+          function load_random_posts(obj) {
+              var arr=site.posts;
+              if (!obj) return;
+              // var count = $(obj).attr('data-count') || 6;
+              for (var i, tmp, n = arr.length; n; i = Math.floor(Math.random() * n), tmp = arr[--n], arr[n] = arr[i], arr[i] = tmp);
+              arr = arr.slice(0, random_count);
+              var html = '<ul>';
+            
+              for(var j=0;j<arr.length;j++){
+                var item=arr[j];
+                html += '<li><strong>' + 
+                item.date + ':&nbsp;&nbsp;<a href="' + (site.BASE_URI+item.uri) + '">' + 
+                (item.title || item.uri) + '</a></strong>';
+                if(item.excerpt){
+                  html +='<div class="post-excerpt">'+item.excerpt+'</div>';
+                }
+                html +='</li>';
+                
+              }
+              $(obj).html(html + '</ul>');
+          }
+          $('.random_posts_ul').each(function () {
+              var c = this;
+              if (!site.posts || !site.posts.length){
+                  $.getJSON(site.BASE_URI + 'js/posts.js',function(json){site.posts = json;load_random_posts(c)});
+              } 
+               else{
+                load_random_posts(c);
+              }
+          });
+      </script>
+    </div>
+  </div>
+
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/08/14/三步式学习法/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">三步式学习法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+ 
+     
+  <div class="comments" id="comments">
+    
+     
+       
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+       
+      
+      
+  </div>
+ 
+  
+
+</section>
+           
+    <aside id="sidebar">
+  
+    
+
+  
+    
+    <div class="widget-wrap">
+    
+      <div class="widget" id="toc-widget-fixed">
+      
+        <strong class="toc-title">文章目录</strong>
+        <div class="toc-widget-list">
+              <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#理解React的工作原理"><span class="toc-number">1.</span> <span class="toc-text">理解React的工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#UI-f-data"><span class="toc-number">1.1.</span> <span class="toc-text">UI = f(data)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#a-virtual-dom"><span class="toc-number">1.2.</span> <span class="toc-text">a) virtual-dom</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#React中一切皆为组件-Component"><span class="toc-number">1.3.</span> <span class="toc-text">React中一切皆为组件(Component)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#声明式编程-（Declarative-Programming"><span class="toc-number">1.4.</span> <span class="toc-text">声明式编程 （Declarative Programming)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JSX-的优势与局限"><span class="toc-number">2.</span> <span class="toc-text">JSX 的优势与局限</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#JSX-在线转义"><span class="toc-number">2.1.</span> <span class="toc-text">JSX 在线转义</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用props还是state"><span class="toc-number">3.</span> <span class="toc-text">使用props还是state</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#详解React组件的生命周期"><span class="toc-number">4.</span> <span class="toc-text">详解React组件的生命周期</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">5.</span> <span class="toc-text">参考链接</span></a></li></ol>
+          </div>
+      </div>
+    </div>
+
+  
+    
+
+  
+    
+  
+    
+  
+    
+
+  
+    
+  
+    <!--微信公众号二维码-->
+
+
+  
+</aside>
+
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-left">
+      &copy; 2014 - 2018 陈广宵&nbsp;|&nbsp;
+      主题 <a href="https://github.com/giscafer/hexo-theme-cafe/" target="_blank">Cafe</a>
+    </div>
+     <div id="footer-right">
+      联系方式&nbsp;|&nbsp;youemail@outlook.com
+    </div>
+  </div>
+</footer>
+ <script src="/jquery/jquery.min.js"></script>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/about" class="mobile-nav-link">关于</a>
+  
+</nav>
+    <img class="back-to-top-btn" src="/images/fly-to-top.png"/>
+<script>
+// Elevator script included on the page, already.
+window.onload = function() {
+  var elevator = new Elevator({
+    selector:'.back-to-top-btn',
+    element: document.querySelector('.back-to-top-btn'),
+    duration: 1000 // milliseconds
+  });
+}
+</script>
+      
+
+  
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "e2fb4051c49842688ce669e634bc983f",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+    
+
+  
+
+
+
+
+
+
+
+<!-- author:forvoid begin -->
+<!-- author:forvoid begin -->
+
+<!-- author:forvoid end -->
+
+<!-- author:forvoid end -->
+
+
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      })
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      })
+    </script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+ <script src="/js/is.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<script src="/js/elevator.js"></script>
+  </div>
+</body>
+</html>

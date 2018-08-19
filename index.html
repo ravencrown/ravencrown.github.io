@@ -67,6 +67,121 @@
         <section id="main">
 
   
+    <article id="post-react-zhihu-live" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/19/react-zhihu-live/" class="article-date">
+  <time datetime="2018-08-19T04:51:34.000Z" itemprop="datePublished">2018-08-19</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/React/">React</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/19/react-zhihu-live/">Live - 帮助你深入理解 React</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <p>本笔记是知乎程墨的《帮助你深入理解React》 Live 的笔记</p>
+<p>课程主要是介绍 React 的</p>
+<ul>
+<li>深入理解 React 工作原理</li>
+<li>JSX 优势和局限</li>
+<li>Props 和 State 的用法</li>
+<li>React 生命周期</li>
+<li>为什么尽量使用无状态组件</li>
+<li>高阶组件</li>
+<li>组件之间的通信</li>
+</ul>
+<h2 id="理解React的工作原理"><a href="#理解React的工作原理" class="headerlink" title="理解React的工作原理"></a>理解React的工作原理</h2><p>React 本质有三个主要的方面</p>
+<ol>
+<li>UI = f(data)</li>
+<li>一切都是组件</li>
+<li>声明式变成（Declarative Programming)</li>
+</ol>
+<h3 id="UI-f-data"><a href="#UI-f-data" class="headerlink" title="UI = f(data)"></a>UI = f(data)</h3><p>改变UI的作用，实际上是通过改变 data, 让 data 驱动 function, function 影响 UI 的渲染。这个 data 实际上就是我们所说的 Props 和 State</p>
+<h3 id="a-virtual-dom"><a href="#a-virtual-dom" class="headerlink" title="a) virtual-dom"></a>a) virtual-dom</h3><ol>
+<li>传统diff 算法背后原理, 类似git diff的功能，传统的 diff 时间复杂度为 O(n2)</li>
+<li>React 的 diff 原理时间复杂度在 O(n), 采用 mount 和 unmount 的过程。例如图一, 当 A 节点移动的时候，A 节点有 unmount 和 mount 的过程，在 React 里面，不认为 A移动了，只认为 A 废掉了， unmount了，然后在 B 节点上重新 mount 过来，这样时间复杂度只在 O(n)。原理就是从根节点开始比对，然后以递归的方式逐步的往下比对。</li>
+</ol>
+<p><img src="https://pic2.zhimg.com/v2-bebdaf74d8718a2ce99cec7b45d36d2b_b.jpg" alt="图一"></p>
+<p>例如，现在有两个节点要比对，第一步先看两个节点的类型是否一样，如果类型不相同，一个是 div, 一个是 p,那就直接认为彻底改变了，有 diff 的情况，然后节点就放弃掉，执行 unmount 和 mount。如果类型相同，那就根据 update 的生命周期来判断</p>
+<p>现在有个例子，如图二，R 节点上有 ABC 三个组件，类型都一样，现在中间插了 X 的组件，这时候需要开发人员协助，因为 React 完全不知道 ABC 和 X 之间有什么关系。这个时候每个组件需要一个 key, 例如 ABC 的 key 分别是 abc, 新组件 X 的 key 是 x, 这样 React 根据 key 的对比知道只不过是加了一个新的组件 X。</p>
+<p><strong>key 的要素：唯一、稳定的（组件 A 的 key 整个过程的 key 是不变的）</strong></p>
+<p>动态子组件是由一个数组来产生的。所以有很多开发人员经常用数组的下标作为 key，但是这样 key 就不稳定了。</p>
+<p><img src="https://pic2.zhimg.com/v2-ff242173690d56f59d3f2f22ed4d8f3a_b.jpg" alt="图二"></p>
+<p>三元运算符组件是否需要 key, 如以下代码</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>hello<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    &#123;</span><br><span class="line">        someCondition? <span class="tag">&lt;<span class="name">p</span>&gt;</span>what?<span class="tag">&lt;/<span class="name">p</span>&gt;</span> : null</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>world<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>答案是不需要，三元运算符不需要加 key, 只有数组才需要加 key</p>
+<p>如图三</p>
+<p><img src="https://pic2.zhimg.com/v2-a00f34c33ca9989cc0cecc6ffeb47833_r.jpg" alt="图三"></p>
+<h3 id="React中一切皆为组件-Component"><a href="#React中一切皆为组件-Component" class="headerlink" title="React中一切皆为组件(Component)"></a>React中一切皆为组件(Component)</h3><h3 id="声明式编程-（Declarative-Programming"><a href="#声明式编程-（Declarative-Programming" class="headerlink" title="声明式编程 （Declarative Programming)"></a>声明式编程 （Declarative Programming)</h3><p>大致意思是不会根据 React 的 API 的改动修改 Code, 不像 jQuery 一样，需要根据 API 的更新改动原来写好的代码，例如以前用的是 delegate，之后 API 更新了，有了 on，原来的代码就要把所有的 delegate 更新成 on。jQuery 的编程是命名式编程。React 的代码不太可能主动去调用系统级的 API，相反是实现函数，例如 render，componentDidMount等等，这样子 React 的实现方式可能会改变，但是不需要改变 code。</p>
+<h2 id="JSX-的优势与局限"><a href="#JSX-的优势与局限" class="headerlink" title="JSX 的优势与局限"></a>JSX 的优势与局限</h2><p>render函数是个纯函数，不做任何直接渲染的事情。只是返回了一些指令，由React对这些指令做真正DOM操作。</p>
+<h3 id="JSX-在线转义"><a href="#JSX-在线转义" class="headerlink" title="JSX 在线转义"></a>JSX 在线转义</h3><p>例如</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">JSX:</span><br><span class="line">&lt;button type=<span class="string">"submit"</span>&gt;</span><br><span class="line">    Save</span><br><span class="line">&lt;<span class="regexp">/button&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面这段代码，babel 转义之后变成下面这段代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Transpiled JS:</span><br><span class="line">React.createElement(</span><br><span class="line">    <span class="string">"button"</span>,</span><br><span class="line">    &#123; <span class="attr">type</span>: <span class="string">"submit"</span> &#125;,</span><br><span class="line">    <span class="string">"Save"</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>React.createElement返回的是一个对DOM的描述，并不是真正去修改DOM。然后由React对描述做Virtual DOM的比对和修改动作。实际上你可以不用JSX定义自己的一套函数</p>
+<p>可以看看下面的这段伪代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// h 函数可以看做 React.createElement</span></span><br><span class="line">h(<span class="string">'div.someclass'</span>, [</span><br><span class="line">    h(<span class="string">'p'</span>, <span class="string">'Child One'</span>),</span><br><span class="line">    h(<span class="string">'p'</span>, &#123;<span class="attr">onClick</span>: <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'Got click.'</span>)&#125;, <span class="string">'Child Two'</span>),</span><br><span class="line">    h(SomeComponent, <span class="string">'Child Three'</span>),</span><br><span class="line">    h(<span class="string">'p'</span>, &#123;<span class="attr">className</span>: <span class="string">'anotherClass'</span>, <span class="attr">key</span>: <span class="string">'four'</span>&#125;, <span class="string">'Child Four'</span>),</span><br><span class="line">]);</span><br></pre></td></tr></table></figure>
+<p><strong>render 函数到目前为止只能返回一个 JSX，或者 null/undefined，但是在 v16以后，render 函数可以返回一个数组</strong></p>
+<p>JSX 可以包含花括号，花括号里面最后都是一个 JavaScript 表达式，实际上都是 createElement 的某个参数。正因为它是参数，所以它必须是表达式，它不能是语句。故不可能有for、while循环，因为二者一出现，就表示这是语句，不是表达式。</p>
+<p>可以看看以下转义前和转义后的代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">JSX：</span><br><span class="line">&lt;div&gt;</span><br><span class="line">  &#123;</span><br><span class="line">    arr.map(<span class="function"><span class="params">x</span> =&gt;</span> &lt;div&gt;x&lt;<span class="regexp">/div&gt;)</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&lt;/</span>div&gt;</span><br></pre></td></tr></table></figure>
+<p><br></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Transpiled JavaScript:</span><br><span class="line">React.createElement(</span><br><span class="line">  <span class="string">"div"</span>,</span><br><span class="line">  <span class="literal">null</span>,</span><br><span class="line">  arr.map(<span class="function"><span class="params">x</span> =&gt;</span> React.createElement(</span><br><span class="line">    <span class="string">"div"</span>,</span><br><span class="line">    <span class="literal">null</span>,</span><br><span class="line">    <span class="string">"x"</span></span><br><span class="line">  ))</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>可以对比 arr.maps 里面的参数。<code>x =&gt; &lt;div&gt;x&lt;/div&gt;</code> 是一个参数，所以不能是语句，只能是表达式。在这里表达式可以是 map/reduce/filter/concat 这些函数，也可以使用三元云算法。</p>
+<p>在 React 的 render 函数，不要使用 push/reverse 这种数组的函数。因为 render 函数应该是纯函数，它不应该有任何副作用。渲染的东西最后是 data，这个 data 可能是 state 或者 props。如果用了 push 或者 reverse，实际上改的是 props 或者 state，最后产生的结果不可预料，因为你不是纯函数。</p>
+<h2 id="使用props还是state"><a href="#使用props还是state" class="headerlink" title="使用props还是state"></a>使用props还是state</h2><p>props 指外部传入的数据，state 是组件内部的一个状态。但一个组件它自己的 state 可以作为传递给它子组件的props的一个数据来源。如图四</p>
+<p>一个组件要改变自己的状态，怎么做呢？只能通过 setState 改变自己的状态。一个组件绝对不可能说修改自己的 props 来引发自己的更新状态，传递过来的 props 不应该被修改。</p>
+<p><img src="https://pic2.zhimg.com/v2-5ca6f25ea1ceddeea7bd57ac492193e7_b.jpg" alt="图四"></p>
+<p>尽量应该让一个组件做的事情少一点，让它state尽量少，所以提倡一个没有state的Component。但凡props能搞定的事情，就不要牵扯到state，最好把state往外堆，堆到系统边缘的地方。</p>
+<p><code>问：我将父级所传递的props，作为子级的state，是否会产生值引用对象影响问题？也就是我更改子级state，父级props被相应更改</code></p>
+<p><strong>答：会产生引用对象问题。因为React不会做深度拷贝事情。结果不可预知。</strong></p>
+<h2 id="详解React组件的生命周期"><a href="#详解React组件的生命周期" class="headerlink" title="详解React组件的生命周期"></a>详解React组件的生命周期</h2><p>三种过程 </p>
+<ol>
+<li>mount - 组件从无到有的过程</li>
+<li>update - 又分为state change引发的和props引发的。state/props 改变之后组件重新绘制一遍<ul>
+<li>组件内部自己的 state 导致的重绘</li>
+<li>父组件传给它的 props 改变引发的</li>
+</ul>
+</li>
+<li>unmount - 组件从有到无</li>
+</ol>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a href="https://babeljs.io/repl/#?babili=false&amp;browsers=&amp;build=&amp;builtIns=false&amp;spec=false&amp;loose=false&amp;code_lz=DwEwlgbgfAUABAuwBGBXALug9gOzugTwAcBTAXgCIBnVZAWzHQtkTgEgBlAQwhJjeAB6NJlywh4aEA&amp;debug=false&amp;forceAllTransforms=false&amp;shippedProposals=false&amp;circleciRepo=&amp;evaluate=false&amp;fileSize=false&amp;sourceType=module&amp;lineWrap=false&amp;presets=react&amp;prettier=false&amp;targets=&amp;version=6.26.0&amp;envVersion=" target="_blank" rel="noopener">JSX 在线转义</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2018/08/19/react-zhihu-live/" data-id="cjl0dnam4000y6ds6p4s4pxvv" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/React/">React</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
     <article id="post-三步式学习法" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/08/14/三步式学习法/" class="article-date">
@@ -91,7 +206,8 @@
       
         <!-- Table of Contents -->
         
-        <h2 id="顺序学习法的方式和优缺点"><a href="#顺序学习法的方式和优缺点" class="headerlink" title="顺序学习法的方式和优缺点"></a>顺序学习法的方式和优缺点</h2><h3 id="方式"><a href="#方式" class="headerlink" title="方式"></a>方式</h3><ol>
+        <p>网易公开课《60天引爆你的学习力》 课程笔记，用于提升深度学习能力的课程，非常不错，值得一看</p>
+<h2 id="顺序学习法的方式和优缺点"><a href="#顺序学习法的方式和优缺点" class="headerlink" title="顺序学习法的方式和优缺点"></a>顺序学习法的方式和优缺点</h2><h3 id="方式"><a href="#方式" class="headerlink" title="方式"></a>方式</h3><ol>
 <li>读书学教材</li>
 <li>自学看书本</li>
 <li>公里-定力-案例</li>
@@ -190,7 +306,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/08/14/三步式学习法/" data-id="cjkshfjkr0016jms6pwxv4ino" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/08/14/三步式学习法/" data-id="cjl0dnam800166ds6s1g4lo3j" class="article-share-link">分享</a>
       
       
       
@@ -241,7 +357,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/08/05/koa01/" data-id="cjkshfjkm0011jms68y2ishy4" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/08/05/koa01/" data-id="cjl0dnamj001h6ds6nqwtvvpd" class="article-share-link">分享</a>
       
       
       
@@ -406,7 +522,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/08/05/webpack01/" data-id="cjkshfjob002tjms6l5elvpqo" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/08/05/webpack01/" data-id="cjl0dnaog002u6ds6i4ddg4x4" class="article-share-link">分享</a>
       
       
       
@@ -470,7 +586,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/07/31/HTTPS安全/" data-id="cjkshfjku0019jms6k1sls1j9" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/07/31/HTTPS安全/" data-id="cjl0dnan0001y6ds6yqm0thwt" class="article-share-link">分享</a>
       
       
       
@@ -638,7 +754,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/07/22/富爸爸穷爸爸笔记/" data-id="cjkshfjt3002xjms6j7bgzpaj" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/07/22/富爸爸穷爸爸笔记/" data-id="cjl0dnapz00316ds6kmmr5z92" class="article-share-link">分享</a>
       
       
       
@@ -713,7 +829,60 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/07/21/小狗钱钱笔记/" data-id="cjkshfjld001wjms697qfchzq" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/07/21/小狗钱钱笔记/" data-id="cjl0dnamu001v6ds64k2hfgz0" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/理财/">理财</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+ 
+
+
+  
+    <article id="post-理财小白的入门课" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/07/11/理财小白的入门课/" class="article-date">
+  <time datetime="2018-07-11T03:46:51.000Z" itemprop="datePublished">2018-07-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/理财/">理财</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/11/理财小白的入门课/">理财小白的入门课</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <p>先列出一些培养财商的书单，读完非常有感触，下次会出一些相关的读书笔记</p>
+<h3 id="《小狗钱钱》"><a href="#《小狗钱钱》" class="headerlink" title="《小狗钱钱》"></a>《小狗钱钱》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9QFicffPibVHjPtj0nFJc3SaUmK1DV1ebs39mOibxhymVgSQn5MmfLUibeA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《小狗钱钱》"></p>
+<h3 id="《富爸爸，穷爸爸》"><a href="#《富爸爸，穷爸爸》" class="headerlink" title="《富爸爸，穷爸爸》"></a>《富爸爸，穷爸爸》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN99C0y5MhENWGXicCkwWLKhib4GiaXZOwM3bqQ2ribADqyu1Dclk4Nj7Pfag/640?wx_fmt=jpeg&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《富爸爸，穷爸爸》"></p>
+<h3 id="《财报就像一本故事书》"><a href="#《财报就像一本故事书》" class="headerlink" title="《财报就像一本故事书》"></a>《财报就像一本故事书》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9f0kBAcuo7Sm7VrsicgjljA1icDsCjyOpfwoApLrlQCvdgZjBjkXwzA6Q/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《财报就像一本故事书》"></p>
+<h3 id="《世界上最简单的会计书》"><a href="#《世界上最简单的会计书》" class="headerlink" title="《世界上最简单的会计书》"></a>《世界上最简单的会计书》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9JMETCfkJXd1cxP7Kic6Ku561XZCfJCgjshJric7wBE86cYKRficuDdObQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《世界上最简单的会计书》"></p>
+<h3 id="《聪明的投资者》"><a href="#《聪明的投资者》" class="headerlink" title="《聪明的投资者》"></a>《聪明的投资者》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9eLwUnIQzhoC7l9ODlqzMiaSayl1kf9U04IRUibeGnicgtS0zLkwJQf1gQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《聪明的投资者》"></p>
+<h3 id="《巴菲特的护城河》"><a href="#《巴菲特的护城河》" class="headerlink" title="《巴菲特的护城河》"></a>《巴菲特的护城河》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9mM2ibZroJgMAbK4Jqb2Poaq827DicvmscmwY4HU4BHURQkkt43Ud6LJQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《巴菲特的护城河》"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2018/07/11/理财小白的入门课/" data-id="cjl0dnaoc002s6ds6mvrxdkqz" class="article-share-link">分享</a>
       
       
       
@@ -783,64 +952,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/07/11/如何在疲劳的JS世界中持续学习？/" data-id="cjkshfjmh002qjms6qklxlqpk" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/07/11/如何在疲劳的JS世界中持续学习？/" data-id="cjl0dnamm001k6ds6qvjnswxp" class="article-share-link">分享</a>
       
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
- 
-
-
-  
-    <article id="post-理财小白的入门课" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/07/11/理财小白的入门课/" class="article-date">
-  <time datetime="2018-07-11T03:46:51.000Z" itemprop="datePublished">2018-07-11</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/理财/">理财</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/11/理财小白的入门课/">理财小白的入门课</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <!-- Table of Contents -->
-        
-        <p>先列出一些培养财商的书单，读完非常有感触，下次会出一些相关的读书笔记</p>
-<h3 id="《小狗钱钱》"><a href="#《小狗钱钱》" class="headerlink" title="《小狗钱钱》"></a>《小狗钱钱》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9QFicffPibVHjPtj0nFJc3SaUmK1DV1ebs39mOibxhymVgSQn5MmfLUibeA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《小狗钱钱》"></p>
-<h3 id="《富爸爸，穷爸爸》"><a href="#《富爸爸，穷爸爸》" class="headerlink" title="《富爸爸，穷爸爸》"></a>《富爸爸，穷爸爸》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN99C0y5MhENWGXicCkwWLKhib4GiaXZOwM3bqQ2ribADqyu1Dclk4Nj7Pfag/640?wx_fmt=jpeg&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《富爸爸，穷爸爸》"></p>
-<h3 id="《财报就像一本故事书》"><a href="#《财报就像一本故事书》" class="headerlink" title="《财报就像一本故事书》"></a>《财报就像一本故事书》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9f0kBAcuo7Sm7VrsicgjljA1icDsCjyOpfwoApLrlQCvdgZjBjkXwzA6Q/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《财报就像一本故事书》"></p>
-<h3 id="《世界上最简单的会计书》"><a href="#《世界上最简单的会计书》" class="headerlink" title="《世界上最简单的会计书》"></a>《世界上最简单的会计书》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9JMETCfkJXd1cxP7Kic6Ku561XZCfJCgjshJric7wBE86cYKRficuDdObQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《世界上最简单的会计书》"></p>
-<h3 id="《聪明的投资者》"><a href="#《聪明的投资者》" class="headerlink" title="《聪明的投资者》"></a>《聪明的投资者》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9eLwUnIQzhoC7l9ODlqzMiaSayl1kf9U04IRUibeGnicgtS0zLkwJQf1gQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《聪明的投资者》"></p>
-<h3 id="《巴菲特的护城河》"><a href="#《巴菲特的护城河》" class="headerlink" title="《巴菲特的护城河》"></a>《巴菲特的护城河》</h3><p><img src="https://mmbiz.qpic.cn/mmbiz_png/9nNmSy5D1FbgcAvEEPonb5WlaDatPVN9mM2ibZroJgMAbK4Jqb2Poaq827DicvmscmwY4HU4BHURQkkt43Ud6LJQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1" alt="《巴菲特的护城河》"></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/07/11/理财小白的入门课/" data-id="cjkshfjli0024jms6tn9dcexv" class="article-share-link">分享</a>
-      
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/理财/">理财</a></li></ul>
 
     </footer>
   </div>
@@ -936,62 +1052,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/06/04/现代JS框架存在的根本原因/" data-id="cjkshfjlf001zjms696o4yz49" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/06/04/现代JS框架存在的根本原因/" data-id="cjl0dnao7002r6ds650vru2kg" class="article-share-link">分享</a>
       
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
- 
-
-
-  
-    <article id="post-京东入职篇章" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/07/12/京东入职篇章/" class="article-date">
-  <time datetime="2017-07-12T12:38:23.000Z" itemprop="datePublished">2017-07-12</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/随笔/">随笔</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/07/12/京东入职篇章/">京东入职新篇</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <!-- Table of Contents -->
-        
-        <p>前两天终于从<code>乐视体育</code>离职了，持续很长一段时间的<code>乐视风波</code>，对我而言，算是结束了，有些不舍，有些不服。</p>
-<p>即将要开始在<code>京东商城</code>的刷副本升级旅程了。</p>
-<p>不舍在于，多少也呆了差不多一年，交了好多好同事，虽然同事都陆陆续续早已离职，高就<code>小米</code>、<code>滴滴</code>、<code>美团</code>了。</p>
-<p>很多人都坚信老贾终有一天王者归来…希望有这一天吧</p>
-<p>一阵风吹来，希望能吹起新的篇章吧。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2017/07/12/京东入职篇章/" data-id="cjkshfjl9001ojms6evfpagp8" class="article-share-link">分享</a>
-      
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
 
     </footer>
   </div>
@@ -1039,7 +1104,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title categories">分类</h3>
     <div class="widget" id="categories">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/V8引擎/">V8引擎</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/理财/">理财</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络/">网络</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/React/">React</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/V8引擎/">V8引擎</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/理财/">理财</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络/">网络</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -1049,7 +1114,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title tagcloud">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 16.75px;">C++</a> <a href="/tags/HTTPS/" style="font-size: 14px;">HTTPS</a> <a href="/tags/JavaScript/" style="font-size: 22.25px;">JavaScript</a> <a href="/tags/Koa/" style="font-size: 14px;">Koa</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a> <a href="/tags/Webpack/" style="font-size: 14px;">Webpack</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/学习力/" style="font-size: 14px;">学习力</a> <a href="/tags/理财/" style="font-size: 19.5px;">理财</a> <a href="/tags/随笔/" style="font-size: 16.75px;">随笔</a>
+      <a href="/tags/C/" style="font-size: 16.75px;">C++</a> <a href="/tags/HTTPS/" style="font-size: 14px;">HTTPS</a> <a href="/tags/JavaScript/" style="font-size: 22.25px;">JavaScript</a> <a href="/tags/Koa/" style="font-size: 14px;">Koa</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a> <a href="/tags/React/" style="font-size: 14px;">React</a> <a href="/tags/Webpack/" style="font-size: 14px;">Webpack</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/学习力/" style="font-size: 14px;">学习力</a> <a href="/tags/理财/" style="font-size: 19.5px;">理财</a> <a href="/tags/随笔/" style="font-size: 16.75px;">随笔</a>
     </div>
   </div>
 
@@ -1059,6 +1124,10 @@
     <h3 class="widget-title recent-posts">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/08/19/react-zhihu-live/">Live - 帮助你深入理解 React</a>
+          </li>
         
           <li>
             <a href="/2018/08/14/三步式学习法/">三步式学习法</a>
@@ -1076,10 +1145,6 @@
             <a href="/2018/07/31/HTTPS安全/">HTTPS安全</a>
           </li>
         
-          <li>
-            <a href="/2018/07/22/富爸爸穷爸爸笔记/">富爸爸穷爸爸笔记</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -1089,7 +1154,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title archive">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 

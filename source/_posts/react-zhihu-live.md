@@ -173,19 +173,169 @@ props 指外部传入的数据，state 是组件内部的一个状态。但一�
     - 父组件传给它的 props 改变引发的
 3. unmount - 组件从有到无
 
+### mount过程：
+
+1. getDefaultProps
+2. getInitialState
+3. componentWillMount
+4. render
+5. componentDidMount (只在浏览器端执行，如果在服务器端做 react 渲染，这个是不会执行的，因为服务器端最后吐出来的是一个字符串，不存在 DOM tree节点被 mount 的过程)
+
+### update 过程
+
+ - 因state改变引发的update过程：
+
+    1. shouldComponentUpdate
+    2. componentWillUpdate
+    3. render
+    4. componentDidUpdate
+
+- 因父组件想要render这个组件改变引发的update过程：
+
+    1. componentWillReceiveProps
+    2. shouldComponentUpdate
+    3. componentWillUpdate
+    4. render
+    5. componentDidUpdate
+
+由于父组件如果想重绘子组件，不管传过来的 props 是否变化，只要重绘，都会执行上面过程。shouldComponentUpdate 此时就很重要，它可以中间截胡，通过返回 false 就可以让后面的三个函数不会被执行，这就节省了很多不必要的渲染时间。
+
+以 render 为界，不管是 mount 过程还是 update 过程，render 之前所有函数被调用时，这些组件的 state 和 props 都是没有被改变的。在 render 之前的函数里访问 this.props 或者 this.state 都是未改变之前的。只有当 render 函数开始执行的时候，state/props 才是更新之后的值
+
+在 V16 里，一个组件的渲染过程是可以被打断的，回头再做。在 V16 之后，以 render 函数为界，前面所有的函数可能会被执行很多次。只要开始执行 render 函数，state 和 props 就被改变了，就不能再被打断了，会一直往下调。
+
+所以 render 函数之前的这些函数一定要写成纯函数，如果写的函数不是纯函数，有副作用，若被执行两次，就会产生意想不到的结果。所以今后写代码，这些函数要尽量写成纯函数。
+
+## 为什么尽量构建无状态组件？
+
+如图五
+
+![图五](https://camo.githubusercontent.com/2384d434bcdaac44f4f94c22a7c4c66632be91ad/68747470733a2f2f706963332e7a68696d672e636f6d2f76322d38663737386165323862643533366161636461666339306230643937383038645f722e6a7067)
 
 
+图五为一个假象的组件树结构，蓝色的是无状态组件。维护状态的组件往上推，推到靠近 root 的地方去。尽量让少数的组件去管理状态，让他有 state, 然后有 state 的组件作为父组件存在，它所控制的子组件，都是无状态的。
+
+需注意 React 世界不是只有两种有状态和无状态组件，这种分类比较粗。有的组件比较特殊，如下每隔多少时间发送一个心跳信息，这是一个副作用的事情。
+
+```js
+import React from 'react';
+
+export default class HeartBeat extends React.Component {
+  render() {
+    return null;   //意思什么都不画。
+  }
+
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      fetch('/api/v1/heartbeat');
+    }, 5000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+}
+```
 
 
+## 创建高阶组件（HoC，Higher-Order Component)
+
+但凡发现一个逻辑在两个组件里面用，都可以把它抽象成高阶组件。高阶组件其实是一个函数，它接收一个或者多个参数(参数往往是组件)，返回一个全新的组件。
+
+如以下的代码
+
+```js
+// 包裹方式
+const HoC = (WrappedComponent) => {
+    const WrappingComponent = (props) => (
+        <div className="foo">
+            <WrappedCompoent {...props} />
+        </div>
+    );
+    return WrappingComponent;
+};
+```
+<br/>
+
+```js
+// 继承方式
+const HoC = (WrappedComponent) => {
+    class WrappingComponent extends WrappendComponent {
+        render() (
+            const {user, ...otherProps} = this.props;
+            this.props = otherProps;
+            return super.render();
+        )
+    }
+    return WrappingComponent;
+};
+```
+
+继承的方式：不得不通过 super.render() 等函数调用父级的生命周期函数，这种方式很不好，它将两个组件纠缠在一起，会有共享函数、共享的属性，这种方式比较违背组件的原则。所以尽量不要采用继承的方式实现 HOC。
 
 
+### HOC误解
+
+- HOC可以有多个参数，不是只能有一个参数
+- HOC可以有多个参数表示多个组件，不是只能有一个参数作为组件类
+
+```js
+// 用户登录，正常登录组件和提示用户登录的组件 
+const HoC = (WrappedComponent, LoginView) => {
+    const WrappingComponent = () => {
+        const {user} = this.props;  
+        if (user) {
+            return <WrappedComponent {...this.props} />
+        } else {
+            return <LoginView {...this.props} />
+        }
+    };
+    return WrappingComponent;
+};
+```
+
+### HOC常见应用场景有哪些？
+
+有一些功能，可以用在不同的组件类，但是不想重复代码，这个时候就需要HOC。
+
+## 组件之间通讯
+
+### 组件通信的三种方式
+
+#### 父子通信
+
+如图六
+
+- 父组件通过props传递给子组件。子组件想传递给父组件，调用父组件的方法。
+- 调用ref(不推荐)。子组件有个foo方法，父组件调用ref.foo来执行，这种方式不太好。
+- 可以用callback或者promise。父组件将promise作为prop传递给子组件，子组件通过resolve传递信息给父组件。
+
+![图六](https://camo.githubusercontent.com/042737a3d3321825287edda26a28c0a58ce0b159/68747470733a2f2f706963342e7a68696d672e636f6d2f76322d33363937626563313430663931656666323463356132656330633031386231655f722e6a7067)
 
 
+### 兄弟通信（两个组件有共同的 Parent）
 
+如图七
 
+- 通过父组件做一个交换。比如说父组件造两个函数，分别传递给两个子组件，然后通过父组件作为一个桥接；
 
+![图七]()
 
+### 非父子、兄弟组件的任意两个组件通信
 
+如图八
+
+- 全局变量, 然后通过emmiter来通知；
+- context, 其实和全局变量没太大差别。
+- 这个实现需要借助第三方，redux等等。
+
+![图八](https://camo.githubusercontent.com/b3a733d4f4af7b53a453fe6a2b2585ed627fbccb/68747470733a2f2f706963322e7a68696d672e636f6d2f76322d38333165636139313962626665616166333364366637323032386432613430615f722e6a7067)
+
+## 总结
+
+- React 一切都是组件。组件可以不画东西，可以只负责通讯，可以只是参加一个副作用
+- 尽量使用 props，少用 state
+- React 哲学是单向数据流的哲学
 
 
 

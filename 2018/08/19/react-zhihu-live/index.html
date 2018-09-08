@@ -3,27 +3,30 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Live - 帮助你深入理解 React | 陈广宵的网络日志</title>
+  <title>Live - 帮助你深入理解 React | 渡鸦的网络日志</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="本笔记是知乎程墨的《帮助你深入理解React》 Live 的笔记 课程主要是介绍 React 的  深入理解 React 工作原理 JSX 优势和局限 Props 和 State 的用法 React 生命周期 为什么尽量使用无状态组件 高阶组件 组件之间的通信  理解React的工作原理React 本质有三个主要的方面  UI = f(data) 一切都是组件 声明式变成（Declarative">
 <meta name="keywords" content="React">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Live - 帮助你深入理解 React">
 <meta property="og:url" content="http://www.xbroder.com/2018/08/19/react-zhihu-live/index.html">
-<meta property="og:site_name" content="陈广宵的网络日志">
+<meta property="og:site_name" content="渡鸦的网络日志">
 <meta property="og:description" content="本笔记是知乎程墨的《帮助你深入理解React》 Live 的笔记 课程主要是介绍 React 的  深入理解 React 工作原理 JSX 优势和局限 Props 和 State 的用法 React 生命周期 为什么尽量使用无状态组件 高阶组件 组件之间的通信  理解React的工作原理React 本质有三个主要的方面  UI = f(data) 一切都是组件 声明式变成（Declarative">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://pic2.zhimg.com/v2-bebdaf74d8718a2ce99cec7b45d36d2b_b.jpg">
 <meta property="og:image" content="https://pic2.zhimg.com/v2-ff242173690d56f59d3f2f22ed4d8f3a_b.jpg">
 <meta property="og:image" content="https://pic2.zhimg.com/v2-a00f34c33ca9989cc0cecc6ffeb47833_r.jpg">
 <meta property="og:image" content="https://pic2.zhimg.com/v2-5ca6f25ea1ceddeea7bd57ac492193e7_b.jpg">
-<meta property="og:updated_time" content="2018-08-19T15:47:37.000Z">
+<meta property="og:image" content="https://camo.githubusercontent.com/2384d434bcdaac44f4f94c22a7c4c66632be91ad/68747470733a2f2f706963332e7a68696d672e636f6d2f76322d38663737386165323862643533366161636461666339306230643937383038645f722e6a7067">
+<meta property="og:image" content="https://camo.githubusercontent.com/042737a3d3321825287edda26a28c0a58ce0b159/68747470733a2f2f706963342e7a68696d672e636f6d2f76322d33363937626563313430663931656666323463356132656330633031386231655f722e6a7067">
+<meta property="og:image" content="https://camo.githubusercontent.com/b3a733d4f4af7b53a453fe6a2b2585ed627fbccb/68747470733a2f2f706963322e7a68696d672e636f6d2f76322d38333165636139313962626665616166333364366637323032386432613430615f722e6a7067">
+<meta property="og:updated_time" content="2018-08-23T14:54:19.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Live - 帮助你深入理解 React">
 <meta name="twitter:description" content="本笔记是知乎程墨的《帮助你深入理解React》 Live 的笔记 课程主要是介绍 React 的  深入理解 React 工作原理 JSX 优势和局限 Props 和 State 的用法 React 生命周期 为什么尽量使用无状态组件 高阶组件 组件之间的通信  理解React的工作原理React 本质有三个主要的方面  UI = f(data) 一切都是组件 声明式变成（Declarative">
 <meta name="twitter:image" content="https://pic2.zhimg.com/v2-bebdaf74d8718a2ce99cec7b45d36d2b_b.jpg">
   
-    <link rel="alternate" href="/atom.xml" title="陈广宵的网络日志" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="渡鸦的网络日志" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -67,7 +70,7 @@
     </div>
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">陈广宵的网络日志</a>
+        <a href="/" id="logo">渡鸦的网络日志</a>
       </h1>
       
     </div>
@@ -168,14 +171,90 @@
 </li>
 <li>unmount - 组件从有到无</li>
 </ol>
+<h3 id="mount过程："><a href="#mount过程：" class="headerlink" title="mount过程："></a>mount过程：</h3><ol>
+<li>getDefaultProps</li>
+<li>getInitialState</li>
+<li>componentWillMount</li>
+<li>render</li>
+<li>componentDidMount (只在浏览器端执行，如果在服务器端做 react 渲染，这个是不会执行的，因为服务器端最后吐出来的是一个字符串，不存在 DOM tree节点被 mount 的过程)</li>
+</ol>
+<h3 id="update-过程"><a href="#update-过程" class="headerlink" title="update 过程"></a>update 过程</h3><ul>
+<li><p>因state改变引发的update过程：</p>
+<ol>
+<li>shouldComponentUpdate</li>
+<li>componentWillUpdate</li>
+<li>render</li>
+<li>componentDidUpdate</li>
+</ol>
+</li>
+</ul>
+<ul>
+<li><p>因父组件想要render这个组件改变引发的update过程：</p>
+<ol>
+<li>componentWillReceiveProps</li>
+<li>shouldComponentUpdate</li>
+<li>componentWillUpdate</li>
+<li>render</li>
+<li>componentDidUpdate</li>
+</ol>
+</li>
+</ul>
+<p>由于父组件如果想重绘子组件，不管传过来的 props 是否变化，只要重绘，都会执行上面过程。shouldComponentUpdate 此时就很重要，它可以中间截胡，通过返回 false 就可以让后面的三个函数不会被执行，这就节省了很多不必要的渲染时间。</p>
+<p>以 render 为界，不管是 mount 过程还是 update 过程，render 之前所有函数被调用时，这些组件的 state 和 props 都是没有被改变的。在 render 之前的函数里访问 this.props 或者 this.state 都是未改变之前的。只有当 render 函数开始执行的时候，state/props 才是更新之后的值</p>
+<p>在 V16 里，一个组件的渲染过程是可以被打断的，回头再做。在 V16 之后，以 render 函数为界，前面所有的函数可能会被执行很多次。只要开始执行 render 函数，state 和 props 就被改变了，就不能再被打断了，会一直往下调。</p>
+<p>所以 render 函数之前的这些函数一定要写成纯函数，如果写的函数不是纯函数，有副作用，若被执行两次，就会产生意想不到的结果。所以今后写代码，这些函数要尽量写成纯函数。</p>
+<h2 id="为什么尽量构建无状态组件？"><a href="#为什么尽量构建无状态组件？" class="headerlink" title="为什么尽量构建无状态组件？"></a>为什么尽量构建无状态组件？</h2><p>如图五</p>
+<p><img src="https://camo.githubusercontent.com/2384d434bcdaac44f4f94c22a7c4c66632be91ad/68747470733a2f2f706963332e7a68696d672e636f6d2f76322d38663737386165323862643533366161636461666339306230643937383038645f722e6a7067" alt="图五"></p>
+<p>图五为一个假象的组件树结构，蓝色的是无状态组件。维护状态的组件往上推，推到靠近 root 的地方去。尽量让少数的组件去管理状态，让他有 state, 然后有 state 的组件作为父组件存在，它所控制的子组件，都是无状态的。</p>
+<p>需注意 React 世界不是只有两种有状态和无状态组件，这种分类比较粗。有的组件比较特殊，如下每隔多少时间发送一个心跳信息，这是一个副作用的事情。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">HeartBeat</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;   <span class="comment">//意思什么都不画。</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  componentDidMount() &#123;</span><br><span class="line">    <span class="keyword">this</span>.timer = setInterval(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">      fetch(<span class="string">'/api/v1/heartbeat'</span>);</span><br><span class="line">    &#125;, <span class="number">5000</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  componentWillUnmount() &#123;</span><br><span class="line">    clearInterval(<span class="keyword">this</span>.timer);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="创建高阶组件（HoC，Higher-Order-Component"><a href="#创建高阶组件（HoC，Higher-Order-Component" class="headerlink" title="创建高阶组件（HoC，Higher-Order Component)"></a>创建高阶组件（HoC，Higher-Order Component)</h2><p>但凡发现一个逻辑在两个组件里面用，都可以把它抽象成高阶组件。高阶组件其实是一个函数，它接收一个或者多个参数(参数往往是组件)，返回一个全新的组件。</p>
+<p>如以下的代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 包裹方式</span></span><br><span class="line"><span class="keyword">const</span> HoC = <span class="function">(<span class="params">WrappedComponent</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> WrappingComponent = <span class="function">(<span class="params">props</span>) =&gt;</span> (</span><br><span class="line">        &lt;div className=<span class="string">"foo"</span>&gt;</span><br><span class="line">            &lt;WrappedCompoent &#123;...props&#125; /&gt;</span><br><span class="line">        &lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">    return WrappingComponent;</span></span><br><span class="line"><span class="regexp">&#125;;</span></span><br></pre></td></tr></table></figure>
+<p><br></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 继承方式</span></span><br><span class="line"><span class="keyword">const</span> HoC = <span class="function">(<span class="params">WrappedComponent</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">WrappingComponent</span> <span class="keyword">extends</span> <span class="title">WrappendComponent</span> </span>&#123;</span><br><span class="line">        render() (</span><br><span class="line">            <span class="keyword">const</span> &#123;user, ...otherProps&#125; = <span class="keyword">this</span>.props;</span><br><span class="line">            <span class="keyword">this</span>.props = otherProps;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">super</span>.render();</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> WrappingComponent;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>继承的方式：不得不通过 super.render() 等函数调用父级的生命周期函数，这种方式很不好，它将两个组件纠缠在一起，会有共享函数、共享的属性，这种方式比较违背组件的原则。所以尽量不要采用继承的方式实现 HOC。</p>
+<h3 id="HOC误解"><a href="#HOC误解" class="headerlink" title="HOC误解"></a>HOC误解</h3><ul>
+<li>HOC可以有多个参数，不是只能有一个参数</li>
+<li>HOC可以有多个参数表示多个组件，不是只能有一个参数作为组件类</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 用户登录，正常登录组件和提示用户登录的组件 </span></span><br><span class="line"><span class="keyword">const</span> HoC = <span class="function">(<span class="params">WrappedComponent, LoginView</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> WrappingComponent = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> &#123;user&#125; = <span class="keyword">this</span>.props;  </span><br><span class="line">        <span class="keyword">if</span> (user) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">WrappedComponent</span> &#123;<span class="attr">...this.props</span>&#125; /&gt;</span></span></span><br><span class="line"><span class="xml">        &#125; else &#123;</span></span><br><span class="line">            return &lt;LoginView &#123;...this.props&#125; /&gt;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    return WrappingComponent;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="HOC常见应用场景有哪些？"><a href="#HOC常见应用场景有哪些？" class="headerlink" title="HOC常见应用场景有哪些？"></a>HOC常见应用场景有哪些？</h3><p>有一些功能，可以用在不同的组件类，但是不想重复代码，这个时候就需要HOC。</p>
+<h2 id="组件之间通讯"><a href="#组件之间通讯" class="headerlink" title="组件之间通讯"></a>组件之间通讯</h2><h3 id="组件通信的三种方式"><a href="#组件通信的三种方式" class="headerlink" title="组件通信的三种方式"></a>组件通信的三种方式</h3><h4 id="父子通信"><a href="#父子通信" class="headerlink" title="父子通信"></a>父子通信</h4><p>如图六</p>
+<ul>
+<li>父组件通过props传递给子组件。子组件想传递给父组件，调用父组件的方法。</li>
+<li>调用ref(不推荐)。子组件有个foo方法，父组件调用ref.foo来执行，这种方式不太好。</li>
+<li>可以用callback或者promise。父组件将promise作为prop传递给子组件，子组件通过resolve传递信息给父组件。</li>
+</ul>
+<p><img src="https://camo.githubusercontent.com/042737a3d3321825287edda26a28c0a58ce0b159/68747470733a2f2f706963342e7a68696d672e636f6d2f76322d33363937626563313430663931656666323463356132656330633031386231655f722e6a7067" alt="图六"></p>
+<h3 id="兄弟通信（两个组件有共同的-Parent）"><a href="#兄弟通信（两个组件有共同的-Parent）" class="headerlink" title="兄弟通信（两个组件有共同的 Parent）"></a>兄弟通信（两个组件有共同的 Parent）</h3><p>如图七</p>
+<ul>
+<li>通过父组件做一个交换。比如说父组件造两个函数，分别传递给两个子组件，然后通过父组件作为一个桥接；</li>
+</ul>
+<p><img src="" alt="图七"></p>
+<h3 id="非父子、兄弟组件的任意两个组件通信"><a href="#非父子、兄弟组件的任意两个组件通信" class="headerlink" title="非父子、兄弟组件的任意两个组件通信"></a>非父子、兄弟组件的任意两个组件通信</h3><p>如图八</p>
+<ul>
+<li>全局变量, 然后通过emmiter来通知；</li>
+<li>context, 其实和全局变量没太大差别。</li>
+<li>这个实现需要借助第三方，redux等等。</li>
+</ul>
+<p><img src="https://camo.githubusercontent.com/b3a733d4f4af7b53a453fe6a2b2585ed627fbccb/68747470733a2f2f706963322e7a68696d672e636f6d2f76322d38333165636139313962626665616166333364366637323032386432613430615f722e6a7067" alt="图八"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>React 一切都是组件。组件可以不画东西，可以只负责通讯，可以只是参加一个副作用</li>
+<li>尽量使用 props，少用 state</li>
+<li>React 哲学是单向数据流的哲学</li>
+</ul>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
-<li><a href="https://babeljs.io/repl/#?babili=false&amp;browsers=&amp;build=&amp;builtIns=false&amp;spec=false&amp;loose=false&amp;code_lz=DwEwlgbgfAUABAuwBGBXALug9gOzugTwAcBTAXgCIBnVZAWzHQtkTgEgBlAQwhJjeAB6NJlywh4aEA&amp;debug=false&amp;forceAllTransforms=false&amp;shippedProposals=false&amp;circleciRepo=&amp;evaluate=false&amp;fileSize=false&amp;sourceType=module&amp;lineWrap=false&amp;presets=react&amp;prettier=false&amp;targets=&amp;version=6.26.0&amp;envVersion=" target="_blank" rel="noopener">JSX 在线转义</a></li>
+<li><p><a href="https://babeljs.io/repl/#?babili=false&amp;browsers=&amp;build=&amp;builtIns=false&amp;spec=false&amp;loose=false&amp;code_lz=DwEwlgbgfAUABAuwBGBXALug9gOzugTwAcBTAXgCIBnVZAWzHQtkTgEgBlAQwhJjeAB6NJlywh4aEA&amp;debug=false&amp;forceAllTransforms=false&amp;shippedProposals=false&amp;circleciRepo=&amp;evaluate=false&amp;fileSize=false&amp;sourceType=module&amp;lineWrap=false&amp;presets=react&amp;prettier=false&amp;targets=&amp;version=6.26.0&amp;envVersion=" target="_blank" rel="noopener">JSX 在线转义</a></p>
+</li>
+<li><p><a href="https://github.com/Bian2017/Blog/issues/16" target="_blank" rel="noopener">知乎Live：帮助你深入理解 React</a></p>
+</li>
 </ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/08/19/react-zhihu-live/" data-id="cjl0dnam4000y6ds6p4s4pxvv" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/08/19/react-zhihu-live/" data-id="cjltlwpsi001gq3s6a96acxs8" class="article-share-link">分享</a>
       
       
       
@@ -229,6 +308,15 @@
     
 <nav id="article-nav">
   
+    <a href="/2018/09/08/css/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          CSS 入门与精深
+        
+      </div>
+    </a>
+  
   
     <a href="/2018/08/14/三步式学习法/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">下一篇</strong>
@@ -268,7 +356,7 @@
       
         <strong class="toc-title">文章目录</strong>
         <div class="toc-widget-list">
-              <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#理解React的工作原理"><span class="toc-number">1.</span> <span class="toc-text">理解React的工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#UI-f-data"><span class="toc-number">1.1.</span> <span class="toc-text">UI = f(data)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#a-virtual-dom"><span class="toc-number">1.2.</span> <span class="toc-text">a) virtual-dom</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#React中一切皆为组件-Component"><span class="toc-number">1.3.</span> <span class="toc-text">React中一切皆为组件(Component)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#声明式编程-（Declarative-Programming"><span class="toc-number">1.4.</span> <span class="toc-text">声明式编程 （Declarative Programming)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JSX-的优势与局限"><span class="toc-number">2.</span> <span class="toc-text">JSX 的优势与局限</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#JSX-在线转义"><span class="toc-number">2.1.</span> <span class="toc-text">JSX 在线转义</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用props还是state"><span class="toc-number">3.</span> <span class="toc-text">使用props还是state</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#详解React组件的生命周期"><span class="toc-number">4.</span> <span class="toc-text">详解React组件的生命周期</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">5.</span> <span class="toc-text">参考链接</span></a></li></ol>
+              <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#理解React的工作原理"><span class="toc-number">1.</span> <span class="toc-text">理解React的工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#UI-f-data"><span class="toc-number">1.1.</span> <span class="toc-text">UI = f(data)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#a-virtual-dom"><span class="toc-number">1.2.</span> <span class="toc-text">a) virtual-dom</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#React中一切皆为组件-Component"><span class="toc-number">1.3.</span> <span class="toc-text">React中一切皆为组件(Component)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#声明式编程-（Declarative-Programming"><span class="toc-number">1.4.</span> <span class="toc-text">声明式编程 （Declarative Programming)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JSX-的优势与局限"><span class="toc-number">2.</span> <span class="toc-text">JSX 的优势与局限</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#JSX-在线转义"><span class="toc-number">2.1.</span> <span class="toc-text">JSX 在线转义</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用props还是state"><span class="toc-number">3.</span> <span class="toc-text">使用props还是state</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#详解React组件的生命周期"><span class="toc-number">4.</span> <span class="toc-text">详解React组件的生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#mount过程："><span class="toc-number">4.1.</span> <span class="toc-text">mount过程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#update-过程"><span class="toc-number">4.2.</span> <span class="toc-text">update 过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么尽量构建无状态组件？"><span class="toc-number">5.</span> <span class="toc-text">为什么尽量构建无状态组件？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建高阶组件（HoC，Higher-Order-Component"><span class="toc-number">6.</span> <span class="toc-text">创建高阶组件（HoC，Higher-Order Component)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HOC误解"><span class="toc-number">6.1.</span> <span class="toc-text">HOC误解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HOC常见应用场景有哪些？"><span class="toc-number">6.2.</span> <span class="toc-text">HOC常见应用场景有哪些？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#组件之间通讯"><span class="toc-number">7.</span> <span class="toc-text">组件之间通讯</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#组件通信的三种方式"><span class="toc-number">7.1.</span> <span class="toc-text">组件通信的三种方式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#父子通信"><span class="toc-number">7.1.1.</span> <span class="toc-text">父子通信</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#兄弟通信（两个组件有共同的-Parent）"><span class="toc-number">7.2.</span> <span class="toc-text">兄弟通信（两个组件有共同的 Parent）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#非父子、兄弟组件的任意两个组件通信"><span class="toc-number">7.3.</span> <span class="toc-text">非父子、兄弟组件的任意两个组件通信</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考链接"><span class="toc-number">9.</span> <span class="toc-text">参考链接</span></a></li></ol>
           </div>
       </div>
     </div>

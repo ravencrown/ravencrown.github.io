@@ -77,20 +77,22 @@
   
 
       </header>
-      <div class="article-meta">
-        <div class="article-date">作者：陈广宵</div>
-        <a href="/2016/12/18/Nginx-PHP的编译安装/" class="article-date">
+        <div class="article-meta">
+          
+            <div class="article-date">作者：陈广宵</div>
+            <a href="/2016/12/18/Nginx-PHP的编译安装/" class="article-date">
   <time datetime="2016-12-18T14:45:12.000Z" itemprop="datePublished">日期：2016-12-18</time>
 </a>
-        
+          
+          
   <div class="article-category1">
     
     <a class="article-category-link" href="/categories/Nginx/">分类：Nginx</a>
   </div>
 
-      </div>
+        </div>
     
-    <div class="article-entry" itemprop="articleBody">
+    <div class="article-entry"  itemprop="articleBody">
       
         <!-- Table of Contents -->
         
@@ -104,6 +106,7 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>1:碰到php文件,</span><br><span class="line"><span class="meta">#</span>2: 把根目录定位到 html,</span><br><span class="line"><span class="meta">#</span>3: 把请求上下文转交给9000端口PHP进程,</span><br><span class="line"><span class="meta">#</span>4: 并告诉PHP进程,当前的脚本是$document_root$fastcgi_scriptname</span><br><span class="line"><span class="meta">#</span>(注:PHP会去找这个脚本并处理,所以脚本的位置要指对)</span><br><span class="line">location ~ \.php$ &#123;</span><br><span class="line">    root html;</span><br><span class="line">    fastcgi_pass   127.0.0.1:9000;</span><br><span class="line">    fastcgi_index  index.php;</span><br><span class="line">    fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;</span><br><span class="line">    include    fastcgi_params;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
+      
     </div>
     <footer class="article-footer">
       <a data-url="http://www.xbroder.com/2016/12/18/Nginx-PHP的编译安装/" data-id="cjlz877su0004hfs686ulo3nd" class="article-share-link">分享</a>
@@ -112,8 +115,10 @@
         <a href="http://www.xbroder.com/2016/12/18/Nginx-PHP的编译安装/#disqus_thread" class="article-comment-link">留言</a>
       
       
+        
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
 
+      
     </footer>
   </div>
   
@@ -181,8 +186,8 @@
 
   
 </article>
- 
-     
+
+  
   <div class="comments" id="comments">
     
      
@@ -205,10 +210,12 @@
     
   </div>
  
-  
+
+
+
 
 </section>
-           
+         
     <aside id="sidebar">
   
     

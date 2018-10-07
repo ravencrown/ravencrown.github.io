@@ -18,8 +18,6 @@
 <meta name="twitter:title" content="Nginx+PHP的编译安装">
 <meta name="twitter:description" content="安装依赖包12345yum install gd gd-develyum install ttfyum install freetypeyum install mysql mysql-serveryum install libvpx libjpeg libpng zlib libXpm libXpm-devel FreeType t1lib  libt1-devel -y nginx+php的配置">
   
-    <link rel="alternate" href="/atom.xml" title="渡鸦的网络日志" type="application/atom+xml">
-  
   
     <link rel="icon" href="/favicon.png">
   
@@ -41,8 +39,6 @@
     <div id="header-inner" class="inner">
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
         <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
       </nav>
       <div id="search-form-wrap">
@@ -54,8 +50,6 @@
           <a class="main-nav-link" href="/">首页</a>
         
           <a class="main-nav-link" href="/archives">归档</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
         
       </nav>
       
@@ -70,16 +64,7 @@
 </header>
       <div class="outer">
         <section id="main"><article id="post-Nginx-PHP的编译安装" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/12/18/Nginx-PHP的编译安装/" class="article-date">
-  <time datetime="2016-12-18T14:45:12.000Z" itemprop="datePublished">2016-12-18</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
-  </div>
-
-  </div>
+  
   <div class="article-inner">
     
     
@@ -92,6 +77,18 @@
   
 
       </header>
+      <div class="article-meta">
+        <div class="article-date">作者：陈广宵</div>
+        <a href="/2016/12/18/Nginx-PHP的编译安装/" class="article-date">
+  <time datetime="2016-12-18T14:45:12.000Z" itemprop="datePublished">日期：2016-12-18</time>
+</a>
+        
+  <div class="article-category1">
+    
+    <a class="article-category-link" href="/categories/Nginx/">分类：Nginx</a>
+  </div>
+
+      </div>
     
     <div class="article-entry" itemprop="articleBody">
       
@@ -111,6 +108,8 @@
     <footer class="article-footer">
       <a data-url="http://www.xbroder.com/2016/12/18/Nginx-PHP的编译安装/" data-id="cjlz877su0004hfs686ulo3nd" class="article-share-link">分享</a>
       
+      
+        <a href="http://www.xbroder.com/2016/12/18/Nginx-PHP的编译安装/#disqus_thread" class="article-comment-link">留言</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
@@ -187,12 +186,23 @@
   <div class="comments" id="comments">
     
      
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+      </section>
+      
        
       <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
     
        
       
       
+           <div id="gitment_comments"></div>
+    
   </div>
  
   
@@ -205,17 +215,6 @@
 
   
     
-    <div class="widget-wrap">
-    
-      <div class="widget" id="toc-widget-fixed">
-      
-        <strong class="toc-title">文章目录</strong>
-        <div class="toc-widget-list">
-              <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装依赖包"><span class="toc-number">1.</span> <span class="toc-text">安装依赖包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP的编译"><span class="toc-number">2.</span> <span class="toc-text">PHP的编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP命令"><span class="toc-number">3.</span> <span class="toc-text">PHP命令</span></a></li></ol>
-          </div>
-      </div>
-    </div>
-
   
     
 
@@ -228,10 +227,6 @@
 
   
     
-  
-    <!--微信公众号二维码-->
-
-
   
 </aside>
 
@@ -256,8 +251,6 @@
   
     <a href="/archives" class="mobile-nav-link">归档</a>
   
-    <a href="/about" class="mobile-nav-link">关于</a>
-  
 </nav>
     <img class="back-to-top-btn" src="/images/fly-to-top.png"/>
 <script>
@@ -272,19 +265,19 @@ window.onload = function() {
 </script>
       
 
+<script>
+  var disqus_shortname = 'true';
   
-    <script>
-      var cloudTieConfig = {
-        url: document.location.href, 
-        sourceId: "",
-        productKey: "e2fb4051c49842688ce669e634bc983f",
-        target: "cloud-tie-wrapper"
-      };
-    </script>
-    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
-    
-
+  var disqus_url = 'http://www.xbroder.com/2016/12/18/Nginx-PHP的编译安装/';
   
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
 
 
 
@@ -294,6 +287,22 @@ window.onload = function() {
 
 <!-- author:forvoid begin -->
 <!-- author:forvoid begin -->
+
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script> 
+  <script>
+  var gitment = new Gitment({
+    // id: '页面 ID', // 可选。默认为 location.href
+    owner: 'ravencrown',
+    repo: 'ravencrown.github.io',
+    oauth: {
+    client_id: '20c3780df7c8f14ab7ca',
+    client_secret: '7ab19a1a82c9f2b8bbef0dd9071c86dc8fcaaa2d',
+    }
+  })
+  gitment.render(document.getElementById("gitment_comments"))
+</script>
+
 
 <!-- author:forvoid end -->
 

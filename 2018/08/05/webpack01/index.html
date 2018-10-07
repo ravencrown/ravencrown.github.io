@@ -24,8 +24,6 @@
 <meta name="twitter:description" content="webpack 是一个现代 JavaScript 应用程序的静态模块打包器(module bundler)在打包过程中，会从入口开始递归地构建一个依赖关系图，其中包含应用程序需要用到的每个模块，然后将这些模块打包成一个或多个bundle webpack 处理前端的资源文件：JS、CSS、图片，将源文件转成浏览器能识别的 ES6 – (loader/plugin) –&amp;gt; ES5SASS/LES">
 <meta name="twitter:image" content="https://user-images.githubusercontent.com/9835391/34867635-d818c624-f7bb-11e7-9e16-546f9f84efd0.png">
   
-    <link rel="alternate" href="/atom.xml" title="渡鸦的网络日志" type="application/atom+xml">
-  
   
     <link rel="icon" href="/favicon.png">
   
@@ -47,8 +45,6 @@
     <div id="header-inner" class="inner">
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
         <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
       </nav>
       <div id="search-form-wrap">
@@ -60,8 +56,6 @@
           <a class="main-nav-link" href="/">首页</a>
         
           <a class="main-nav-link" href="/archives">归档</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
         
       </nav>
       
@@ -76,16 +70,7 @@
 </header>
       <div class="outer">
         <section id="main"><article id="post-webpack01" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/08/05/webpack01/" class="article-date">
-  <time datetime="2018-08-05T08:30:36.000Z" itemprop="datePublished">2018-08-05</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/JavaScript/">JavaScript</a>
-  </div>
-
-  </div>
+  
   <div class="article-inner">
     
     
@@ -98,6 +83,18 @@
   
 
       </header>
+      <div class="article-meta">
+        <div class="article-date">作者：陈广宵</div>
+        <a href="/2018/08/05/webpack01/" class="article-date">
+  <time datetime="2018-08-05T08:30:36.000Z" itemprop="datePublished">日期：2018-08-05</time>
+</a>
+        
+  <div class="article-category1">
+    
+    <a class="article-category-link" href="/categories/JavaScript/">分类：JavaScript</a>
+  </div>
+
+      </div>
     
     <div class="article-entry" itemprop="articleBody">
       
@@ -229,6 +226,8 @@
       <a data-url="http://www.xbroder.com/2018/08/05/webpack01/" data-id="cjlz877u4001rhfs66r0smnsx" class="article-share-link">分享</a>
       
       
+        <a href="http://www.xbroder.com/2018/08/05/webpack01/#disqus_thread" class="article-comment-link">留言</a>
+      
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Webpack/">Webpack</a></li></ul>
 
@@ -304,12 +303,23 @@
   <div class="comments" id="comments">
     
      
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+      </section>
+      
        
       <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
     
        
       
       
+           <div id="gitment_comments"></div>
+    
   </div>
  
   
@@ -322,17 +332,6 @@
 
   
     
-    <div class="widget-wrap">
-    
-      <div class="widget" id="toc-widget-fixed">
-      
-        <strong class="toc-title">文章目录</strong>
-        <div class="toc-widget-list">
-              <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#四个核心概念"><span class="toc-number">1.</span> <span class="toc-text">四个核心概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#入口-Entry"><span class="toc-number">1.1.</span> <span class="toc-text">入口 Entry</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出-output"><span class="toc-number">1.2.</span> <span class="toc-text">输出 output</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#核心概念：Loader"><span class="toc-number">2.</span> <span class="toc-text">核心概念：Loader</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#loader的特性"><span class="toc-number">2.1.</span> <span class="toc-text">loader的特性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#loader-的使用"><span class="toc-number">2.2.</span> <span class="toc-text">loader 的使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-babel-loader-转换-ES6-代码"><span class="toc-number">3.</span> <span class="toc-text">使用 babel-loader 转换 ES6 代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装"><span class="toc-number">3.1.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用方式"><span class="toc-number">3.2.</span> <span class="toc-text">使用方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件-babelrc"><span class="toc-number">3.3.</span> <span class="toc-text">配置文件 .babelrc</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#presets-是干什么用的？"><span class="toc-number">3.4.</span> <span class="toc-text">presets 是干什么用的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的-Loader"><span class="toc-number">3.5.</span> <span class="toc-text">常用的 Loader</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#module-loaders"><span class="toc-number">3.6.</span> <span class="toc-text">module.loaders</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#webpack-处理项目中的-CSS-文件"><span class="toc-number">4.</span> <span class="toc-text">webpack 处理项目中的 CSS 文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#webpack-处理项目中的-LESS-SASS-文件"><span class="toc-number">5.</span> <span class="toc-text">webpack 处理项目中的 LESS/SASS 文件</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#webpack-处理项目中的模板文件"><span class="toc-number"></span> <span class="toc-text">webpack 处理项目中的模板文件</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#核心概念：Plugins"><span class="toc-number">1.</span> <span class="toc-text">核心概念：Plugins</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考资料"><span class="toc-number">2.</span> <span class="toc-text">参考资料</span></a></li></ol>
-          </div>
-      </div>
-    </div>
-
   
     
 
@@ -345,10 +344,6 @@
 
   
     
-  
-    <!--微信公众号二维码-->
-
-
   
 </aside>
 
@@ -373,8 +368,6 @@
   
     <a href="/archives" class="mobile-nav-link">归档</a>
   
-    <a href="/about" class="mobile-nav-link">关于</a>
-  
 </nav>
     <img class="back-to-top-btn" src="/images/fly-to-top.png"/>
 <script>
@@ -389,19 +382,19 @@ window.onload = function() {
 </script>
       
 
+<script>
+  var disqus_shortname = 'true';
   
-    <script>
-      var cloudTieConfig = {
-        url: document.location.href, 
-        sourceId: "",
-        productKey: "e2fb4051c49842688ce669e634bc983f",
-        target: "cloud-tie-wrapper"
-      };
-    </script>
-    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
-    
-
+  var disqus_url = 'http://www.xbroder.com/2018/08/05/webpack01/';
   
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
 
 
 
@@ -411,6 +404,22 @@ window.onload = function() {
 
 <!-- author:forvoid begin -->
 <!-- author:forvoid begin -->
+
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script> 
+  <script>
+  var gitment = new Gitment({
+    // id: '页面 ID', // 可选。默认为 location.href
+    owner: 'ravencrown',
+    repo: 'ravencrown.github.io',
+    oauth: {
+    client_id: '20c3780df7c8f14ab7ca',
+    client_secret: '7ab19a1a82c9f2b8bbef0dd9071c86dc8fcaaa2d',
+    }
+  })
+  gitment.render(document.getElementById("gitment_comments"))
+</script>
+
 
 <!-- author:forvoid end -->
 

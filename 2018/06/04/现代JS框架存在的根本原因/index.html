@@ -26,8 +26,6 @@
 <meta name="twitter:description" content="【本文转载自 奇舞周刊 微信公众号】 我曾见过很多很多人盲目地使用（前端）框架，如 React，Angular 或 Vue等等。这些框架提供了许多有意思的东西，然而通常人们（自以为）使用框架是因为：  它们支持组件化； 它们有强大的社区支持； 它们有很多（基于框架的）第三方库来解决问题； 它们有很多（很好的）第三方组件; 它们有浏览器扩展工具来帮助调试； 它们适合做单页应用。   但这些都不是使用">
 <meta name="twitter:image" content="https://mmbiz.qpic.cn/mmbiz_gif/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tiapMh3yNSjT3YSdLWh9FFhCibOEdzevK3v4gRsQ3pwmgKibMdX9j1pofpg/640?wx_fmt=gif&wxfrom=5&wx_lazy=1">
   
-    <link rel="alternate" href="/atom.xml" title="渡鸦的网络日志" type="application/atom+xml">
-  
   
     <link rel="icon" href="/favicon.png">
   
@@ -49,8 +47,6 @@
     <div id="header-inner" class="inner">
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
         <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
       </nav>
       <div id="search-form-wrap">
@@ -62,8 +58,6 @@
           <a class="main-nav-link" href="/">首页</a>
         
           <a class="main-nav-link" href="/archives">归档</a>
-        
-          <a class="main-nav-link" href="/about">关于</a>
         
       </nav>
       
@@ -78,16 +72,7 @@
 </header>
       <div class="outer">
         <section id="main"><article id="post-现代JS框架存在的根本原因" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/06/04/现代JS框架存在的根本原因/" class="article-date">
-  <time datetime="2018-06-04T15:05:11.000Z" itemprop="datePublished">2018-06-04</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/JavaScript/">JavaScript</a>
-  </div>
-
-  </div>
+  
   <div class="article-inner">
     
     
@@ -100,6 +85,18 @@
   
 
       </header>
+      <div class="article-meta">
+        <div class="article-date">作者：陈广宵</div>
+        <a href="/2018/06/04/现代JS框架存在的根本原因/" class="article-date">
+  <time datetime="2018-06-04T15:05:11.000Z" itemprop="datePublished">日期：2018-06-04</time>
+</a>
+        
+  <div class="article-category1">
+    
+    <a class="article-category-link" href="/categories/JavaScript/">分类：JavaScript</a>
+  </div>
+
+      </div>
     
     <div class="article-entry" itemprop="articleBody">
       
@@ -165,6 +162,8 @@
     <footer class="article-footer">
       <a data-url="http://www.xbroder.com/2018/06/04/现代JS框架存在的根本原因/" data-id="cjlz877ul002rhfs6fhd6idqz" class="article-share-link">分享</a>
       
+      
+        <a href="http://www.xbroder.com/2018/06/04/现代JS框架存在的根本原因/#disqus_thread" class="article-comment-link">留言</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JavaScript/">JavaScript</a></li></ul>
@@ -241,12 +240,23 @@
   <div class="comments" id="comments">
     
      
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+      </section>
+      
        
       <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
     
        
       
       
+           <div id="gitment_comments"></div>
+    
   </div>
  
   
@@ -259,17 +269,6 @@
 
   
     
-    <div class="widget-wrap">
-    
-      <div class="widget" id="toc-widget-fixed">
-      
-        <strong class="toc-title">文章目录</strong>
-        <div class="toc-widget-list">
-              <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#是的，就是这原因，让我们来看看为什么"><span class="toc-number">1.</span> <span class="toc-text">是的，就是这原因，让我们来看看为什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#用原生（JS）实现相对复杂的-UI"><span class="toc-number">2.</span> <span class="toc-text">用原生（JS）实现相对复杂的 UI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#响应式-UI-拯救一切"><span class="toc-number">3.</span> <span class="toc-text">响应式 UI 拯救一切</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#框架是如何工作的呢"><span class="toc-number">4.</span> <span class="toc-text">框架是如何工作的呢?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#那-Web-components-呢"><span class="toc-number">5.</span> <span class="toc-text">那 Web components 呢?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自己动手，丰衣足食"><span class="toc-number">6.</span> <span class="toc-text">自己动手，丰衣足食</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">7.</span> <span class="toc-text">结论</span></a></li></ol>
-          </div>
-      </div>
-    </div>
-
   
     
 
@@ -282,10 +281,6 @@
 
   
     
-  
-    <!--微信公众号二维码-->
-
-
   
 </aside>
 
@@ -310,8 +305,6 @@
   
     <a href="/archives" class="mobile-nav-link">归档</a>
   
-    <a href="/about" class="mobile-nav-link">关于</a>
-  
 </nav>
     <img class="back-to-top-btn" src="/images/fly-to-top.png"/>
 <script>
@@ -326,19 +319,19 @@ window.onload = function() {
 </script>
       
 
+<script>
+  var disqus_shortname = 'true';
   
-    <script>
-      var cloudTieConfig = {
-        url: document.location.href, 
-        sourceId: "",
-        productKey: "e2fb4051c49842688ce669e634bc983f",
-        target: "cloud-tie-wrapper"
-      };
-    </script>
-    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
-    
-
+  var disqus_url = 'http://www.xbroder.com/2018/06/04/现代JS框架存在的根本原因/';
   
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
 
 
 
@@ -348,6 +341,22 @@ window.onload = function() {
 
 <!-- author:forvoid begin -->
 <!-- author:forvoid begin -->
+
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script> 
+  <script>
+  var gitment = new Gitment({
+    // id: '页面 ID', // 可选。默认为 location.href
+    owner: 'ravencrown',
+    repo: 'ravencrown.github.io',
+    oauth: {
+    client_id: '20c3780df7c8f14ab7ca',
+    client_secret: '7ab19a1a82c9f2b8bbef0dd9071c86dc8fcaaa2d',
+    }
+  })
+  gitment.render(document.getElementById("gitment_comments"))
+</script>
+
 
 <!-- author:forvoid end -->
 

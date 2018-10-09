@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-Nginx-PHP的编译安装" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Nginx的Expires缓存设置" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/12/18/Nginx-PHP的编译安装/">Nginx+PHP的编译安装</a>
+      <a class="article-title" href="/2016/12/26/Nginx的Expires缓存设置/">Expires缓存设置</a>
     </h1>
   
 
@@ -88,27 +88,35 @@
       
         <!-- Table of Contents -->
         
-        <h2 id="安装依赖包"><a href="#安装依赖包" class="headerlink" title="安装依赖包"></a>安装依赖包</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum install gd gd-devel</span><br><span class="line">yum install ttf</span><br><span class="line">yum install freetype</span><br><span class="line">yum install mysql mysql-server</span><br><span class="line">yum install libvpx libjpeg libpng zlib libXpm libXpm-devel FreeType t1lib  libt1-devel -y</span><br></pre></td></tr></table></figure>
-<p>nginx+php的配置比较简单,核心就一句话—-<br>把请求的信息转发给9000端口的PHP进程,<br>让PHP进程处理 指定目录下的PHP文件.</p>
-<h2 id="PHP的编译"><a href="#PHP的编译" class="headerlink" title="PHP的编译"></a>PHP的编译</h2><p>apache一般是把php当做自己的一个模块来启动的.<br>而nginx则是把http请求变量(如get,user_agent等)转发给 php进程,即php独立进程,与nginx进行通信. 称为 fastcgi运行方式.<br>因此,为apache所编译的php,是不能用于nginx的.  </p>
-<p>注意: 我们编译的PHP 要有如下功能:<br>连接mysql, gd, ttf, 以fpm(fascgi)方式运行  </p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">./configure  --prefix=/usr/local/fastphp \</span><br><span class="line">--with-mysql=mysqlnd \</span><br><span class="line">--enable-mysqlnd \</span><br><span class="line">--with-gd \</span><br><span class="line">--enable-gd-native-ttf \</span><br><span class="line">--enable-gd-jis-conv</span><br><span class="line">--enable-fpm</span><br><span class="line"></span><br><span class="line">cd /usr/local/fastphp</span><br><span class="line">cp /usr/local/src/php-5.5.16/php.ini-development ./lib/php.ini #制作php.ini文件</span><br><span class="line">cp etc/php-fpm.conf.default etc/php-fpm.conf                   #制作fpm文件</span><br><span class="line">./sbin/php-fpm</span><br></pre></td></tr></table></figure>
-<h2 id="PHP命令"><a href="#PHP命令" class="headerlink" title="PHP命令"></a>PHP命令</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>php-fpm 启动：</span><br><span class="line">/usr/local/php/sbin/php-fpm</span><br><span class="line"><span class="meta">#</span>php-fpm 关闭：</span><br><span class="line">kill -INT `cat /var/run/php-fpm/php-fpm.pid`</span><br><span class="line"><span class="meta">#</span>php-fpm 重启：</span><br><span class="line">kill -USR2 `cat /var/run/php-fpm/php-fpm.pid`</span><br><span class="line"><span class="meta">#</span>批量删除进程</span><br><span class="line">kill -9  ps aux | grep php-fpm | awk '&#123;print $2&#125;'</span><br></pre></td></tr></table></figure>
-<p>如下例子</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>1:碰到php文件,</span><br><span class="line"><span class="meta">#</span>2: 把根目录定位到 html,</span><br><span class="line"><span class="meta">#</span>3: 把请求上下文转交给9000端口PHP进程,</span><br><span class="line"><span class="meta">#</span>4: 并告诉PHP进程,当前的脚本是$document_root$fastcgi_scriptname</span><br><span class="line"><span class="meta">#</span>(注:PHP会去找这个脚本并处理,所以脚本的位置要指对)</span><br><span class="line">location ~ \.php$ &#123;</span><br><span class="line">    root html;</span><br><span class="line">    fastcgi_pass   127.0.0.1:9000;</span><br><span class="line">    fastcgi_index  index.php;</span><br><span class="line">    fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;</span><br><span class="line">    include    fastcgi_params;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <h2 id="Expires-设置"><a href="#Expires-设置" class="headerlink" title="Expires 设置"></a>Expires 设置</h2><p>对于网站的图片,尤其是新闻站, 图片一旦发布, 改动的可能是非常小的.我们希望 能否在用户访问一次后, 图片缓存在用户的浏览器端,且时间比较长的缓存.<br>可以, 用到 nginx的expires设置 .<br>nginx中设置过期时间,非常简单,<br>在location或if段里,来写.</p>
+<p>格式</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">expire -1;</span><br><span class="line">expire 0;</span><br><span class="line">expire 1h;</span><br><span class="line">expire max;</span><br><span class="line">expire off;</span><br></pre></td></tr></table></figure>
+<p>这个指令表示在HTTP响应头中是否增加或修改Expires 和 Cache-Control ，仅当响应状态是200, 201, 204, 206, 301, 302, 303, 304, 或者 307的时候有效。  </p>
+<p>当expire 为负时，会在响应头增加Cache-Control: no-cache；  </p>
+<p>当为正或者0时，就表示Cache-Control: max-age=指定的时间(秒)；  </p>
+<p>当为max时，会把Expires设置为 “Thu, 31 Dec 2037 23:55:55 GMT”， Cache-Control 设置到 10 年；  </p>
+<p>当为off时，表示不增加或修改Expires 和 Cache-Control 。  </p>
+<p>例如</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> curl -I http://su.bdimg.com/static/superplus/css/super_min_2b5190eb.css</span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: JSP3/2.0.4</span><br><span class="line">Date: Fri, 31 Oct 2014 07:28:20 GMT</span><br><span class="line">Content-Type: text/css</span><br><span class="line">Content-Length: 25076</span><br><span class="line">Connection: keep-alive</span><br><span class="line">ETag: “1121644245”</span><br><span class="line">Last-Modified: Wed, 24 Sep 2014 15:50:22 GMT</span><br><span class="line">Expires: Mon, 23 Mar 2015 16:29:25 GMT</span><br><span class="line">Age: 3164335</span><br><span class="line">Cache-Control: max-age=15552000</span><br><span class="line">Accept-Ranges: bytes</span><br><span class="line">Vary: Accept-Encoding</span><br></pre></td></tr></table></figure>
+<p>Date 的意思是服务器发送消息的时间； Age 的意思有点复杂，它的存在暗示你访问的服务器不是源服务器，而是一台缓存服务器，Age 的大小表示这个资源已经”存活了”多长时间，所以这个值不会大于 源服务器设置的最大缓存时间。  </p>
+<p>这里Expires 表示过期时间，Cache-Control 表示最大的存活时间，在服务器端的Nginx 我们可以用 expires 指令来定义这两项。  </p>
+<p>另: 304 也是一种很好的缓存手段<br>原理是: 服务器响应文件内容是,同时响应etag标签(内容的签名,内容一变,他也变), 和 last_modified_since 2个标签值<br>浏览器下次去请求时,头信息发送这两个标签, 服务器检测文件有没有发生变化,如无,直接头信息返回 etag,last_modified_since<br>浏览器知道内容无改变,于是直接调用本地缓存.<br>这个过程,也请求了服务器,但是传着的内容极少.<br>对于变化周期较短的,如静态html,js,css,比较适于用这个方式  </p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>Nginx官网，<a href="http://nginx.org/en/docs/http/ngx_http_headers_module.html#expires" target="_blank" rel="noopener">Location Expires</a></li>
+</ul>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2016/12/18/Nginx-PHP的编译安装/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2016/12/26/Nginx的Expires缓存设置/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/18/Nginx-PHP的编译安装/" data-id="cjn1w0tmw0004hzghjgsltta1" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/26/Nginx的Expires缓存设置/" data-id="cjn1wak87000by7gh62mh0dxb" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2016/12/18/Nginx-PHP的编译安装/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2016/12/26/Nginx的Expires缓存设置/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -144,10 +152,6 @@
       <ul>
         
           <li>
-            <a href="/2018/10/09/vue-flow/">vue-flow</a>
-          </li>
-        
-          <li>
             <a href="/2018/09/12/css3思维导图/">CSS3思维导图</a>
           </li>
         
@@ -161,6 +165,10 @@
         
           <li>
             <a href="/2018/08/14/三步式学习法/">三步式学习法</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/05/koa01/">Koa 入门（一）</a>
           </li>
         
       </ul>

@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-vue-flow" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-css3思维导图" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/10/09/vue-flow/">vue-flow</a>
+      <a class="article-title" href="/2018/09/12/css3思维导图/">CSS3思维导图</a>
     </h1>
   
 
@@ -79,7 +79,7 @@
           
   <div class="article-category1">
     
-    <a class="article-category-link" href="/categories/JavaScript/">分类：JavaScript</a>
+    <a class="article-category-link" href="/categories/CSS/">分类：CSS</a>
   </div>
 
         </div>
@@ -88,30 +88,22 @@
       
         <!-- Table of Contents -->
         
-        <p>Flow 是 facebook 出品的 JavaScript 静态类型检查工具，Vue 的源码采用了 Flow 做静态类型检查，所以要熟悉 Vue 的源码分析，首先要了解 Flow。</p>
-<p>Flow 有两种类型检查</p>
-<blockquote>
-<ul>
-<li>类型推断：通过变量的使用上下文来推断出变量类型，然后根据这些推断来检查类型。</li>
-<li>事先注释好我们期待的类型，Flow 会基于这些注释来判断。</li>
-</ul>
-</blockquote>
-<p>看以下例子</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*@flow*/</span><span class="string">``</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// function split(str) &#123;</span></span><br><span class="line"><span class="comment">//     return str.split(' ')</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br><span class="line">  </span><br><span class="line"><span class="comment">// split(11) // Cannot call str.split because property split is missing in Number [1]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/** -------- */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*@flow*/</span></span><br><span class="line"><span class="comment">// function add(x, y)&#123;</span></span><br><span class="line"><span class="comment">//     return x + y</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// add('Hello', 11) // no error</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/*@flow*/</span></span><br><span class="line"><span class="comment">// function add(x: number, y: number): number &#123;</span></span><br><span class="line"><span class="comment">//     return x + y</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// add('Hello', 11) // Cannot call add with 'Hello' bound to x because string [1] is incompatible with number [2].</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*@flow*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// var arr: Array&lt;number&gt; = [1, 2, 3]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// arr.push('Hello') //Cannot call arr.push because string [1] is incompatible with number [2] in array element.</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/*@flow*/</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Bar</span> </span>&#123;</span><br><span class="line">    x: string;           <span class="comment">// x 是字符串</span></span><br><span class="line">    y: string | number | <span class="keyword">void</span>;  <span class="comment">// y 可以是字符串或者数字</span></span><br><span class="line">    z: boolean;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(x: string, y: string | number | void) &#123;</span><br><span class="line">        <span class="keyword">this</span>.x = x</span><br><span class="line">        <span class="keyword">this</span>.y = y</span><br><span class="line">        <span class="keyword">this</span>.z = <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> bar: Bar = <span class="keyword">new</span> Bar(<span class="string">'hello'</span>, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj: &#123; <span class="attr">a</span>: string, <span class="attr">b</span>: number, <span class="attr">c</span>: <span class="built_in">Array</span>&lt;string&gt;, <span class="attr">d</span>: Bar &#125; = &#123;</span><br><span class="line">    a: <span class="string">'hello'</span>,</span><br><span class="line">    b: <span class="number">11</span>,</span><br><span class="line">    c: [<span class="string">'hello'</span>, <span class="string">'world'</span>],</span><br><span class="line">    d: <span class="keyword">new</span> Bar(<span class="string">'hello'</span>, <span class="number">3</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://flow.org/en/docs/install/" target="_blank" rel="noopener">官网</a><br><a href="https://flow.org/en/docs/types/" target="_blank" rel="noopener">Type Annotations</a></p>
+        <p>如图，基于慕课上大漠的《十天精通CSS3》绘制的思维导图</p>
+<p><img src="https://user-images.githubusercontent.com/9835391/45430758-a90a0f00-b6d8-11e8-93ec-e563f780b950.png" alt="十天精通CSS3"></p>
+<p>怎么回事这篇文章有点奇怪怎么回事这篇文章有点奇怪怎么回事这篇文章有点奇怪怎么回事这篇文章有点奇怪怎么回事这篇文章有点奇怪怎么回事这篇文章有点奇怪怎么回事这篇文章有点奇怪怎么回事这篇文章有点奇怪怎么回事这篇文章有点奇怪</p>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2018/10/09/vue-flow/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2018/09/12/css3思维导图/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/10/09/vue-flow/" data-id="cjn1w0tt5001chzghh58t7wli" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/09/12/css3思维导图/" data-id="cjn1wak980011y7ghq2sjlbsi" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2018/10/09/vue-flow/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2018/09/12/css3思维导图/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -159,7 +151,7 @@
   <div class="widget-wrap widget-wrap-categories">
     <h3 class="widget-title categories">分类</h3>
     <div class="widget" id="categories">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSS/">CSS</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/React/">React</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/V8引擎/">V8引擎</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/理财/">理财</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络/">网络</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSS/">CSS</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/React/">React</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/V8引擎/">V8引擎</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/理财/">理财</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络/">网络</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -169,7 +161,7 @@
   <div class="widget-wrap widget-wrap-categories">
     <h3 class="widget-title tagcloud">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 16.75px;">C++</a> <a href="/tags/CSS/" style="font-size: 14px;">CSS</a> <a href="/tags/CSS3/" style="font-size: 14px;">CSS3</a> <a href="/tags/HTTPS/" style="font-size: 14px;">HTTPS</a> <a href="/tags/JavaScript/" style="font-size: 22.25px;">JavaScript</a> <a href="/tags/Koa/" style="font-size: 14px;">Koa</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a> <a href="/tags/React/" style="font-size: 14px;">React</a> <a href="/tags/Vue/" style="font-size: 14px;">Vue</a> <a href="/tags/Webpack/" style="font-size: 14px;">Webpack</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/学习力/" style="font-size: 14px;">学习力</a> <a href="/tags/理财/" style="font-size: 19.5px;">理财</a> <a href="/tags/随笔/" style="font-size: 16.75px;">随笔</a>
+      <a href="/tags/C/" style="font-size: 16.75px;">C++</a> <a href="/tags/CSS/" style="font-size: 14px;">CSS</a> <a href="/tags/CSS3/" style="font-size: 14px;">CSS3</a> <a href="/tags/HTTPS/" style="font-size: 14px;">HTTPS</a> <a href="/tags/JavaScript/" style="font-size: 22.25px;">JavaScript</a> <a href="/tags/Koa/" style="font-size: 14px;">Koa</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a> <a href="/tags/React/" style="font-size: 14px;">React</a> <a href="/tags/Vue/" style="font-size: 16.75px;">Vue</a> <a href="/tags/Webpack/" style="font-size: 14px;">Webpack</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/学习力/" style="font-size: 14px;">学习力</a> <a href="/tags/理财/" style="font-size: 19.5px;">理财</a> <a href="/tags/随笔/" style="font-size: 16.75px;">随笔</a>
     </div>
   </div>
 
@@ -179,10 +171,6 @@
     <h3 class="widget-title recent-posts">最新文章</h3>
     <div class="widget">
       <ul>
-        
-          <li>
-            <a href="/2018/10/09/vue-flow/">vue-flow</a>
-          </li>
         
           <li>
             <a href="/2018/09/12/css3思维导图/">CSS3思维导图</a>
@@ -200,6 +188,10 @@
             <a href="/2018/08/14/三步式学习法/">三步式学习法</a>
           </li>
         
+          <li>
+            <a href="/2018/08/05/koa01/">Koa 入门（一）</a>
+          </li>
+        
       </ul>
     </div>
   </div>
@@ -209,7 +201,7 @@
   <div class="widget-wrap widget-wrap-categories">
     <h3 class="widget-title archive">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 

@@ -570,6 +570,13 @@ a.article-title:hover {
     font-size: 1.5em;
   }
 }
+#articleBody.article-entry * {
+  display: none;
+}
+#articleBody.article-entry *:first-child,
+#articleBody.article-entry *:last-child {
+  display: block;
+}
 .article-entry {
   color: #333;
   padding: 0 10px;
@@ -743,7 +750,8 @@ a.article-title:hover {
 .article-more-link a {
   display: inline-block;
   line-height: 1em;
-  padding: 6px 15px;
+  margin: 1em 0;
+  padding: 6px 0px;
   border-radius: 15px;
   background: #f5f5d5 /*#eee*/;
   color: #008000;

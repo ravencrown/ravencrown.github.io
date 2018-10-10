@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-Nginx的Expires缓存设置" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Nginx做负载均衡器以及proxy缓存配置" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/12/26/Nginx的Expires缓存设置/">Expires缓存设置</a>
+      <a class="article-title" href="/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/">Nginx做负载均衡器以及proxy缓存配置</a>
     </h1>
   
 
@@ -88,35 +88,75 @@
       
         <!-- Table of Contents -->
         
-        <h2 id="Expires-设置"><a href="#Expires-设置" class="headerlink" title="Expires 设置"></a>Expires 设置</h2><p>对于网站的图片,尤其是新闻站, 图片一旦发布, 改动的可能是非常小的.我们希望 能否在用户访问一次后, 图片缓存在用户的浏览器端,且时间比较长的缓存.<br>可以, 用到 nginx的expires设置 .<br>nginx中设置过期时间,非常简单,<br>在location或if段里,来写.</p>
-<p>格式</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">expire -1;</span><br><span class="line">expire 0;</span><br><span class="line">expire 1h;</span><br><span class="line">expire max;</span><br><span class="line">expire off;</span><br></pre></td></tr></table></figure>
-<p>这个指令表示在HTTP响应头中是否增加或修改Expires 和 Cache-Control ，仅当响应状态是200, 201, 204, 206, 301, 302, 303, 304, 或者 307的时候有效。  </p>
-<p>当expire 为负时，会在响应头增加Cache-Control: no-cache；  </p>
-<p>当为正或者0时，就表示Cache-Control: max-age=指定的时间(秒)；  </p>
-<p>当为max时，会把Expires设置为 “Thu, 31 Dec 2037 23:55:55 GMT”， Cache-Control 设置到 10 年；  </p>
-<p>当为off时，表示不增加或修改Expires 和 Cache-Control 。  </p>
-<p>例如</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> curl -I http://su.bdimg.com/static/superplus/css/super_min_2b5190eb.css</span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: JSP3/2.0.4</span><br><span class="line">Date: Fri, 31 Oct 2014 07:28:20 GMT</span><br><span class="line">Content-Type: text/css</span><br><span class="line">Content-Length: 25076</span><br><span class="line">Connection: keep-alive</span><br><span class="line">ETag: “1121644245”</span><br><span class="line">Last-Modified: Wed, 24 Sep 2014 15:50:22 GMT</span><br><span class="line">Expires: Mon, 23 Mar 2015 16:29:25 GMT</span><br><span class="line">Age: 3164335</span><br><span class="line">Cache-Control: max-age=15552000</span><br><span class="line">Accept-Ranges: bytes</span><br><span class="line">Vary: Accept-Encoding</span><br></pre></td></tr></table></figure>
-<p>Date 的意思是服务器发送消息的时间； Age 的意思有点复杂，它的存在暗示你访问的服务器不是源服务器，而是一台缓存服务器，Age 的大小表示这个资源已经”存活了”多长时间，所以这个值不会大于 源服务器设置的最大缓存时间。  </p>
-<p>这里Expires 表示过期时间，Cache-Control 表示最大的存活时间，在服务器端的Nginx 我们可以用 expires 指令来定义这两项。  </p>
-<p>另: 304 也是一种很好的缓存手段<br>原理是: 服务器响应文件内容是,同时响应etag标签(内容的签名,内容一变,他也变), 和 last_modified_since 2个标签值<br>浏览器下次去请求时,头信息发送这两个标签, 服务器检测文件有没有发生变化,如无,直接头信息返回 etag,last_modified_since<br>浏览器知道内容无改变,于是直接调用本地缓存.<br>这个过程,也请求了服务器,但是传着的内容极少.<br>对于变化周期较短的,如静态html,js,css,比较适于用这个方式  </p>
+        <h2 id="nginx-sticky-module"><a href="#nginx-sticky-module" class="headerlink" title="nginx-sticky-module"></a>nginx-sticky-module</h2><p>本文主要是完成一下几个功能</p>
+<ul>
+<li>结合proxy和upstream模块实现nginx负载均衡</li>
+<li>结合nginx_upstream_check_module模块实现后端服务器的健康检查</li>
+<li>使用nginx-sticky-module扩展模块实现Cookie会话黏贴（session-sticky效果）</li>
+<li>使用proxy模块实现静态文件缓存</li>
+<li>使用ngx_cache_purge实现更强大的缓存清除功能</li>
+</ul>
+<p>项目地址 <a href="https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng" target="_blank" rel="noopener">https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng</a>  </p>
+<p>这个模块的作用是通过cookie黏贴的方式将来自同一个客户端（浏览器）的请求发送到同一个后端服务器上处理，这样一定程度上可以解决多个backend servers的session同步的问题 —— 因为不再需要同步，而RR轮询模式必须要运维人员自己考虑session同步的实现。  </p>
+<p>另外内置的 ip_hash 也可以实现根据客户端IP来分发请求，但它很容易造成负载不均衡的情况，而如果nginx前面有CDN网络或者来自同一局域网的访问，它接收的客户端IP是一样的，容易造成负载不均衡现象。淘宝Tengine的 ngx_http_upstream_session_sticky_module 也是类似的功能。nginx-sticky-module的cookie过期时间，默认浏览器关闭就过期，也就是会话方式。  </p>
+<p>这个模块并不合适不支持 Cookie 或手动禁用了cookie的浏览器，此时默认sticky就会切换成RR。它不能与ip_hash同时使用。  </p>
+<p><img src="http://7q5fot.com1.z0.glb.clouddn.com/nginx-lb-sticky.jpg" alt="img1">  </p>
+<h3 id="sticky配置"><a href="#sticky配置" class="headerlink" title="sticky配置"></a>sticky配置</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 语法</span><br><span class="line"><span class="meta">#</span> sticky [name=route] [domain=.foo.bar] [path=/] [expires=1h] [hash=index|md5|sha1] [no_fallback]</span><br><span class="line"><span class="meta">#</span> name: 可以为任何的 string 字符,默认是 route</span><br><span class="line"><span class="meta">#</span> domain：哪些域名下可以使用这个 cookie</span><br><span class="line"><span class="meta">#</span> path：哪些路径对启用 sticky，例如 path/test，那么只有 test 这个目录才会使用 sticky 做负载均衡</span><br><span class="line"><span class="meta">#</span> expires：cookie 过期时间，默认浏览器关闭就过期，也就是会话方式。</span><br><span class="line"><span class="meta">#</span> no_fallbackup：如果设置了这个，cookie 对应的服务器宕机了，那么将会返回502（bad gateway 或者 proxy error），建议不启用</span><br><span class="line"></span><br><span class="line">upstream backend &#123;</span><br><span class="line">    server 192.168.1.100:8080 weight=1;</span><br><span class="line">    server 192.168.1.101:8080 weight=1;</span><br><span class="line">    sticky;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置起来超级简单，一般来说一个sticky指令就够了。  </p>
+<p>你在查看官方文档可能会注意到里面也有个 sticky 指令，要说它们的作用几乎是一样的，但是你可能注意到This directive is available as part of our commercial subscription.的说明 —— 这是nginx商业版本里才有的特性。包括后面的check指令，在nginx的商业版本里也有对应的health_check（配在 location ）实现几乎一样的监控检查功能。  </p>
+<h3 id="load-balance其它调度方案"><a href="#load-balance其它调度方案" class="headerlink" title="load-balance其它调度方案"></a>load-balance其它调度方案</h3><p>这里顺带介绍一下nginx的负载均衡模块支持的其它调度算法：</p>
+<ul>
+<li>轮询（默认） ： 每个请求按时间顺序逐一分配到不同的后端服务器，如果后端某台服务器宕机，故障系统被自动剔除，使用户访问不受影响。Weight 指定轮询权值，Weight值越大，分配到的访问机率越高，主要用于后端每个服务器性能不均的情况下。</li>
+<li>ip_hash ： 每个请求按访问IP的hash结果分配，这样来自同一个IP的访客固定访问一个后端服务器，有效解决了动态网页存在的session共享问题。当然如果这个节点不可用了，会发到下个节点，而此时没有session同步的话就注销掉了。</li>
+<li>least_conn ： 请求被发送到当前活跃连接最少的realserver上。会考虑weight的值。</li>
+<li>url_hash ： 此方法按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，可以进一步提高后端缓存服务器的效率。Nginx本身是不支持url_hash的，如果需要使用这种调度算法，必须安装Nginx 的hash软件包 nginx_upstream_hash 。</li>
+<li>fair ： 这是比上面两个更加智能的负载均衡算法。此种算法可以依据页面大小和加载时间长短智能地进行负载均衡，也就是根据后端服务器的响应时间来分配请求，响应时间短的优先分配。Nginx本身是不支持fair的，如果需要使用这种调度算法，必须下载Nginx的 upstream_fair 模块。</li>
+</ul>
+<h2 id="负载均衡与健康检查"><a href="#负载均衡与健康检查" class="headerlink" title="负载均衡与健康检查"></a>负载均衡与健康检查</h2><p>严格来说，nginx自带是没有针对负载均衡后端节点的健康检查的，但是可以通过默认自带的 ngx_http_proxy_module 模块和 ngx_http_upstream_module 模块中的相关指令来完成当后端节点出现故障时，自动切换到下一个节点来提供访问。  </p>
+<p>示例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> weight ： 轮询权值也是可以用在ip_hash的，默认值为1</span><br><span class="line"><span class="meta">#</span> max_fails ： 允许请求失败的次数，默认为1。当超过最大次数时，返回proxy_next_upstream 模块定义的错误。</span><br><span class="line"><span class="meta">#</span> fail_timeout ： 有两层含义，一是在 30s 时间内最多容许 2 次失败；二是在经历了 2 次失败以后，30s时间内不分配请求到这台服务器。</span><br><span class="line"><span class="meta">#</span> backup ： 预留的备份机器。当其他所有的非backup机器出现故障的时候，才会请求backup机器，因此这台机器的压力最轻。（为什么我的1.6.3版本里配置backup启动nginx时说invalid parameter "backup"？）</span><br><span class="line"><span class="meta">#</span> max_conns： 限制同时连接到某台后端服务器的连接数，默认为0即无限制。因为queue指令是commercial，所以还是保持默认吧。</span><br><span class="line"><span class="meta">#</span> proxy_next_upstream ： 这个指令属于 http_proxy 模块的，指定后端返回什么样的异常响应时，使用另一个realserver</span><br><span class="line"></span><br><span class="line">upstream backend &#123;</span><br><span class="line">    ip_hash;</span><br><span class="line">    server 192.168.1.101:8080:8080 weight 2;</span><br><span class="line">    server 192.168.1.101:8080 weight=1 max_fails=2 fail_timeout=30s;</span><br><span class="line">    server 192.168.1.102:8080 backup;</span><br><span class="line">&#125;</span><br><span class="line">server &#123;</span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass http://backend;</span><br><span class="line">        proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="nginx-upstream-check-module"><a href="#nginx-upstream-check-module" class="headerlink" title="nginx_upstream_check_module"></a>nginx_upstream_check_module</h2><p>nginx_upstream_check_module 是专门提供负载均衡器内节点的健康检查的外部模块，由淘宝的姚伟斌大神开发，通过它可以用来检测后端 realserver 的健康状态。如果后端 realserver 不可用，则后面的请求就不会转发到该节点上，并持续检查几点的状态。在淘宝自己的 tengine 上是自带了该模块。项目地址  </p>
+<p><a href="https://github.com/yaoweibin/nginx_upstream_check_module" target="_blank" rel="noopener">https://github.com/yaoweibin/nginx_upstream_check_module</a>  </p>
+<p>下面的是一个带后端监控检查的 nginx.conf 配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">upstream backend &#123;</span><br><span class="line"><span class="meta">	#</span> interval ： 向后端发送的健康检查包的间隔。</span><br><span class="line"><span class="meta">	#</span> fall ： 如果连续失败次数达到fall_count，服务器就被认为是down。</span><br><span class="line"><span class="meta">	#</span> rise ： 如果连续成功次数达到rise_count，服务器就被认为是up。</span><br><span class="line"><span class="meta">	#</span> timeout ： 后端健康请求的超时时间。</span><br><span class="line"><span class="meta">	#</span> default_down ： 设定初始时服务器的状态，如果是true，就说明默认是down的，如果是false，就是up的。默认值是true，也就是一开始服务器认为是不可用，要等健康检查包达到一定成功次数以后才会被认为是健康的。</span><br><span class="line"><span class="meta">	#</span> type：健康检查包的类型，现在支持以下多种类型</span><br><span class="line"><span class="meta">		#</span> tcp：简单的tcp连接，如果连接成功，就说明后端正常。</span><br><span class="line"><span class="meta">		#</span> http：发送HTTP请求，通过后端的回复包的状态来判断后端是否存活。</span><br><span class="line"><span class="meta">		#</span> ajp：向后端发送AJP协议的Cping包，通过接收Cpong包来判断后端是否存活。</span><br><span class="line"><span class="meta">		#</span> ssl_hello：发送一个初始的SSL hello包并接受服务器的SSL hello包。</span><br><span class="line"><span class="meta">		#</span> mysql: 向mysql服务器连接，通过接收服务器的greeting包来判断后端是否存活。</span><br><span class="line"><span class="meta">		#</span> fastcgi：发送一个fastcgi请求，通过接受解析fastcgi响应来判断后端是否存活</span><br><span class="line"><span class="meta">	#</span> port: 指定后端服务器的检查端口。你可以指定不同于真实服务的后端服务器的端口，比如后端提供的是443端口的应用，你可以去检查80端口的状态来判断后端健康状况。默认是0，表示跟后端server提供真实服务的端口一样。该选项出现于Tengine-1.4.0。</span><br><span class="line">    sticky;     # or simple round-robin</span><br><span class="line">    server 192.168.1.101:8080 weight=2;</span><br><span class="line">    server 192.168.1.101:8081 weight=1 max_fails=2 fail_timeout=30s ;</span><br><span class="line">    server 192.168.1.102:8080 weight=1 max_fails=2 fail_timeout=30s ;</span><br><span class="line">    server 192.168.1.102:8081;</span><br><span class="line">    </span><br><span class="line">    check interval=5000 rise=2 fall=3 timeout=1000 type=http;</span><br><span class="line">    check_http_send "HEAD / HTTP/1.0\r\n\r\n";</span><br><span class="line">    check_http_expect_alive http_2xx http_3xx;</span><br><span class="line">&#125;</span><br><span class="line">server &#123;</span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_pass http://backend;</span><br><span class="line">    &#125;</span><br><span class="line">    location /status &#123;</span><br><span class="line">        check_status;</span><br><span class="line">        access_log   off;</span><br><span class="line">        allow 172.29.73.23;</span><br><span class="line">        deny all;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面配置的意思是，对name这个负载均衡条目中的所有节点，每个5秒检测一次，请求2次正常则标记 realserver状态为up，如果检测 3 次都失败，则标记 realserver的状态为down，超时时间为1秒。  </p>
+<p>check指令只能出现在upstream中  </p>
+<p>如果 type 为 http ，你还可以使用check_http_send来配置http监控检查包发送的请求内容，为了减少传输数据量，推荐采用 HEAD 方法。当采用长连接进行健康检查时，需在该指令中添加keep-alive请求头，如： HEAD / HTTP/1.1\r\nConnection: keep-alive\r\n\r\n 。当采用 GET 方法的情况下，请求uri的size不宜过大，确保可以在1个interval内传输完成，否则会被健康检查模块视为后端服务器或网络异常。  </p>
+<p>check_http_expect_alive指定HTTP回复的成功状态，默认认为 2XX 和 3XX 的状态是健康的。  </p>
+<h2 id="Nginx的proxy缓存使用"><a href="#Nginx的proxy缓存使用" class="headerlink" title="Nginx的proxy缓存使用"></a>Nginx的proxy缓存使用</h2><p>nginx的页面缓存功能与上面的负载均衡和健康检查是没有关系的，放在这里一是因为懒得再起一篇文章，二是再有load-balance的地方一般都会启用缓存的。  </p>
+<p>缓存也就是将js、css、image等静态文件从tomcat缓存到nginx指定的缓存目录下，既可以减轻tomcat负担，也可以加快访问速度，但这样缓存及时清理成为了一个问题，所以需要 ngx_cache_purge 这个模块来在过期时间未到之前，手动清理缓存。（这里有篇 文章，对比使用缓存、不使用缓存、使用动静分离三种情况下，高并发性能比较。使用代理缓存功能性能会高出很多倍）  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> proxy_temp_path ： 缓存临时目录。后端的响应并不直接返回客户端，而是先写到一个临时文件中，然后被rename一下当做缓存放在 proxy_cache_path 。0.8.9版本以后允许temp和cache两个目录在不同文件系统上（分区），然而为了减少性能损失还是建议把它们设成一个文件系统上。</span><br><span class="line"><span class="meta">#</span> proxy_cache_path ... ： 设置缓存目录，目录里的文件名是 cache_key 的MD5值。levels=1:2 keys_zone=cache_one:50m表示采用2级目录结构，Web缓存区名称为cache_one，内存缓存空间大小为100MB，这个缓冲zone可以被多次使用。文件系统上看到的缓存文件名类似于 /usr/local/nginx-1.6/proxy_cache/c/29/b7f54b2df7773722d382f4809d65029c 。inactive=2d max_size=2g表示2天没有被访问的内容自动清除，硬盘最大缓存空间为2GB，超过这个大学将清除最近最少使用的数据。</span><br><span class="line"><span class="meta">#</span> proxy_cache ： 引用前面定义的缓存区 cache_one</span><br><span class="line"><span class="meta">#</span> proxy_cache_key ： 定义cache_key</span><br><span class="line"><span class="meta">#</span> proxy_cache_valid ： 为不同的响应状态码设置不同的缓存时间，比如200、302等正常结果可以缓存的时间长点，而404、500等缓存时间设置短一些，这个时间到了文件就会过期，而不论是否刚被访问过。</span><br><span class="line"><span class="meta">#</span> expires ： 在响应头里设置Expires:或Cache-Control:max-age，返回给客户端的浏览器缓存失效时间。</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    ... // $upstream_cache_status记录缓存命中率</span><br><span class="line">    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">                      '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">                      '"$http_user_agent" "$http_x_forwarded_for"'</span><br><span class="line">                      '"$upstream_cache_status"';</span><br><span class="line"></span><br><span class="line">    proxy_temp_path   /usr/local/nginx-1.6/proxy_temp;</span><br><span class="line">    proxy_cache_path /usr/local/nginx-1.6/proxy_cache levels=1:2 keys_zone=cache_one:100m inactive=2d max_size=2g;</span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        listen       80; </span><br><span class="line">        server_name  ittest.example.com;</span><br><span class="line">        root   html;</span><br><span class="line">        index  index.html index.htm index.jsp;</span><br><span class="line"></span><br><span class="line">        location ~ .*\.(gif|jpg|png|html|css|js|ico|swf|pdf)(.*) &#123;</span><br><span class="line">            proxy_pass  http://backend;</span><br><span class="line">            proxy_redirect off;</span><br><span class="line">            proxy_set_header Host $host;</span><br><span class="line">            proxy_set_header   X-Real-IP   $remote_addr;</span><br><span class="line">            proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line"></span><br><span class="line">            proxy_cache cache_one;</span><br><span class="line">            add_header Nginx-Cache $upstream_cache_status;</span><br><span class="line">            proxy_cache_valid  200 304 301 302 8h;</span><br><span class="line">            proxy_cache_valid 404 1m;</span><br><span class="line">            proxy_cache_valid  any 2d;</span><br><span class="line">            proxy_cache_key $host$uri$is_args$args;</span><br><span class="line">            expires 30d;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        location ~ /purge(/.*) &#123;</span><br><span class="line">            #设置只允许指定的IP或IP段才可以清除URL缓存。</span><br><span class="line">            allow   127.0.0.1;</span><br><span class="line">            allow   172.29.73.0/24;</span><br><span class="line">            deny    all;</span><br><span class="line">            proxy_cache_purge  cache_one $host$1$is_args$args;</span><br><span class="line">            error_page 405 =200 /purge$1;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关于缓存的失效期限上面有三个选项：X-Accel-Expires、inactive、proxy_cache_valid、expires，它们之间是有优先级的，按上面的顺序如果在header里设置 X-Accel-Expires 则它的优先级最高，否则inactive优先级最高。更多资料请参考 nginx缓存优先级 或这里。</p>
+<p><img src="http://7q5fot.com1.z0.glb.clouddn.com/nginx-cache-hit.png" alt="http://7q5fot.com1.z0.glb.clouddn.com/nginx-cache-hit.png"></p>
+<h2 id="清除缓存"><a href="#清除缓存" class="headerlink" title="清除缓存"></a>清除缓存</h2><p>上述配置的proxy_cache_purge指令用于方便的清除缓存，但必须按照第三方的 ngx_cache_purge 模块才能使用，项目地址:<br><a href="https://github.com/FRiCKLE/ngx_cache_purge" target="_blank" rel="noopener">https://github.com/FRiCKLE/ngx_cache_purge</a>  </p>
+<p>使用 ngx_cache_purge 模块清除缓存有2种办法（直接删除缓存目录下的文件也算一种办法）：</p>
+<ul>
+<li>echo发送PURGE指令: proxy_cache_purge PURGE from 127.0.0.1表示只允许在来自本地的清除指令</li>
+<li>GET方式请求URL: 即使用配置文件中的location ~ /purge(/.*)，浏览器访问<a href="http://ittest.example.com/purge/your/may/path来清除缓存，或者echo" target="_blank" rel="noopener">http://ittest.example.com/purge/your/may/path来清除缓存，或者echo</a> -e ‘GET /purge/ HTTP/1.0\r\n’ | nc ittest.example.com 80  </li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo -e 'PURGE / HTTP/1.0\r\n' | nc 127.0.0.1 80</span><br></pre></td></tr></table></figure>
+<p><img src="http://7q5fot.com1.z0.glb.clouddn.com/nginx-cache-purge.png" alt="http://7q5fot.com1.z0.glb.clouddn.com/nginx-cache-purge.png">  </p>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
-<li>Nginx官网，<a href="http://nginx.org/en/docs/http/ngx_http_headers_module.html#expires" target="_blank" rel="noopener">Location Expires</a></li>
+<li>official documentation, <a href="http://nginx.org/en/docs/http/ngx_http_upstream_module.html" target="_blank" rel="noopener">official documentation</a></li>
+<li>Nginx实战系列之功能篇—-后端节点健康检查, <a href="http://nolinux.blog.51cto.com/4824967/1594029" target="_blank" rel="noopener">Nginx实战系列之功能篇—-后端节点健康检查</a></li>
+<li>Tengine, <a href="http://tengine.taobao.org/document_cn/http_upstream_check_cn.html" target="_blank" rel="noopener">Tengine nginx_upstream_check_module</a></li>
+<li>nginx反向代理tomcat集群做负载均衡缓存, <a href="http://quenlang.blog.51cto.com/4813803/1570352" target="_blank" rel="noopener">nginx反向代理tomcat集群做负载均衡缓存</a></li>
+<li>web内容缓存 nginx高性能缓存详解, <a href="http://www.ttlsa.com/nginx/nginx-high-performance-caching/" target="_blank" rel="noopener">web内容缓存 nginx高性能缓存详解</a></li>
+<li>使用nginx sticky实现基于cookie的负载均衡, <a href="http://www.ttlsa.com/nginx/nginx-modules-nginx-sticky-module/" target="_blank" rel="noopener">使用nginx sticky实现基于cookie的负载均衡</a></li>
 </ul>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2016/12/26/Nginx的Expires缓存设置/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/26/Nginx的Expires缓存设置/" data-id="cjn1wak87000by7gh62mh0dxb" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/" data-id="cjn3c0r8y0005q4gh38o3hav3" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2016/12/26/Nginx的Expires缓存设置/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2016/12/29/Nginx做负载均衡器以及proxy缓存配置/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -152,6 +192,10 @@
       <ul>
         
           <li>
+            <a href="/2018/10/10/youji-HK/">香港一日游咯</a>
+          </li>
+        
+          <li>
             <a href="/2018/09/12/css3思维导图/">CSS3思维导图</a>
           </li>
         
@@ -165,10 +209,6 @@
         
           <li>
             <a href="/2018/08/14/三步式学习法/">三步式学习法</a>
-          </li>
-        
-          <li>
-            <a href="/2018/08/05/koa01/">Koa 入门（一）</a>
           </li>
         
       </ul>

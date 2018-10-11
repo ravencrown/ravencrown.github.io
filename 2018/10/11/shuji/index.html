@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Nginx日志管理 | 渡鸦的网络日志</title>
+  <title>阅读书籍推荐 | 渡鸦的网络日志</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Nginx 允许针对不同的server做不同的log我们观察nginx的server段,可以看到如下类似信息 1access_log  logs/host.access.log  main; 这说明 该server, 它的访问日志的文件是  logs/host.access.log ,使用的格式”main”格式.除了main格式,你可以自定义其他格式. main格式是什么? 123log_form">
-<meta name="keywords" content="Nginx">
+  <meta name="description" content="阅读书籍推荐 非技术  《爆裂》 - by 伊藤穰一   技术  《Node.js：来一打 C++ 扩展》 - by 死月   理财  《小狗钱钱》 - by 博多·舍费尔 《穷爸爸富爸爸》 - by 罗伯特·清崎">
+<meta name="keywords" content="学习力">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Nginx日志管理">
-<meta property="og:url" content="http://www.xbroder.com/2016/11/27/Nginx日志管理/index.html">
+<meta property="og:title" content="阅读书籍推荐">
+<meta property="og:url" content="http://www.xbroder.com/2018/10/11/shuji/index.html">
 <meta property="og:site_name" content="渡鸦的网络日志">
-<meta property="og:description" content="Nginx 允许针对不同的server做不同的log我们观察nginx的server段,可以看到如下类似信息 1access_log  logs/host.access.log  main; 这说明 该server, 它的访问日志的文件是  logs/host.access.log ,使用的格式”main”格式.除了main格式,你可以自定义其他格式. main格式是什么? 123log_form">
+<meta property="og:description" content="阅读书籍推荐 非技术  《爆裂》 - by 伊藤穰一   技术  《Node.js：来一打 C++ 扩展》 - by 死月   理财  《小狗钱钱》 - by 博多·舍费尔 《穷爸爸富爸爸》 - by 罗伯特·清崎">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-07-12T04:37:49.000Z">
+<meta property="og:updated_time" content="2018-10-11T16:02:35.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Nginx日志管理">
-<meta name="twitter:description" content="Nginx 允许针对不同的server做不同的log我们观察nginx的server段,可以看到如下类似信息 1access_log  logs/host.access.log  main; 这说明 该server, 它的访问日志的文件是  logs/host.access.log ,使用的格式”main”格式.除了main格式,你可以自定义其他格式. main格式是什么? 123log_form">
+<meta name="twitter:title" content="阅读书籍推荐">
+<meta name="twitter:description" content="阅读书籍推荐 非技术  《爆裂》 - by 伊藤穰一   技术  《Node.js：来一打 C++ 扩展》 - by 死月   理财  《小狗钱钱》 - by 博多·舍费尔 《穷爸爸富爸爸》 - by 罗伯特·清崎">
   
   
     <link rel="icon" href="/favicon.png">
@@ -63,7 +63,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-Nginx日志管理" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-shuji" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -72,7 +72,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Nginx日志管理
+      阅读书籍推荐
     </h1>
   
 
@@ -80,14 +80,14 @@
         <div class="article-meta">
           
             <div class="article-date">作者：陈广宵</div>
-            <a href="/2016/11/27/Nginx日志管理/" class="article-date">
-  <time datetime="2016-11-27T09:45:03.000Z" itemprop="datePublished">日期：2016-11-27</time>
+            <a href="/2018/10/11/shuji/" class="article-date">
+  <time datetime="2018-10-11T15:55:05.000Z" itemprop="datePublished">日期：2018-10-11</time>
 </a>
           
           
   <div class="article-category1">
     
-    <a class="article-category-link" href="/categories/Nginx/">分类：Nginx</a>
+    <a class="article-category-link" href="/categories/笔记本/">分类：笔记本</a>
   </div>
 
         </div>
@@ -96,38 +96,36 @@
       
         <!-- Table of Contents -->
         
-        <h2 id="Nginx-允许针对不同的server做不同的log"><a href="#Nginx-允许针对不同的server做不同的log" class="headerlink" title="Nginx 允许针对不同的server做不同的log"></a>Nginx 允许针对不同的server做不同的log</h2><p>我们观察nginx的server段,可以看到如下类似信息</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">access_log  logs/host.access.log  main;</span><br></pre></td></tr></table></figure>
-<p>这说明 该server, 它的访问日志的文件是  logs/host.access.log ,<br>使用的格式”main”格式.<br>除了main格式,你可以自定义其他格式.</p>
-<p>main格式是什么?</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">    '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">    '"$http_user_agent" "$http_x_forwarded_for"';</span><br></pre></td></tr></table></figure>
-<p>main格式是我们定义好一种日志的格式,并起个名字,便于引用.<br>以上面的例子, main类型的日志,记录的 remote_addr…. http_x_forwarded_for等选项.</p>
-<h3 id="日志格式-是指记录哪些选项"><a href="#日志格式-是指记录哪些选项" class="headerlink" title="日志格式 是指记录哪些选项"></a>日志格式 是指记录哪些选项</h3><p>默认的日志格式: main</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">    '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">	'"$http_user_agent" "$http_x_forwarded_for"';</span><br></pre></td></tr></table></figure>
-<p>如默认的main日志格式,记录这么几项<br>远程IP- 远程用户/用户时间 请求方法(如GET/POST) 请求体body长度 referer来源信息<br>http-user-agent用户代理/蜘蛛 ,被转发的请求的原始IP</p>
-<p>http_x_forwarded_for:在经过代理时,代理把你的本来IP加在此头信息中,传输你的原始IP</p>
-<p>例如：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">58.132.169.60 - - [07/Oct/2015:11:40:19 +0800] "GET / HTTP/1.1" 200 30 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:41.0) Gecko/20100101 Firefox/41.0" "-"</span><br></pre></td></tr></table></figure>
-<h3 id="声明一个独特的log-format并命名"><a href="#声明一个独特的log-format并命名" class="headerlink" title="声明一个独特的log_format并命名"></a>声明一个独特的log_format并命名</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_format  mylog '$remote_addr- "$request" '</span><br><span class="line"> 	'$status $body_bytes_sent "$http_referer" '</span><br><span class="line">    '"$http_user_agent" "$http_x_forwarded_for"';</span><br></pre></td></tr></table></figure>
-<p>在下面的server/location,我们就可以引用 mylog</p>
-<p>在server段中,这样来声明<br>Nginx允许针对不同的server做不同的Log ,(有的web服务器不支持,如lighttp)</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">access_log logs/access_8080.log mylog;  </span><br><span class="line"><span class="meta">#</span>声明log   log位置          log格式;</span><br></pre></td></tr></table></figure>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
-<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_log_module.html" target="_blank" rel="noopener">Module ngx_http_log_module</a></li>
+        <p>阅读书籍推荐</p>
+<h2 id="非技术"><a href="#非技术" class="headerlink" title="非技术"></a>非技术</h2><blockquote>
+<ul>
+<li><a href="https://item.jd.com/12240382.html" target="_blank" rel="noopener">《爆裂》</a> - by 伊藤穰一</li>
 </ul>
+</blockquote>
+<h2 id="技术"><a href="#技术" class="headerlink" title="技术"></a>技术</h2><blockquote>
+<ul>
+<li><a href="https://item.jd.com/12380404.html" target="_blank" rel="noopener">《Node.js：来一打 C++ 扩展》</a> - by 死月</li>
+</ul>
+</blockquote>
+<h2 id="理财"><a href="#理财" class="headerlink" title="理财"></a>理财</h2><blockquote>
+<ul>
+<li><a href="https://item.jd.com/12345927.html" target="_blank" rel="noopener">《小狗钱钱》</a> - by 博多·舍费尔</li>
+<li><a href="https://item.jd.com/12235496.html" target="_blank" rel="noopener">《穷爸爸富爸爸》</a> - by 罗伯特·清崎</li>
+</ul>
+</blockquote>
 
       
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/11/27/Nginx日志管理/" data-id="cjn4runbb000a9bgh8zv040k3" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/10/11/shuji/" data-id="cjn4runcd001h9bgh8104xz3a" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2016/11/27/Nginx日志管理/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2018/10/11/shuji/#disqus_thread" class="article-comment-link">留言</a>
       
       
         
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/学习力/">学习力</a></li></ul>
 
       
     </footer>
@@ -178,19 +176,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2016/12/03/Nginx日志切割/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">上一篇</strong>
-      <div class="article-nav-title">
-        
-          Nginx日志切割
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/11/09/Nginx虚拟主机配置/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2018/10/11/js-xuexijihua/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title">Nginx虚拟主机配置</div>
+      <div class="article-nav-title">学习计划安排</div>
     </a>
   
 </nav>
@@ -286,7 +275,7 @@ window.onload = function() {
 <script>
   var disqus_shortname = 'true';
   
-  var disqus_url = 'http://www.xbroder.com/2016/11/27/Nginx日志管理/';
+  var disqus_url = 'http://www.xbroder.com/2018/10/11/shuji/';
   
   (function(){
     var dsq = document.createElement('script');

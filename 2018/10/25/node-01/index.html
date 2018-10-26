@@ -3,15 +3,17 @@
 <head>
   <meta charset="utf-8">
   
-  <title>分类: React | 渡鸦的网络日志</title>
+  <title>Node 学习笔记（一） | 渡鸦的网络日志</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="渡鸦的网络日志">
-<meta property="og:url" content="http://www.xbroder.com/categories/React/index.html">
+  <meta name="keywords" content="Node">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Node 学习笔记（一）">
+<meta property="og:url" content="http://www.xbroder.com/2018/10/25/node-01/index.html">
 <meta property="og:site_name" content="渡鸦的网络日志">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-10-25T15:43:50.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="渡鸦的网络日志">
+<meta name="twitter:title" content="Node 学习笔记（一）">
   
   
     <link rel="icon" href="/favicon.png">
@@ -58,41 +60,138 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-
+        <section id="main"><article id="post-node-01" class="article article-type-post" itemscope itemprop="blogPost">
   
-  
+  <div class="article-inner">
     
     
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-         <span class="archive-year-post">17 post  this year</span>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2018/08/19/react-zhihu-live/" class="archive-article-date">
-  <time datetime="2018-08-19T04:51:34.000Z" itemprop="datePublished">日期：08-19</time>
-</a>
-      
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/08/19/react-zhihu-live/">Live - 帮助你深入理解 React</a>
+    <h1 class="article-title" itemprop="name">
+      Node 学习笔记（一）
     </h1>
   
 
-    </header>
+      </header>
+        <div class="article-meta">
+          
+            <div class="article-date">作者：陈广宵</div>
+            <a href="/2018/10/25/node-01/" class="article-date">
+  <time datetime="2018-10-25T14:34:23.000Z" itemprop="datePublished">日期：2018-10-25</time>
+</a>
+          
+          
+  <div class="article-category1">
+    
+    <a class="article-category-link" href="/categories/Node/">分类：Node</a>
   </div>
+
+        </div>
+    
+    <div class="article-entry"  itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        
+      
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2018/10/25/node-01/" data-id="cjnoov51u000033ghnqzwtnim" class="article-share-link">分享</a>
+      
+      
+        <a href="http://www.xbroder.com/2018/10/25/node-01/#disqus_thread" class="article-comment-link">留言</a>
+      
+      
+        
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Node/">Node</a></li></ul>
+
+      
+    </footer>
+  </div>
+  
+    
+ <script src="/jquery/jquery.min.js"></script>
+  <div id="random_posts">
+    <h2>推荐文章</h2>
+    <div class="random_posts_ul">
+      <script>
+          var random_count =4
+          var site = {BASE_URI:'/'};
+          function load_random_posts(obj) {
+              var arr=site.posts;
+              if (!obj) return;
+              // var count = $(obj).attr('data-count') || 6;
+              for (var i, tmp, n = arr.length; n; i = Math.floor(Math.random() * n), tmp = arr[--n], arr[n] = arr[i], arr[i] = tmp);
+              arr = arr.slice(0, random_count);
+              var html = '<ul>';
+            
+              for(var j=0;j<arr.length;j++){
+                var item=arr[j];
+                html += '<li><strong>' + 
+                item.date + ':&nbsp;&nbsp;<a href="' + (site.BASE_URI+item.uri) + '">' + 
+                (item.title || item.uri) + '</a></strong>';
+                if(item.excerpt){
+                  html +='<div class="post-excerpt">'+item.excerpt+'</div>';
+                }
+                html +='</li>';
+                
+              }
+              $(obj).html(html + '</ul>');
+          }
+          $('.random_posts_ul').each(function () {
+              var c = this;
+              if (!site.posts || !site.posts.length){
+                  $.getJSON(site.BASE_URI + 'js/posts.js',function(json){site.posts = json;load_random_posts(c)});
+              } 
+               else{
+                load_random_posts(c);
+              }
+          });
+      </script>
+    </div>
+  </div>
+
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/10/11/shuji/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">阅读书籍推荐</div>
+    </a>
+  
+</nav>
+
+  
 </article>
+
   
-  
-    </div></section>
-  
+  <div class="comments" id="comments">
+    
+     
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+      </section>
+      
+       
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+       
+      
+      
+           <div id="gitment_comments"></div>
+    
+  </div>
+ 
+
+
 
 
 </section>
@@ -105,13 +204,6 @@
     
   
     
-  <div class="widget-wrap widget-wrap-categories">
-    <h3 class="widget-title categories">分类</h3>
-    <div class="widget" id="categories">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSS/">CSS</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/React/">React</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/V8引擎/">V8引擎</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/游记/">游记</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/理财/">理财</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/笔记本/">笔记本</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络/">网络</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">2</span></li></ul>
-    </div>
-  </div>
-
 
   
     
@@ -121,6 +213,10 @@
     <h3 class="widget-title recent-posts">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/10/25/node-01/">Node 学习笔记（一）</a>
+          </li>
         
           <li>
             <a href="/2018/10/11/shuji/">阅读书籍推荐</a>
@@ -136,10 +232,6 @@
         
           <li>
             <a href="/2018/09/12/css3思维导图/">CSS3思维导图</a>
-          </li>
-        
-          <li>
-            <a href="/2018/09/08/css/">CSS 入门与精深</a>
           </li>
         
       </ul>
@@ -192,11 +284,13 @@ window.onload = function() {
 <script>
   var disqus_shortname = 'true';
   
+  var disqus_url = 'http://www.xbroder.com/2018/10/25/node-01/';
+  
   (function(){
     var dsq = document.createElement('script');
     dsq.type = 'text/javascript';
     dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
   })();
 </script>

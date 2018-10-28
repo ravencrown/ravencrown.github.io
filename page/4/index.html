@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-Nginx日志切割" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Nginx的Location语法" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/12/03/Nginx日志切割/">Nginx日志切割</a>
+      <a class="article-title" href="/2016/12/07/Nginx的Location语法/">Nginx的Location语法</a>
     </h1>
   
 
@@ -88,65 +88,31 @@
       
         <!-- Table of Contents -->
         
-        <h2 id="信号控制"><a href="#信号控制" class="headerlink" title="信号控制"></a>信号控制</h2><table>
-<thead>
-<tr>
-<th>TERM,INT</th>
-<th>Quick shutdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>QUIT</td>
-<td>Graceful shutdown  优雅的关闭进程,即等请求结束后再关闭</td>
-</tr>
-<tr>
-<td>HUP</td>
-<td>Configuration reload ,Start the new worker processes with a new configuration Gracefully shutdown the old worker processes 改变配置文件,平滑的重读配置文件</td>
-</tr>
-<tr>
-<td>USR1</td>
-<td>Reopen the log files 重读日志,在日志按月/日分割时有用</td>
-</tr>
-<tr>
-<td>USR2</td>
-<td>Upgrade Executable on the fly 平滑的升级</td>
-</tr>
-<tr>
-<td>WINCH</td>
-<td>Gracefully shutdown the worker processes 优雅关闭旧的进程(配合USR2来进行升级)</td>
-</tr>
-</tbody>
-</table>
-<p>示例</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>具体语法:</span><br><span class="line">Kill -信号选项 nginx的主进程号</span><br><span class="line">Kill -HUP 4873</span><br><span class="line"> </span><br><span class="line">Kill -信号控制 `cat /xxx/path/log/nginx.pid`</span><br><span class="line"> </span><br><span class="line">Kill -USR1 `cat /xxx/path/log/nginx.pid`</span><br></pre></td></tr></table></figure>
-<h2 id="shell-定时任务-nginx信号管理-完成日志按日期存储"><a href="#shell-定时任务-nginx信号管理-完成日志按日期存储" class="headerlink" title="shell+定时任务+nginx信号管理,完成日志按日期存储"></a>shell+定时任务+nginx信号管理,完成日志按日期存储</h2><p>分析思路</p>
-<ul>
-<li>凌晨00:00:01,把昨天的日志重命名,放在相应的目录下</li>
-<li>再USR1信息号控制nginx重新生成新的日志文件</li>
-</ul>
-<p>脚本一</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>!/bin/bash</span><br><span class="line">base_path='/usr/local/nginx/logs'</span><br><span class="line">log_path=$(date -d yesterday +"%Y%m")</span><br><span class="line">day=$(date -d yesterday +"%d")</span><br><span class="line">mkdir -p $base_path/$log_path</span><br><span class="line">mv $base_path/access.log $base_path/$log_path/access_$day.log</span><br><span class="line"><span class="meta">#</span> echo $base_path/$log_path/access_$day.log</span><br><span class="line">kill -USR1 `cat /usr/local/nginx/logs/nginx.pid`</span><br></pre></td></tr></table></figure>
-<p>脚本二</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>!/bin/bash</span><br><span class="line">LOGPATH=/usr/local/nginx/logs/z.com.access.log</span><br><span class="line">BASEPATH=/data/$(date -d yesterday +%Y%m)</span><br><span class="line">mkdir -p $BASEPATH</span><br><span class="line">bak=$BASEPATH/$(date -d yesterday +%d%H%M).zcom.access.log</span><br><span class="line">mv $LOGPATH $bak</span><br><span class="line">touch $LOGPATH</span><br><span class="line">kill -USR1 `cat /usr/local/nginx/logs/nginx.pid`</span><br></pre></td></tr></table></figure>
-<h3 id="Crontab-编辑定时任务"><a href="#Crontab-编辑定时任务" class="headerlink" title="Crontab 编辑定时任务"></a>Crontab 编辑定时任务</h3><p>示例</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">01 00 * * * /xxx/path/b.sh  #每天0时1分(建议在02-04点之间,系统负载小)</span><br></pre></td></tr></table></figure>
+        <p>location 有”定位”的意思, 根据URI来进行不同的定位.<br>在虚拟主机的配置中,是必不可少的,location可以把网站的不同部分,定位到不同的处理方式上.<br>比如, 碰到.php, 如何调用PHP解释器?  –这时就需要location</p>
+<h2 id="Location-的语法"><a href="#Location-的语法" class="headerlink" title="Location 的语法"></a>Location 的语法</h2><p>location 有”定位”的意思, 根据Uri来进行不同的定位. 在虚拟主机的配置中,是必不可少的,location可以把网站的不同部分,定位到不同的处理方式上. 比如, 碰到.php, 如何调用PHP解释器? –这时就需要location location 的语法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Syntax:	location [ = | ~ | ~* | ^~ ] uri &#123; ... &#125;</span><br><span class="line">location @name &#123; ... &#125;</span><br><span class="line">Default:	—</span><br><span class="line">Context:	server, location</span><br><span class="line"></span><br><span class="line">中括号可以不写任何参数,此时称为一般匹配,也可以写参数</span><br><span class="line">因此,大类型可以分为3种:</span><br><span class="line">location = patt &#123;&#125; [精准匹配]</span><br><span class="line">location patt&#123;&#125;  [一般匹配]</span><br><span class="line">location ~ patt&#123;&#125; [正则匹配]</span><br></pre></td></tr></table></figure>
+<p>location示例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">location = / &#123;</span><br><span class="line">    [ configuration A ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location / &#123;</span><br><span class="line">    [ configuration B ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /documents/ &#123;</span><br><span class="line">    [ configuration C ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ^~ /images/ &#123;</span><br><span class="line">    [ configuration D ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~* \.(gif|jpg|jpeg)$ &#123;</span><br><span class="line">    [ configuration E ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="如何发挥作用"><a href="#如何发挥作用" class="headerlink" title="如何发挥作用?"></a>如何发挥作用?</h3><p>首先看有没有精准匹配,如果有,则停止匹配过程.</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>如果 $uri == patt,匹配成功，使用configA</span><br><span class="line">location = / &#123;</span><br><span class="line">    root   /var/www/html/;</span><br><span class="line">    index  index.htm index.html;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line">  location / &#123;</span><br><span class="line">     root   /usr/local/nginx/html;</span><br><span class="line">    index  index.html index.htm;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果访问<a href="http://xxx.com/" target="_blank" rel="noopener">http://xxx.com/</a><br>定位流程是　</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1: 精准匹配中　”/”   ,得到index页为　　index.htm</span><br><span class="line">2: 再次访问 /index.htm , 此次内部转跳uri已经是”/index.htm” ,根目录为/usr/local/nginx/html</span><br><span class="line">3: 最终结果,访问了/usr/local/nginx/html/index.htm</span><br></pre></td></tr></table></figure>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
-<li>Nginx官网, <a href="https://www.nginx.com/resources/wiki/start/topics/tutorials/commandline/" target="_blank" rel="noopener">Starting, Stopping, and Restarting NGINX</a></li>
+<li>Nginx官网，<a href="http://nginx.org/en/docs/http/ngx_http_core_module.html#location" target="_blank" rel="noopener">Location Syntax</a></li>
 </ul>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2016/12/03/Nginx日志切割/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2016/12/07/Nginx的Location语法/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/03/Nginx日志切割/" data-id="cjnt18f4t00051tghn53j3gyw" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/07/Nginx的Location语法/" data-id="cjnt2fk0h000hitghulco1hcy" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2016/12/03/Nginx日志切割/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2016/12/07/Nginx的Location语法/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -182,7 +148,11 @@
       <ul>
         
           <li>
-            <a href="/2018/10/28/node-02/">Node 学习笔记02 - node 编程基础</a>
+            <a href="/2018/10/28/node-03/">Node 学习笔记03 - 命令行框架</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/27/node-02/">Node 学习笔记02 - node 编程基础</a>
           </li>
         
           <li>
@@ -195,10 +165,6 @@
         
           <li>
             <a href="/2018/10/11/js-xuexijihua/">学习计划安排</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/10/youji-HK/">香港一日游咯</a>
           </li>
         
       </ul>

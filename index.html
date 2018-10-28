@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-node-02" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-node-03" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/10/28/node-02/">Node 学习笔记02 - node 编程基础</a>
+      <a class="article-title" href="/2018/10/28/node-03/">Node 学习笔记03 - 命令行框架</a>
     </h1>
   
 
@@ -88,43 +88,26 @@
       
         <!-- Table of Contents -->
         
-        <p>Node 的开发环境非常容易设置，比 Java、Python 等语言更容易配置些。如果用 Mac, 可以直接使用 HomeBrew 安装。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew install node</span><br></pre></td></tr></table></figure>
-<h2 id="一、NVM"><a href="#一、NVM" class="headerlink" title="一、NVM"></a>一、NVM</h2><p>个人建议使用 nvm 安装 Node。 Node 版本很多，你一定会有切换 Node 的版本的场景。nvm 就是用来管理 Node 版本的工具。另一个工具是 n 工具，不过个人喜欢使用 nvm 进行管理。<a href="https://github.com/creationix/nvm" target="_blank" rel="noopener">nvm 安装</a></p>
-<p>nvm 安装 node 和管理 node。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ nvm ls-remote         // 列出可以安装的 node 版本号</span><br><span class="line">$ nvm install v8.10.0    // 安装指定版本</span><br><span class="line">$ nvm uninstall v8.10.0  // 删除指定版本</span><br><span class="line">$ nvm use v8.10.0       // 切换 node 版本</span><br><span class="line">$ nvm current          // 查看当前版本</span><br><span class="line">$ nvm ls              // 查看已经安装的版本</span><br></pre></td></tr></table></figure>
-<h2 id="二、NRM"><a href="#二、NRM" class="headerlink" title="二、NRM"></a>二、NRM</h2><p>Node 经常遇到的一个问题就是安装包太慢，官网提供的镜像资源服务器在国外，所以经常吐槽官网的镜像。</p>
-<p><strong>nvm 安装</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g nrm</span><br></pre></td></tr></table></figure>
-<p>列出可用的镜像源</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ nrm ls</span><br></pre></td></tr></table></figure>
-<p>会列出下面的几个源，带 * 号的表示当前的采用的镜像源。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">  npm ---- https://registry.npmjs.org/</span><br><span class="line">  cnpm --- http://r.cnpmjs.org/</span><br><span class="line">* taobao - https://registry.npm.taobao.org/</span><br><span class="line">  nj ----- https://registry.nodejitsu.com/</span><br><span class="line">  rednpm - http://registry.mirror.cqupt.edu.cn/</span><br><span class="line">  npmMirror  https://skimdb.npmjs.com/registry/</span><br><span class="line">  edunpm - http://registry.enpmjs.org/</span><br></pre></td></tr></table></figure>
-<p>如果想使用其他的源，例如想换成 cnpm 的源</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ nrm use cnpm</span><br></pre></td></tr></table></figure>
-<p>会提示<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Registry has been set to: http://r.cnpmjs.org/</span><br></pre></td></tr></table></figure></p>
-<h2 id="三、淘宝镜像源和-CNPM"><a href="#三、淘宝镜像源和-CNPM" class="headerlink" title="三、淘宝镜像源和 CNPM"></a>三、淘宝镜像源和 CNPM</h2><p>直接参考这篇文章，不复制粘贴<a href="https://npm.taobao.org/" target="_blank" rel="noopener">淘宝镜像源和 CNPM</a></p>
-<h2 id="四、NPM"><a href="#四、NPM" class="headerlink" title="四、NPM"></a>四、NPM</h2><p>直接参考官网文档，介绍的最权威<a href="https://www.npmjs.com.cn/" target="_blank" rel="noopener">官网文档</a>，必读，必须熟悉，少废话。</p>
-<h2 id="五、Package-json"><a href="#五、Package-json" class="headerlink" title="五、Package.json"></a>五、Package.json</h2><p>同样给两个地址自己读，同样是 Node 中非常重要的必须要熟悉的知识</p>
+        <p>Node 两大命令行框架</p>
 <blockquote>
 <ul>
-<li><a href="https://www.npmjs.com.cn/files/package.json/" target="_blank" rel="noopener">package.json</a></li>
-<li><a href="https://www.npmjs.com.cn/getting-started/using-a-package.json/" target="_blank" rel="noopener">Working with package.json</a></li>
+<li>yargs</li>
+<li>commander</li>
 </ul>
 </blockquote>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2018/10/28/node-02/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2018/10/28/node-03/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/10/28/node-02/" data-id="cjnt18f8k00211tghzimuihzv" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/10/28/node-03/" data-id="cjnt2fk11001kitghcs69ywr4" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2018/10/28/node-02/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2018/10/28/node-03/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -172,7 +155,7 @@
   <div class="widget-wrap widget-wrap-categories">
     <h3 class="widget-title categories">分类</h3>
     <div class="widget" id="categories">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSS/">CSS</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Node/">Node</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/V8引擎/">V8引擎</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/游记/">游记</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/理财/">理财</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/笔记本/">笔记本</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络/">网络</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSS/">CSS</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Node/">Node</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/V8引擎/">V8引擎</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/游记/">游记</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/理财/">理财</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/笔记本/">笔记本</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络/">网络</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -182,7 +165,7 @@
   <div class="widget-wrap widget-wrap-categories">
     <h3 class="widget-title tagcloud">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 16.75px;">C++</a> <a href="/tags/CSS/" style="font-size: 14px;">CSS</a> <a href="/tags/CSS3/" style="font-size: 14px;">CSS3</a> <a href="/tags/HTTPS/" style="font-size: 14px;">HTTPS</a> <a href="/tags/JavaScript/" style="font-size: 22.25px;">JavaScript</a> <a href="/tags/Koa/" style="font-size: 14px;">Koa</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a> <a href="/tags/Node/" style="font-size: 16.75px;">Node</a> <a href="/tags/React/" style="font-size: 14px;">React</a> <a href="/tags/Vue/" style="font-size: 16.75px;">Vue</a> <a href="/tags/Webpack/" style="font-size: 14px;">Webpack</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/学习力/" style="font-size: 19.5px;">学习力</a> <a href="/tags/理财/" style="font-size: 19.5px;">理财</a> <a href="/tags/随笔/" style="font-size: 16.75px;">随笔</a> <a href="/tags/香港/" style="font-size: 14px;">香港</a>
+      <a href="/tags/C/" style="font-size: 16.75px;">C++</a> <a href="/tags/CSS/" style="font-size: 14px;">CSS</a> <a href="/tags/CSS3/" style="font-size: 14px;">CSS3</a> <a href="/tags/HTTPS/" style="font-size: 14px;">HTTPS</a> <a href="/tags/JavaScript/" style="font-size: 22.25px;">JavaScript</a> <a href="/tags/Koa/" style="font-size: 14px;">Koa</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a> <a href="/tags/Node/" style="font-size: 19.5px;">Node</a> <a href="/tags/React/" style="font-size: 14px;">React</a> <a href="/tags/Vue/" style="font-size: 16.75px;">Vue</a> <a href="/tags/Webpack/" style="font-size: 14px;">Webpack</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/学习力/" style="font-size: 19.5px;">学习力</a> <a href="/tags/理财/" style="font-size: 19.5px;">理财</a> <a href="/tags/随笔/" style="font-size: 16.75px;">随笔</a> <a href="/tags/香港/" style="font-size: 14px;">香港</a>
     </div>
   </div>
 
@@ -194,7 +177,11 @@
       <ul>
         
           <li>
-            <a href="/2018/10/28/node-02/">Node 学习笔记02 - node 编程基础</a>
+            <a href="/2018/10/28/node-03/">Node 学习笔记03 - 命令行框架</a>
+          </li>
+        
+          <li>
+            <a href="/2018/10/27/node-02/">Node 学习笔记02 - node 编程基础</a>
           </li>
         
           <li>
@@ -209,10 +196,6 @@
             <a href="/2018/10/11/js-xuexijihua/">学习计划安排</a>
           </li>
         
-          <li>
-            <a href="/2018/10/10/youji-HK/">香港一日游咯</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -222,7 +205,7 @@
   <div class="widget-wrap widget-wrap-categories">
     <h3 class="widget-title archive">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 

@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Node 学习笔记01 - 应用场景 | 渡鸦的网络日志</title>
+  <title>Node 学习笔记02 - node 编程基础 | 渡鸦的网络日志</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Node 的可以做什么？ 可以参考以下四条应用场景   工具：npm上各种工具模块，包括各种前端预编译、构建工具 Grunt/Gulp、脚手架，命令行工具，各种奇技淫巧 前端：三大框架 React/Vue/Angular 辅助开发，以及工程化演进过程（使用Gulp /Webpack 构建 Web 开发工具） 后端：Node 核心特性、Web 应用、API/RPC、测试、部署、微服务 扩平台：覆盖你">
+  <meta name="description" content="Node 的开发环境非常容易设置，比 Java、Python 等语言更容易配置些。如果用 Mac, 可以直接使用 HomeBrew 安装。 1$ brew install node 一、NVM个人建议使用 nvm 安装 Node。 Node 版本很多，你一定会有切换 Node 的版本的场景。nvm 就是用来管理 Node 版本的工具。另一个工具是 n 工具，不过个人喜欢使用 nvm 进行管理。nv">
 <meta name="keywords" content="Node">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Node 学习笔记01 - 应用场景">
-<meta property="og:url" content="http://www.xbroder.com/2018/10/25/node-01/index.html">
+<meta property="og:title" content="Node 学习笔记02 - node 编程基础">
+<meta property="og:url" content="http://www.xbroder.com/2018/10/28/node-02/index.html">
 <meta property="og:site_name" content="渡鸦的网络日志">
-<meta property="og:description" content="Node 的可以做什么？ 可以参考以下四条应用场景   工具：npm上各种工具模块，包括各种前端预编译、构建工具 Grunt/Gulp、脚手架，命令行工具，各种奇技淫巧 前端：三大框架 React/Vue/Angular 辅助开发，以及工程化演进过程（使用Gulp /Webpack 构建 Web 开发工具） 后端：Node 核心特性、Web 应用、API/RPC、测试、部署、微服务 扩平台：覆盖你">
+<meta property="og:description" content="Node 的开发环境非常容易设置，比 Java、Python 等语言更容易配置些。如果用 Mac, 可以直接使用 HomeBrew 安装。 1$ brew install node 一、NVM个人建议使用 nvm 安装 Node。 Node 版本很多，你一定会有切换 Node 的版本的场景。nvm 就是用来管理 Node 版本的工具。另一个工具是 n 工具，不过个人喜欢使用 nvm 进行管理。nv">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-10-28T14:54:18.000Z">
+<meta property="og:updated_time" content="2018-10-28T15:31:41.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Node 学习笔记01 - 应用场景">
-<meta name="twitter:description" content="Node 的可以做什么？ 可以参考以下四条应用场景   工具：npm上各种工具模块，包括各种前端预编译、构建工具 Grunt/Gulp、脚手架，命令行工具，各种奇技淫巧 前端：三大框架 React/Vue/Angular 辅助开发，以及工程化演进过程（使用Gulp /Webpack 构建 Web 开发工具） 后端：Node 核心特性、Web 应用、API/RPC、测试、部署、微服务 扩平台：覆盖你">
+<meta name="twitter:title" content="Node 学习笔记02 - node 编程基础">
+<meta name="twitter:description" content="Node 的开发环境非常容易设置，比 Java、Python 等语言更容易配置些。如果用 Mac, 可以直接使用 HomeBrew 安装。 1$ brew install node 一、NVM个人建议使用 nvm 安装 Node。 Node 版本很多，你一定会有切换 Node 的版本的场景。nvm 就是用来管理 Node 版本的工具。另一个工具是 n 工具，不过个人喜欢使用 nvm 进行管理。nv">
   
   
     <link rel="icon" href="/favicon.png">
@@ -63,7 +63,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-node-01" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-node-02" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -72,7 +72,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Node 学习笔记01 - 应用场景
+      Node 学习笔记02 - node 编程基础
     </h1>
   
 
@@ -80,8 +80,8 @@
         <div class="article-meta">
           
             <div class="article-date">作者：陈广宵</div>
-            <a href="/2018/10/25/node-01/" class="article-date">
-  <time datetime="2018-10-25T14:34:23.000Z" itemprop="datePublished">日期：2018-10-25</time>
+            <a href="/2018/10/28/node-02/" class="article-date">
+  <time datetime="2018-10-28T14:54:14.000Z" itemprop="datePublished">日期：2018-10-28</time>
 </a>
           
           
@@ -96,15 +96,28 @@
       
         <!-- Table of Contents -->
         
-        <p>Node 的可以做什么？ 可以参考以下四条应用场景</p>
+        <p>Node 的开发环境非常容易设置，比 Java、Python 等语言更容易配置些。如果用 Mac, 可以直接使用 HomeBrew 安装。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew install node</span><br></pre></td></tr></table></figure>
+<h2 id="一、NVM"><a href="#一、NVM" class="headerlink" title="一、NVM"></a>一、NVM</h2><p>个人建议使用 nvm 安装 Node。 Node 版本很多，你一定会有切换 Node 的版本的场景。nvm 就是用来管理 Node 版本的工具。另一个工具是 n 工具，不过个人喜欢使用 nvm 进行管理。<a href="https://github.com/creationix/nvm" target="_blank" rel="noopener">nvm 安装</a></p>
+<p>nvm 安装 node 和管理 node。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ nvm ls-remote         // 列出可以安装的 node 版本号</span><br><span class="line">$ nvm install v8.10.0    // 安装指定版本</span><br><span class="line">$ nvm uninstall v8.10.0  // 删除指定版本</span><br><span class="line">$ nvm use v8.10.0       // 切换 node 版本</span><br><span class="line">$ nvm current          // 查看当前版本</span><br><span class="line">$ nvm ls              // 查看已经安装的版本</span><br></pre></td></tr></table></figure>
+<h2 id="二、NRM"><a href="#二、NRM" class="headerlink" title="二、NRM"></a>二、NRM</h2><p>Node 经常遇到的一个问题就是安装包太慢，官网提供的镜像资源服务器在国外，所以经常吐槽官网的镜像。</p>
+<p><strong>nvm 安装</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g nrm</span><br></pre></td></tr></table></figure>
+<p>列出可用的镜像源</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ nrm ls</span><br></pre></td></tr></table></figure>
+<p>会列出下面的几个源，带 * 号的表示当前的采用的镜像源。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">  npm ---- https://registry.npmjs.org/</span><br><span class="line">  cnpm --- http://r.cnpmjs.org/</span><br><span class="line">* taobao - https://registry.npm.taobao.org/</span><br><span class="line">  nj ----- https://registry.nodejitsu.com/</span><br><span class="line">  rednpm - http://registry.mirror.cqupt.edu.cn/</span><br><span class="line">  npmMirror  https://skimdb.npmjs.com/registry/</span><br><span class="line">  edunpm - http://registry.enpmjs.org/</span><br></pre></td></tr></table></figure>
+<p>如果想使用其他的源，例如想换成 cnpm 的源</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ nrm use cnpm</span><br></pre></td></tr></table></figure>
+<p>会提示<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Registry has been set to: http://r.cnpmjs.org/</span><br></pre></td></tr></table></figure></p>
+<h2 id="三、淘宝镜像源和-CNPM"><a href="#三、淘宝镜像源和-CNPM" class="headerlink" title="三、淘宝镜像源和 CNPM"></a>三、淘宝镜像源和 CNPM</h2><p>直接参考这篇文章，不复制粘贴<a href="https://npm.taobao.org/" target="_blank" rel="noopener">淘宝镜像源和 CNPM</a></p>
+<h2 id="四、NPM"><a href="#四、NPM" class="headerlink" title="四、NPM"></a>四、NPM</h2><p>直接参考官网文档，介绍的最权威<a href="https://www.npmjs.com.cn/" target="_blank" rel="noopener">官网文档</a>，必读，必须熟悉，少废话。</p>
+<h2 id="五、Package-json"><a href="#五、Package-json" class="headerlink" title="五、Package.json"></a>五、Package.json</h2><p>同样给两个地址自己读，同样是 Node 中非常重要的必须要熟悉的知识</p>
 <blockquote>
 <ul>
-<li>工具：npm上各种工具模块，包括各种前端预编译、构建工具 Grunt/Gulp、脚手架，命令行工具，各种奇技淫巧</li>
-<li>前端：三大框架 React/Vue/Angular 辅助开发，以及工程化演进过程（使用Gulp /Webpack 构建 Web 开发工具）</li>
-<li>后端：Node 核心特性、Web 应用、API/RPC、测试、部署、微服务</li>
-<li>扩平台：覆盖你能想到的面向用户的所有平台，传统的PC Web端，以及PC客户端 nw.js/electron 、移动端 cordova、HTML5、react-native、weex，硬件 ruff.io 等</li>
-<li>框架：Koa/Egg 等等</li>
-<li>监控：PM2 等等</li>
+<li><a href="https://www.npmjs.com.cn/files/package.json/" target="_blank" rel="noopener">package.json</a></li>
+<li><a href="https://www.npmjs.com.cn/getting-started/using-a-package.json/" target="_blank" rel="noopener">Working with package.json</a></li>
 </ul>
 </blockquote>
 
@@ -112,10 +125,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/10/25/node-01/" data-id="cjnt18f8o00221tghsl96713l" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/10/28/node-02/" data-id="cjnt18f8k00211tghzimuihzv" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2018/10/25/node-01/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2018/10/28/node-02/#disqus_thread" class="article-comment-link">留言</a>
       
       
         
@@ -170,19 +183,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2018/10/28/node-02/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">上一篇</strong>
-      <div class="article-nav-title">
-        
-          Node 学习笔记02 - node 编程基础
-        
-      </div>
-    </a>
   
-  
-    <a href="/2018/10/11/shuji/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2018/10/25/node-01/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title">阅读书籍推荐</div>
+      <div class="article-nav-title">Node 学习笔记01 - 应用场景</div>
     </a>
   
 </nav>
@@ -232,35 +236,6 @@
     
   
     
-  <div class="widget-wrap widget-wrap-categories">
-    <h3 class="widget-title recent-posts">最新文章</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2018/10/28/node-02/">Node 学习笔记02 - node 编程基础</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/25/node-01/">Node 学习笔记01 - 应用场景</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/11/shuji/">阅读书籍推荐</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/11/js-xuexijihua/">学习计划安排</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/10/youji-HK/">香港一日游咯</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
   
     
 
@@ -307,7 +282,7 @@ window.onload = function() {
 <script>
   var disqus_shortname = 'true';
   
-  var disqus_url = 'http://www.xbroder.com/2018/10/25/node-01/';
+  var disqus_url = 'http://www.xbroder.com/2018/10/28/node-02/';
   
   (function(){
     var dsq = document.createElement('script');

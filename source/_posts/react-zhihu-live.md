@@ -3,7 +3,7 @@ layout: post
 title: Live - 帮助你深入理解 React
 date: 2018-08-19 12:51:34
 tags: React
-categories: React
+categories: JavaScript
 ---
 
 本笔记是知乎程墨的《帮助你深入理解React》 Live 的笔记

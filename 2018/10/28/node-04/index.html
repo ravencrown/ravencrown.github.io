@@ -3,15 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>归档: 2018/8 | 渡鸦的网络日志</title>
+  <title>Node 学习笔记03 - AMD和CMD | 渡鸦的网络日志</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="渡鸦的网络日志">
-<meta property="og:url" content="http://www.xbroder.com/archives/2018/08/index.html">
+  <meta name="description" content="Node 的模块系统的规范   CommonJS AMD0p">
+<meta name="keywords" content="Node">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Node 学习笔记03 - AMD和CMD">
+<meta property="og:url" content="http://www.xbroder.com/2018/10/28/node-04/index.html">
 <meta property="og:site_name" content="渡鸦的网络日志">
+<meta property="og:description" content="Node 的模块系统的规范   CommonJS AMD0p">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-11-08T13:50:08.037Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="渡鸦的网络日志">
+<meta name="twitter:title" content="Node 学习笔记03 - AMD和CMD">
+<meta name="twitter:description" content="Node 的模块系统的规范   CommonJS AMD0p">
   
   
     <link rel="icon" href="/favicon.png">
@@ -58,98 +63,154 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
+        <section id="main"><article id="post-node-04" class="article article-type-post" itemscope itemprop="blogPost">
+  
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Node 学习笔记03 - AMD和CMD
+    </h1>
+  
 
-  
-  
+      </header>
+        <div class="article-meta">
+          
+            <div class="article-date">作者：陈广宵</div>
+            <a href="/2018/10/28/node-04/" class="article-date">
+  <time datetime="2018-10-28T15:35:20.000Z" itemprop="datePublished">日期：2018-10-28</time>
+</a>
+          
+          
+  <div class="article-category1">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
+    <a class="article-category-link" href="/categories/Node/">分类：Node</a>
+  </div>
+
         </div>
-         <span class="archive-year-post">22 post  this year</span>
-        <div class="archives">
     
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2018/08/19/react-zhihu-live/" class="archive-article-date">
-  <time datetime="2018-08-19T04:51:34.000Z" itemprop="datePublished">日期：08-19</time>
-</a>
+    <div class="article-entry"  itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/08/19/react-zhihu-live/">Live - 帮助你深入理解 React</a>
-    </h1>
-  
+        <!-- Table of Contents -->
+        
+        <p>Node 的模块系统的规范</p>
+<blockquote>
+<ul>
+<li>CommonJS</li>
+<li>AMD0p</li>
+</ul>
+</blockquote>
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2018/08/14/三步式学习法/" class="archive-article-date">
-  <time datetime="2018-08-13T16:17:38.000Z" itemprop="datePublished">日期：08-14</time>
-</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/08/14/三步式学习法/">三步式学习法</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2018/08/05/koa01/" class="archive-article-date">
-  <time datetime="2018-08-05T14:24:18.000Z" itemprop="datePublished">日期：08-05</time>
-</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/08/05/koa01/">Koa 入门（一）</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2018/08/05/webpack01/" class="archive-article-date">
-  <time datetime="2018-08-05T08:30:36.000Z" itemprop="datePublished">日期：08-05</time>
-</a>
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2018/10/28/node-04/" data-id="cjo8njw1i001zuagh87ptowsz" class="article-share-link">分享</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/08/05/webpack01/">Webpack 入门（一）</a>
-    </h1>
-  
+      
+        <a href="http://www.xbroder.com/2018/10/28/node-04/#disqus_thread" class="article-comment-link">留言</a>
+      
+      
+        
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Node/">Node</a></li></ul>
 
-    </header>
+      
+    </footer>
   </div>
+  
+    
+ <script src="/jquery/jquery.min.js"></script>
+  <div id="random_posts">
+    <h2>推荐文章</h2>
+    <div class="random_posts_ul">
+      <script>
+          var random_count =4
+          var site = {BASE_URI:'/'};
+          function load_random_posts(obj) {
+              var arr=site.posts;
+              if (!obj) return;
+              // var count = $(obj).attr('data-count') || 6;
+              for (var i, tmp, n = arr.length; n; i = Math.floor(Math.random() * n), tmp = arr[--n], arr[n] = arr[i], arr[i] = tmp);
+              arr = arr.slice(0, random_count);
+              var html = '<ul>';
+            
+              for(var j=0;j<arr.length;j++){
+                var item=arr[j];
+                html += '<li><strong>' + 
+                item.date + ':&nbsp;&nbsp;<a href="' + (site.BASE_URI+item.uri) + '">' + 
+                (item.title || item.uri) + '</a></strong>';
+                if(item.excerpt){
+                  html +='<div class="post-excerpt">'+item.excerpt+'</div>';
+                }
+                html +='</li>';
+                
+              }
+              $(obj).html(html + '</ul>');
+          }
+          $('.random_posts_ul').each(function () {
+              var c = this;
+              if (!site.posts || !site.posts.length){
+                  $.getJSON(site.BASE_URI + 'js/posts.js',function(json){site.posts = json;load_random_posts(c)});
+              } 
+               else{
+                load_random_posts(c);
+              }
+          });
+      </script>
+    </div>
+  </div>
+
+    
+<nav id="article-nav">
+  
+    <a href="/2018/10/28/node-03/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Node 学习笔记03 - 命令行框架
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/10/27/node-02/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Node 学习笔记02 - node 编程基础</div>
+    </a>
+  
+</nav>
+
+  
 </article>
+
   
-  
-    </div></section>
-  
+  <div class="comments" id="comments">
+    
+     
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+      </section>
+      
+       
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+       
+      
+      
+           <div id="gitment_comments"></div>
+    
+  </div>
+ 
+
+
 
 
 </section>
@@ -198,13 +259,6 @@
 
   
     
-  <div class="widget-wrap widget-wrap-categories">
-    <h3 class="widget-title archive">归档</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li></ul>
-    </div>
-  </div>
-
 
   
     
@@ -249,11 +303,13 @@ window.onload = function() {
 <script>
   var disqus_shortname = 'true';
   
+  var disqus_url = 'http://www.xbroder.com/2018/10/28/node-04/';
+  
   (function(){
     var dsq = document.createElement('script');
     dsq.type = 'text/javascript';
     dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
   })();
 </script>

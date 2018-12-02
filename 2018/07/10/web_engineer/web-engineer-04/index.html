@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>前端工程化（四）：使用 Webpack 构建应用及最新特性解析 | 渡鸦的网络日志</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在上一篇文章中我们介绍了什么是模块以及模块打包的原理。在这篇文章中我会主要介绍 Webpack，包括我们为什么选择使用 Webpack 来做打包，以及从一个最简单的项目开始逐步介绍如何使用 Webpack，并且在最后会带来一些 Webpack 最新特性的分析。在本文的中各个实例你都可以在本课程的 Github 上找到。 为什么选择 Webpack？对于 JavaScript 应用来说，现在市面上可">
+<meta name="keywords" content="GitChat 课程(非原创)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前端工程化（四）：使用 Webpack 构建应用及最新特性解析">
+<meta property="og:url" content="http://www.xbroder.com/2018/07/10/web_engineer/web-engineer-04/index.html">
+<meta property="og:site_name" content="渡鸦的网络日志">
+<meta property="og:description" content="在上一篇文章中我们介绍了什么是模块以及模块打包的原理。在这篇文章中我会主要介绍 Webpack，包括我们为什么选择使用 Webpack 来做打包，以及从一个最简单的项目开始逐步介绍如何使用 Webpack，并且在最后会带来一些 Webpack 最新特性的分析。在本文的中各个实例你都可以在本课程的 Github 上找到。 为什么选择 Webpack？对于 JavaScript 应用来说，现在市面上可">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/6af705b8ly1fkn9mb1mvsj20jg09qaaf.jpg">
+<meta property="og:updated_time" content="2018-12-02T08:14:35.131Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="前端工程化（四）：使用 Webpack 构建应用及最新特性解析">
+<meta name="twitter:description" content="在上一篇文章中我们介绍了什么是模块以及模块打包的原理。在这篇文章中我会主要介绍 Webpack，包括我们为什么选择使用 Webpack 来做打包，以及从一个最简单的项目开始逐步介绍如何使用 Webpack，并且在最后会带来一些 Webpack 最新特性的分析。在本文的中各个实例你都可以在本课程的 Github 上找到。 为什么选择 Webpack？对于 JavaScript 应用来说，现在市面上可">
+<meta name="twitter:image" content="http://ww1.sinaimg.cn/large/6af705b8ly1fkn9mb1mvsj20jg09qaaf.jpg">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    
+    <div id="header-inner" class="inner">
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://www.xbroder.com"></form>
+      </div>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">渡鸦的网络日志</a>
+      </h1>
+      
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-web_engineer/web-engineer-04" class="article article-type-post" itemscope itemprop="blogPost">
+  
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      前端工程化（四）：使用 Webpack 构建应用及最新特性解析
+    </h1>
+  
+
+      </header>
+        <div class="article-meta">
+          
+            <div class="article-date">作者：陈广宵</div>
+            <a href="/2018/07/10/web_engineer/web-engineer-04/" class="article-date">
+  <time datetime="2018-07-10T15:01:01.000Z" itemprop="datePublished">日期：2018-07-10</time>
+</a>
+          
+          
+  <div class="article-category1">
+    
+    <a class="article-category-link" href="/categories/前端工程化/">分类：前端工程化</a>
+  </div>
+
+        </div>
+    
+    <div class="article-entry"  itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <p>在上一篇文章中我们介绍了什么是模块以及模块打包的原理。在这篇文章中我会主要介绍 Webpack，包括我们为什么选择使用 Webpack 来做打包，以及从一个最简单的项目开始逐步介绍如何使用 Webpack，并且在最后会带来一些 Webpack 最新特性的分析。在本文的中各个实例你都可以在本课程的 <a href="https://github.com/yuhaoju/webpack-examples" target="_blank" rel="noopener">Github</a> 上找到。</p>
+<h2 id="为什么选择-Webpack？"><a href="#为什么选择-Webpack？" class="headerlink" title="为什么选择 Webpack？"></a>为什么选择 Webpack？</h2><p>对于 JavaScript 应用来说，现在市面上可以选择的打包和构建工具有很多：Gulp、Grunt、Browserify、Webpack、Rollup 等等。</p>
+<p>如果我们大概分一下类的话，Gulp、Grunt 它们是属于构建流程管理工具，也就是通过定义和执行任务来完成构建工作。这些任务可以包括预编译语言的处理、模块打包、代码压缩等等，开发者可以利用 Gulp、Grunt 以及它们周边的插件去做很多事情。</p>
+<p>Browserify、Webpack、Rollup 则属于打包工具，核心的功能就是把模块按照特定模块规则合并到一起，使浏览器可以执行。Rollup 主要是面向库的打包工具，本文不会过多涉及。而 Browserify 和 Webpack 对比起来，Webpack 的功能要更强大一些。它支持 AMD、CommonJS、ES6 Module 多种模块系统，也可以通过 loader 和 plugin 来进行预编译语言的处理、代码压缩等等。而 Webpack 最主要的优势在于可以进行代码按需加载（ code spliting ），使构建速度和用户体验均可以得到提升，在后面我们会详细介绍。</p>
+<h2 id="从零开始-Webpack"><a href="#从零开始-Webpack" class="headerlink" title="从零开始 Webpack"></a>从零开始 Webpack</h2><p>让我们从一个最简单的工程开始认识 Webpack，首先在一个空的工程目录下，使用 npm 进行初始化并安装 Webpack：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm init</span><br><span class="line">npm i webpack --save-dev</span><br></pre></td></tr></table></figure>
+<p>接下来我们在工程中创建三个文件：index.html、app.js 和 module.js。</p>
+<p>index.html：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;html lang=<span class="string">"zh-CN"</span>&gt;</span><br><span class="line">  &lt;body&gt;</span><br><span class="line">    &lt;script src=<span class="string">"dist/bundle.js"</span>&gt;&lt;/script&gt;</span><br><span class="line">  &lt;<span class="regexp">/body&gt;</span></span><br><span class="line"><span class="regexp">&lt;/</span>html&gt;</span><br></pre></td></tr></table></figure></p>
+<p>app.js：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> moduleLog <span class="keyword">from</span> <span class="string">'./module.js'</span>;</span><br><span class="line"><span class="built_in">document</span>.write(<span class="string">'app.js loaded.'</span>);</span><br><span class="line">moduleLog();</span><br></pre></td></tr></table></figure></p>
+<p>module.js：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">document</span>.write(<span class="string">'module.js loaded.'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接下来执行 Webpack 命令来生成我们的第一个打包结果：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./node_modules/.bin/webpack app.js dist/bundle.js</span><br></pre></td></tr></table></figure>
+<p>注意，这里我们使用的是项目中安装的 Webpack，因此我们执行的路径是 <code>./node_modules/.bin/webpack</code>。<code>./node_modules/.bin/</code> 是用来执行项目内安装的 npm 包命令的目录，在 Webpack 安装完之后会在该目录下面生成一个命令入口。</p>
+<p>Webpack 命令后面我们加了两个参数，第一个参数是打包入口文件（ app.js ），第二个参数是打包结果文件（ dist/bundle.js ），现在工程中应该已经生成了该打包结果。</p>
+<p>在浏览器中打开 index.html，你应该能看到页面内容中的 “app.js loaded. module.js loaded.” 了。以上是我们通过 Webpack 将工程中的源文件 app.js 和 module.js 打包合并生成了 bundle.js。</p>
+<p><strong>定义配置文件</strong></p>
+<p>Webpack 为打包提供了很多配置项，如果使用命令行的形式则要配置太多的参数，使得最终的打包命令很长。因此我们习惯于将 Webpack 配置写在一个特定的文件中，通过该文件来管理我们项目中的配置。比如我们在工程中创建一个 webpack.config.js：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    entry: <span class="string">'./app.js'</span>,</span><br><span class="line">    output: &#123;</span><br><span class="line">        path: path.join(__dirname, <span class="string">'dist'</span>),</span><br><span class="line">        filename: <span class="string">'bundle.js'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面我们导出了一个 Webpack 的配置对象，该对象现在包含两个属性：</p>
+<p><strong>entry</strong>：工程资源的入口，它可以是单个文件也可以是多个文件。通过每一个资源入口，Webpack 会依次去寻找它的依赖来进行模块打包。我们可以把 entry 理解为整个依赖树的根，每一个入口都将对应一个最终生成的打包结果。 output：这是一个配置对象，通过它我们可以对最终打包的产物进行配置。这里我们配置了两个属性：</p>
+<blockquote>
+<ul>
+<li>path：打包资源放置的路径，必须为绝对路径。</li>
+<li>filename：打包结果的文件名。<br>定义好配置文件后，在工程中执行打包命令：</li>
+</ul>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./node_modules/.bin/webpack</span><br></pre></td></tr></table></figure>
+<p>这一次由于已经有了配置文件，我们在打包命令中不需要再指定源文件名和输出文件名。看起来执行的命令更简洁了，而最终生成的还是一样的 bundle.js。</p>
+<p><strong>Dev Server</strong></p>
+<p>在本地开发时候一般都会通过 webpack-dev-server 起一个本地服务，它可以为我们带来开发中的便利。它最主要的功能是可以监听工程目录文件的改动，当我们修改源文件并保存的时候，它可以实现重新打包，并且自动刷新浏览器（ hot-loading ）来看到效果。</p>
+<p>先在工程目录下安装 <code>webpack-dev-server：</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install webpack-dev-server --save-dev</span><br></pre></td></tr></table></figure>
+<p>接着在 webpack.config.js 中对它进行简单的配置：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    entry: <span class="string">'./app.js'</span>,</span><br><span class="line">    output: &#123;</span><br><span class="line">        path: path.join(__dirname, <span class="string">'dist'</span>),</span><br><span class="line">        filename: <span class="string">'bundle.js'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    devServer: &#123;</span><br><span class="line">        port: <span class="number">3000</span>, <span class="comment">// 服务端口</span></span><br><span class="line">        publicPath: <span class="string">"/dist/"</span> <span class="comment">// 打包后资源路径，后面会详细解释</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后我们在项目中执行 <code>node_modules/.bin/webpack-dev-server</code>，访问 <code>localhost:3000</code> 即可看到结果。</p>
+<p>使用 <code>webpack-dev-server</code> 和我们使用普通的 Webpack 命令行的最主要区别在于，webpack-dev-server 打包并不会生成实际的文件（比如它并不会在 dist 目录生成 bundle.js 文件）。我们可以理解成最终的资源只存在于内存中，然后当浏览器发出请求的时候它会从内存中去加载，返回打包后的资源结果。</p>
+<p><strong>一切皆模块与 loaders</strong></p>
+<p><img src="http://ww1.sinaimg.cn/large/6af705b8ly1fkn9mb1mvsj20jg09qaaf.jpg" alt=""></p>
+<p>接下来我们要介绍一个 Webpack 的核心特性——一切皆模块。对于像 RequireJS 或 Browserify 这样的打包工具而言，它们仅仅能够处理 JavaScript。然而我们的工程不仅仅有 JavaScript，还有模板、样式文件、图片等等其它类型的资源，这就意味着我们还需要使用别的工具去管理它们。</p>
+<p>在 Webpack 的思想中，所有这些资源——模板、样式、图片等等都是模块，因为这些资源也具备模块的特性——它们都负责特定的职能，并且具有可复用性。因此，我们可以使用 Webpack 去管理所有这些资源，并且把它们都当做模块来处理。</p>
+<p>到了代码层面，让我们实际来使用一下这个特性。在项目中创建一个很简单的 style.css：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">body &#123;</span><br><span class="line">    text-align: center;</span><br><span class="line">    padding: <span class="number">100</span>px;</span><br><span class="line">    color: #fff;</span><br><span class="line">    background-color: #09c;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来编辑项目中的 app.js：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> moduleLog <span class="keyword">from</span> <span class="string">'./module.js'</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'./style.css'</span>;</span><br><span class="line"><span class="built_in">document</span>.write(<span class="string">'app.js loaded.'</span>);</span><br><span class="line">moduleLog();</span><br></pre></td></tr></table></figure>
+<p>让我们来看一下文件的改动。在上面的 app.js 中我们引入了一个 CSS 文件，你可能会觉得有点奇怪。在模块语法层面来说我们在 JS 文件中只能引入 JS，因为编译器无法编译其它类型的文件。然而在 Webpack 中，我们可以在 JS 文件中引入 CSS、LESS、SCSS，甚至是 Mustache、PNG。实际上，Webpack 会处理在依赖树中的所有资源，不管它是 JS 也好，还是 CSS 也好。那么 Webpack 是如何使得它在打包过程中解析这些不属于 JavaScript 的语法呢？这就要提到 Webpack 中另一个概念——loader。</p>
+<p>loader 可以被理解成对于 Webpack 能力的扩展。Webpack 本身只能处理 JavaScript，而对于别的类型的语法则完全不认识。如果我们需要引入某一类型的模块，那么就需要通过为它添加特性类型的 loader。比如上面我们在 app.js 中引入了一个 CSS 文件，那么我们就需要 CSS 的 loader。</p>
+<p>loader 是独立与 Webpack 存在的，Webpack 内部并不包含任何 loader，因此我们首先使用 npm 安装 css-loader（很多情况下，解析某种文件的 loader 命名就是 <code>&lt;filetype&gt;-loader</code>，比如 <code>sass-loader</code>、<code>mustache-loader</code>、<code>coffee-loader</code> 等，通过 google 或者 github 很容易搜索到）：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i css-loader --save-dev</span><br></pre></td></tr></table></figure>
+<p>现在让我们编辑 webpack.config.js 来让 css-loader 生效：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    entry: <span class="string">'./app.js'</span>,</span><br><span class="line">    output: &#123;</span><br><span class="line">        path: path.join(__dirname, <span class="string">'dist'</span>),</span><br><span class="line">        filename: <span class="string">'bundle.js'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="built_in">module</span>: &#123;</span><br><span class="line">        loaders: [</span><br><span class="line">            &#123;</span><br><span class="line">                test: <span class="regexp">/\.css$/</span>,</span><br><span class="line">                loader: <span class="string">'css-loader'</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到我们配置了 module.loaders 这样一个数组，数组中的每项则是一个对象，我们为它添加了两个属性（实际上有更多的属性，这里我们只涉及两个）。</p>
+<p><strong>test</strong>：代表我们希望 Webpack 对哪种类型的文件使用该 loader。通过正则匹配我们找出符合要求的以 .css 结尾文件名的文件。 <strong>loader</strong>：对所匹配到文件进行处理的 loader 的名字。</p>
+<p>现在让我们重新执行打包命令，然而当你刷新页面你可能会发现 style.css 中的样式并没有生效。这是因为我们使用 css-loader 只是解决了 CSS 语法解析的问题，然而并没有把样式加到页面上。现在让我们为项目添加 style-loader 来解决这个问题，它会负责为我们的样式生成 style 标签并插入到页面中。</p>
+<p>首先还是使用 npm 来安装 style-loader：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i style-loader --save-dev</span><br></pre></td></tr></table></figure>
+<p>接下来编辑 webpack.config.js：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    entry: <span class="string">'./app.js'</span>,</span><br><span class="line">    output: &#123;</span><br><span class="line">        path: path.join(__dirname, <span class="string">'dist'</span>),</span><br><span class="line">        filename: <span class="string">'bundle.js'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="built_in">module</span>: &#123;</span><br><span class="line">        loaders: [</span><br><span class="line">            &#123;</span><br><span class="line">                test: <span class="regexp">/\.css/</span>,</span><br><span class="line">                loader: <span class="string">'style-loader!css-loader'</span></span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到在 css-loader 之前我添加上了 style-loader，并且使用 “!” 分隔，这是 Webpack 对于 loader 的配置形式。loader 的执行顺序是从右向左，也就是说 CSS 文件会首先经过 css-loader 来解析语法，然后通过 style-loader 来生成插入 style 标签的代码。现在当你重新打包之后刷新页面，你应该能看到之前添加的样式在页面中生效了。</p>
+<p>以上是一个使用 loader 的简单的例子，我们通过链式的 loader 配置来处理样式文件，你也可以试试为你的工程添加更多的 loader。并且 loader 还有更多的配置项，具体可以参阅官方文档，这里不再详述。</p>
+<p><strong>资源压缩</strong></p>
+<p>既然已经聊过了模块打包，现在让我们继续深入到工程构建中的其它流程。我们知道客户端页面加载性能是作为前端工程师的重要关注点之一。为了使页面渲染的更快，我们希望 JS、CSS 等资源能更快地传输到客户端，所以所传输的资源体积越小越好，因此我们一般都会将资源进行压缩处理，Webpack 可以帮我们做这项工作。</p>
+<p>压缩实际上是从源代码中去掉生产环境下不必要的内容，比如代码中的注释、换行、空格，这些也许对于开发者来说有用，但是用户并不需要这些。去掉这些之后可以减小资源的整体体积，同时不影响代码的实际功能。</p>
+<p>添加压缩功能需要用到 Webpack 的 plugin 配置项，通过该配置项我们来为工程打包添加辅助插件。这些插件可以侵入打包的各个流程，来实现特定的功能。它们有些是 Webpack 自带的，有些需要我们手动从 npm 去安装。现在让我们来安装压缩插件：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i uglifyjs-webpack-plugin --save-dev</span><br></pre></td></tr></table></figure>
+<p>接着编辑 webpack.config.js 将它引入：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> UglifyJSPlugin = <span class="built_in">require</span>(<span class="string">'uglifyjs-webpack-plugin'</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    entry: <span class="string">'./app.js'</span>,</span><br><span class="line">    output: ...</span><br><span class="line">    <span class="built_in">module</span>: ...</span><br><span class="line">    plugins: [</span><br><span class="line">        <span class="keyword">new</span> UglifyJSPlugin()</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在当你执行打包你会发现生成的 bundle.js 已经是压缩过的并且基本不具备可读性，但是它的体积比之前已经减小了很多。</p>
+<p><strong>按需加载</strong></p>
+<p>对于现在的 JavaScript 应用，尤其是单页应用来说，资源体积过大是一个很常见的问题。一般来说，当我们加载一个单页应用的时候，我们需要把整个应用的逻辑全塞在入口 JS 文件中，这会使得首页加载速度很慢。假如我们可以在页面需要的时候再去加载我们需要的模块就好了，Webpack 可以帮我们做到这一点。</p>
+<p>Webpack 支持异步加载模块的特性，从原理上说其实很简单——就是动态地向页面中插入 script 标签。比如一个拥有五个页面（或者说路由状态）的单页应用，我们在首页加载的 index.js 中只放首页需要的逻辑。而另外四个页面的逻辑则通过跳转到其对应路由状态时再进行异步加载。这样的话就实现了只加载用户需要的模块，也就是按需加载。</p>
+<p>在代码层面，Webpack 支持两种方式进行异步模块加载，一种是 CommonJS 形式的 <code>require.ensure</code>，一种是 ES6 Module 形式的异步 <code>import()</code>。在这里我们使用 <code>import()</code> 的形式动态加载我们的模块。</p>
+<p>首先更改一下 module.js，因为异步加载的脚本不允许使用 document.write，我们把之前的代码改为一个 console.log 函数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> log = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'module.js loaded.'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后编辑 app.js，将 module.js 以异步的形式加载进来：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span>(<span class="string">'./module.js'</span>).then(<span class="function"><span class="params">module</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">module</span>.log();</span><br><span class="line">&#125;).catch(<span class="function"><span class="params">error</span> =&gt;</span> <span class="string">'An error occurred while loading the module'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">document</span>.write(<span class="string">'app.js loaded.'</span>);</span><br></pre></td></tr></table></figure>
+<p>修改 webpack.config.js：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    entry: <span class="string">'./app.js'</span>,</span><br><span class="line">    output: &#123;</span><br><span class="line">        path: path.join(__dirname, <span class="string">'dist'</span>),</span><br><span class="line">        publicPath: <span class="string">'./dist/'</span>,</span><br><span class="line">        filename: <span class="string">'bundle.js'</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment">// 省略其它配置...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我们在 output 中添加了一个配置项 publicPath，它是 Webpack 中一个很重要又很容易引起迷惑的配置。当我们的工程中有按需加载以及图片和文件等外部资源时就需要它来配置这些资源的路径，否则页面上就会报 404。这里我们将 publicPath 配置为相对于 html 的路径，使按需加载的资源生成在 dist 目录下并且页面能正确地引用到它。</p>
+<p>重新打包之后你会发现打包结果中多出来一个 0.bundle.js，这里面就是将来会被异步加载进来的内容。刷新页面并查看 chrome 的 network 标签，可以看到页面会请求 0.bundle.js。它并不是来源于 index.html 中的引用，而是通过 bundle.js 在页面插入了一个 script 标签来将其引入的。</p>
+<h2 id="使用-Webpack-的构建特性"><a href="#使用-Webpack-的构建特性" class="headerlink" title="使用 Webpack 的构建特性"></a>使用 Webpack 的构建特性</h2><p>从 2.0.0 版本开始，Webpack 开始加入了更多的可以优化构建过程的特性。</p>
+<p><strong>tree-shaking</strong><br>在关于模块的那一篇文章中我们提到过，ES6 Module 的模块依赖解析是在代码静态分析过程中进行的。换句话说，它可以在代码的编译过程中得到依赖树，而非运行时。利用这一点 Webpack 提供了 tree-shaking 功能，它可以帮助我们检测工程中哪些模块有从未被引用到的代码，这些代码不可能被执行到，因此也称为”死代码”。通过 tree-shaking，Webpack 可以在打包过程中去掉这些死代码来减小最终的资源体积。</p>
+<p>开启 tree-shaking 特性很简单，只要保证模块遵循 ES6 Module 的形式定义即可，这意味着之前所有我们的例子其实都是默认已经开启了的。但是要注意如果在配置中使用了 babel-preset-es2015 或者 babel-preset-env，则需要将其模块依赖解析的特性关掉，如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">presets: [</span><br><span class="line">  [env, &#123;<span class="attr">module</span>: <span class="literal">false</span>&#125;]</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>这里我们测试一下 tree-shaking 的功能，编辑 module.js:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// module.js</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> log = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'module.js loaded.'</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> unusedFunc = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'not used'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>打开页面查看 0.bundle.js 的内容，应该可以发现 unusedFunc 的代码是不存在的，因为它没有被别的模块使用，属于死代码，在 tree-shaking 的过程中被优化掉了。</p>
+<p>tree-shaking 最终的效果依赖于实际工程的代码本身，在我对于实际工程的测试中，一般可以将最终的体积减小 3%~5%。总体来看，我认为如果要使 tree-shaking 发挥真正的效果还要等几年的时间，因为现在大多数的 npm 模块还是在使用 CommonJS，因此享受不了这个特性带来的优势。</p>
+<p><strong>scope-hoisting</strong></p>
+<p>scope-hoisting（作用域提升）是由 Webpack3 提供的特性。在大型的工程中模块引用的层级往往较深，这会产生比较长的引用链。scope-hoisting 可以将这种纵深的引用链拍平，使得模块本身和其引用的其它模块作用域处于同级。这样的话可以去掉一部分 Webpack 的附加代码，减小资源体积，同时可以提升代码的执行效率。</p>
+<p>目前如果要开启 scope-hoisting，需要引入它的一个内部插件：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    plugins: [</span><br><span class="line">        <span class="keyword">new</span> webpack.optimize.ModuleConcatenationPlugin()</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>scope-hoisting 生效后会在 bundle.js 中看到类似下面的内容，你会发现 log 的定义和调用是在同一个作用域下了：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// CONCATENATED MODULE: ./module.js</span></span><br><span class="line"><span class="keyword">const</span> log = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'module.js loaded.'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// CONCATENATED MODULE: ./app.js</span></span><br><span class="line">log();</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>以上是对于 Webpack 一些基本特性的介绍，如果你想运行示例可以在本课程的 Github 上找到。在后续介绍构建优化的文章中会进一步带来更多 Webpack 的进阶用法，可以帮助提升构建速度以及减小资源体积，同样到时也会给出更多的示例。</p>
+
+      
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2018/07/10/web_engineer/web-engineer-04/" data-id="cjp6m12wd00094ughhnlsmjqr" class="article-share-link">分享</a>
+      
+      
+        <a href="http://www.xbroder.com/2018/07/10/web_engineer/web-engineer-04/#disqus_thread" class="article-comment-link">留言</a>
+      
+      
+        
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/GitChat-课程-非原创/">GitChat 课程(非原创)</a></li></ul>
+
+      
+    </footer>
+  </div>
+  
+    
+ <script src="/jquery/jquery.min.js"></script>
+  <div id="random_posts">
+    <h2>推荐文章</h2>
+    <div class="random_posts_ul">
+      <script>
+          var random_count =4
+          var site = {BASE_URI:'/'};
+          function load_random_posts(obj) {
+              var arr=site.posts;
+              if (!obj) return;
+              // var count = $(obj).attr('data-count') || 6;
+              for (var i, tmp, n = arr.length; n; i = Math.floor(Math.random() * n), tmp = arr[--n], arr[n] = arr[i], arr[i] = tmp);
+              arr = arr.slice(0, random_count);
+              var html = '<ul>';
+            
+              for(var j=0;j<arr.length;j++){
+                var item=arr[j];
+                html += '<li><strong>' + 
+                item.date + ':&nbsp;&nbsp;<a href="' + (site.BASE_URI+item.uri) + '">' + 
+                (item.title || item.uri) + '</a></strong>';
+                if(item.excerpt){
+                  html +='<div class="post-excerpt">'+item.excerpt+'</div>';
+                }
+                html +='</li>';
+                
+              }
+              $(obj).html(html + '</ul>');
+          }
+          $('.random_posts_ul').each(function () {
+              var c = this;
+              if (!site.posts || !site.posts.length){
+                  $.getJSON(site.BASE_URI + 'js/posts.js',function(json){site.posts = json;load_random_posts(c)});
+              } 
+               else{
+                load_random_posts(c);
+              }
+          });
+      </script>
+    </div>
+  </div>
+
+    
+<nav id="article-nav">
+  
+    <a href="/2018/07/11/javascript/如何在疲劳的JS世界中持续学习？/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          如何在疲劳的JS世界中持续学习？
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/07/07/web_engineer/web-engineer-03/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">前端工程化（三）：关于包管理器你应该知道的</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+  
+  <div class="comments" id="comments">
+    
+     
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+      </section>
+      
+       
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+       
+      
+      
+           <div id="gitment_comments"></div>
+    
+  </div>
+ 
+
+
+
+
+</section>
+         
+    <aside id="sidebar">
+  
+    
+
+  
+    
+  
+    
+
+  
+    
+  
+    
+  
+    
+
+  
+    
+  
+</aside>
+
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-left">
+      &copy; 2014 - 2018 陈广宵&nbsp;|&nbsp;
+      主题 <a href="https://github.com/giscafer/hexo-theme-cafe/" target="_blank">Cafe</a>
+    </div>
+     <div id="footer-right">
+      联系方式&nbsp;|&nbsp;chengx@guangxiao.me
+    </div>
+  </div>
+</footer>
+ <script src="/jquery/jquery.min.js"></script>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    <img class="back-to-top-btn" src="/images/fly-to-top.png"/>
+<script>
+// Elevator script included on the page, already.
+window.onload = function() {
+  var elevator = new Elevator({
+    selector:'.back-to-top-btn',
+    element: document.querySelector('.back-to-top-btn'),
+    duration: 1000 // milliseconds
+  });
+}
+</script>
+      
+
+<script>
+  var disqus_shortname = 'true';
+  
+  var disqus_url = 'http://www.xbroder.com/2018/07/10/web_engineer/web-engineer-04/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+
+
+
+
+<!-- author:forvoid begin -->
+<!-- author:forvoid begin -->
+
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script> 
+  <script>
+  var gitment = new Gitment({
+    // id: '页面 ID', // 可选。默认为 location.href
+    owner: 'ravencrown',
+    repo: 'ravencrown.github.io',
+    oauth: {
+    client_id: '20c3780df7c8f14ab7ca',
+    client_secret: '7ab19a1a82c9f2b8bbef0dd9071c86dc8fcaaa2d',
+    }
+  })
+  gitment.render(document.getElementById("gitment_comments"))
+</script>
+
+
+<!-- author:forvoid end -->
+
+<!-- author:forvoid end -->
+
+
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      })
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      })
+    </script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+ <script src="/js/is.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<script src="/js/elevator.js"></script>
+  </div>
+</body>
+</html>

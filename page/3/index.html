@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-现代JS框架存在的根本原因" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-web-engineer-05" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/04/现代JS框架存在的根本原因/">现代JS框架存在的根本原因</a>
+      <a class="article-title" href="/2018/07/13/web-engineer-05/">前端工程化（五）：摆脱冗长的等待——构建流程优化</a>
     </h1>
   
 
@@ -79,7 +79,7 @@
           
   <div class="article-category1">
     
-    <a class="article-category-link" href="/categories/JavaScript/">分类：JavaScript</a>
+    <a class="article-category-link" href="/categories/前端工程化/">分类：前端工程化</a>
   </div>
 
         </div>
@@ -88,73 +88,89 @@
       
         <!-- Table of Contents -->
         
-        <p><strong>【本文转载自 奇舞周刊 微信公众号】</strong></p>
-<p>我曾见过很多很多人盲目地使用（前端）框架，如 React，Angular 或 Vue等等。这些框架提供了许多有意思的东西，然而通常人们（自以为）使用框架是因为：</p>
+        <p>随着 JavaScript 应用规模和复杂度不断提升，构建速度逐渐成为了让开发者头疼的问题。不仅是本地工程启动慢，在进行发布时每次开发和 QA 都要等好几分钟才能进行验证，拖慢了开发效率。这篇文章会讲解如何从 npm 和 Webpack 的角度进行优化让构建更快。</p>
+<p>下文会聊到很多种策略，首先需要强调的是，一种优化策略通常只是针对一类场景，不是所有的优化点放在我们的项目中都有效。因此我会先从原理上去分析构建的流程，以及在这些流程部分中哪些容易成为性能的瓶颈。希望大家在遇到类似的问题时能对症下药，分析出问题的原因，然后找到对应的解决方案进行优化。</p>
+<h2 id="从-npm-install-开始"><a href="#从-npm-install-开始" class="headerlink" title="从 npm install 开始"></a>从 npm install 开始</h2><p>假设我们刚刚把工程代码从 git 仓库拉下来，准备进行构建和发布。那么对于一般 JavaScript 应用来说，第一步通常是使用 npm/Yarn 等包管理器安装项目依赖。对于我们来说很简单，只是执行一个命令（以下以 npm 为例）：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br></pre></td></tr></table></figure>
+<p>接下来 npm 在安装流程中会经历以下几个阶段：</p>
+<blockquote>
+<ol>
+<li>分析包依赖关系和确定版本。npm 首先会检查是否有版本描述文件，通过它来获取包的下载地址和版本等信息。如果没有版本描述文件则要根据 package.json 和 semver 规则来进一步分析。比如一个包的版本是 ^1.1.0，则 npm 会去仓库获取符合该语义规则的最新版本。然后通过依赖关系递归地去获取更多的包及其相应版本，最后得到项目所有需要的包信息。</li>
+<li>接下来 npm 会获取包的下载地址。在版本描述文件中一般会有 resolve 字段，这就是用来记录每个包下载地址的。如果没有的话 npm 会调用仓库的接口，比如它会告诉仓库需要 split 这个包的 1.1.2 版本，接着仓库会返回一个压缩包地址，如果没有找到则会返回 404，安装过程即报错终止。</li>
+<li>下载包（或使用缓存）。有了下载地址之后，npm 会首先检查缓存，如果已经下载过同样的包（包名、版本、仓库均相同），就直接使用缓存。相反如果没有找到缓存则会再从仓库下载。</li>
+<li>将下载后的压缩包解压（或者直接使用缓存）拷贝到 node_modules。在这个过程中有些包还会调用其生命周期函数，如 preinstall、postinstall 等。</li>
+</ol>
+</blockquote>
+<p><strong>固化 npm 包信息</strong></p>
+<p>在上面的流程中，第一个耗时的事情就是递归地分析包的依赖关系和版本。一个项目中有几十个甚至上百个包是很正常的事情，并且大多数包都有其自身的依赖。npm 需要逐层去分析每个依赖的版本，最后再将这些树状关系拍平，在大型工程中这是个很耗时的过程。</p>
+<p>优化的办法很简单，就是在项目中维护一份版本描述文件。可以使用包括 shrinkwrap.json（ npm 5 以下）、package-lock.json（ npm 5）和 yarn.lock（ Yarn ），任何其中一个都可以。版本描述文件中已经记录了依赖包的各种信息，也就不用再重新获取一遍了。在一般的实际工程中，使用了版本描述文件可以使整个 npm install 的过程缩短 10s 以上，这个收益是非常可观的。</p>
+<p><strong>仓库与镜像</strong></p>
+<p>在国内一般我们使用淘宝提供的 npm 仓库来提升下载包的速度。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm config set registry https:<span class="comment">//registry.npm.taobao.org</span></span><br></pre></td></tr></table></figure>
+<p>但是有时仅仅设置了仓库还不够，有些包定义了生命周期函数（比如上面提到的 postinstall ）用来在安装过程中执行特定的脚本。这些脚本很多是用来下载第三方的辅助文件，比如 node-sass 需要下载二进制包来编译 SASS。而像这样的文件通常放在外网直接下载很慢，需要指到国内的镜像地址。在“去哪儿网”我们搭了一个<a href="https://ued.qunar.com/mirrors/" target="_blank" rel="noopener">镜像平台</a>用来放一些常用文件的镜像，有需要的同学可以自取。</p>
+<p><strong>查找臃肿的依赖</strong></p>
+<p>开发过程中难免会添加一些冗余的包，可能最初我们只是想测试它的功能，但是后来忘记去掉，亦或是我们在使用某一个非常庞大的工具类库，只为了其中的一个接口，而实际上却存在更加轻量简洁的解决方案。</p>
+<p>这里推荐一个用来检测依赖大小的工具叫 <a href="https://github.com/nolanlawson/slow-deps" target="_blank" rel="noopener">slow-deps</a>，通过它我们可以找到哪些东西影响了 npm install 的速度。</p>
+<p><img src="http://images.gitbook.cn/29530f20-c29e-11e7-b5a3-55d241c83e13" alt=""></p>
+<p>从上图可以清晰地看出每个包的安装时间、包的大小、以及它自身依赖的情况。如果哪个包太大，我们可以尝试寻找一些轻量级的替代解决方案。</p>
+<h2 id="打包流程分析与优化"><a href="#打包流程分析与优化" class="headerlink" title="打包流程分析与优化"></a>打包流程分析与优化</h2><p>相信很多 Webpack 的使用者都经历过打包速度慢的问题。我之前也是被这个问题困扰过一段时间，后来发现影响 Webpack 打包速度一般来说也就那么几个因素，只要找到项目中构建性能的瓶颈并将其优化掉就能大幅缩短整体构建时间。</p>
+<p>如果把整个 Webpack 打包的过程理想化，那么可以将其看作为一个函数。输入是所有工程模块，包括项目中模块和 node_modules 中的模块，输出自然就是最终的 JS、CSS、HTML 等静态资源。在这个函数的内部主要就做了这两件事情：</p>
+<blockquote>
+<ol>
+<li>依赖处理。从 Webpack 配置中的入口文件开始，逐层进行依赖分析，最终得到整个应用的依赖树。</li>
+<li>文件编译。每个依赖树中的文件都要根据配置来决定要把它交给哪些 loader 来处理，打包过程中最耗时的地方也就在这。假如说我们工程中有 TypeScript 模块，那就要用对应的 ts-loader 来将其编译为 JavaScript。如果是 SASS，那就用 sass-loader 来编译为 CSS。有时我们还会使用链式的 loader 来对文件进行多步处理。</li>
+</ol>
+</blockquote>
+<p>下面我们分几个切入点来讲如何使 loader 来更快地完成工作。</p>
+<p><strong>减少不必要的编译过程</strong></p>
+<p>每个 loader 都有其作用的范围，我们应该使这个范围尽可能缩小来避免冗余的工作。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>: &#123;</span><br><span class="line">  <span class="comment">// 配置 Webpack 完全忽略的目录</span></span><br><span class="line">  noParse: [<span class="regexp">/moment-with-locales/</span>],</span><br><span class="line">  loaders: [</span><br><span class="line">    &#123;</span><br><span class="line">      test: <span class="regexp">/\.ts$/</span>,</span><br><span class="line">      <span class="comment">// 配置 loader 忽略的目录</span></span><br><span class="line">      exclude: [<span class="regexp">/node_modules/</span>],</span><br><span class="line">      loaders: [<span class="string">'typescript-loader'</span>]</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      test: <span class="regexp">/\.js$/</span>,</span><br><span class="line">      <span class="comment">// 忽略目录（除了某几个子目录）</span></span><br><span class="line">      exclude: <span class="regexp">/node_modules\/(?!(MY-MODULE|ANOTHER-ONE)\/).*/</span>,</span><br><span class="line">      loaders: [<span class="string">'babel-loader'</span>]</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>noParse</code> 是整个 Webpack 完全忽略的目录，甚至连 <code>require</code>、<code>import</code> 都不会处理，所以它应该是完全独立的模块（比如某些打包好的框架类库）。<code>exclude</code> 只对 loader 生效，或是 loader 忽略该目录，最常见的用法是忽略 nodemodules。但是当我们只想对 nodemodules 中的某几个目录使用 loader 时，也可以通过上面例子中的正则匹配来实现。</p>
+<p><strong>公共代码与 CommonsChunkPlugin</strong></p>
+<p>如何有效地减小构建时间？首先应该优先关注最耗时的部分，而最耗时的部分往往是框架类库等比较大的模块。可以利用 <a href="https://github.com/webpack-contrib/webpack-bundle-analyzer" target="_blank" rel="noopener">webpack-bundle-analyzer</a> 这样的工具进行打包结果分析，找出体积占比最大的模块。</p>
+<p>有一天一个同事找我说他们用 Webpack 的时候总是出现内存溢出的问题，导致打包到一半就终止了。我看了他们的项目，发现这个问题在于有太多重复打包的模块。首先，这是个后台管理系统，包含 20 多个页面，每个页面都对应一个入口 js。其次，它使用了 Ant Design，并且每个入口 js 都单独引用了所有组件的样式，这意味着相同的样式代码被 loader 重复处理了 20 多次。一份完整的 Ant Design 样式就已经很大了，而在这个工程中将同一份样式编译 20 多次，也难怪会内存溢出了。</p>
+<p>这种情况一般可使用 <code>CommonsChunkPlugin</code> 来提取相同模块。如果说将打包过程理解成每个入口都各自生成一个依赖树的话，那么通过 <code>CommonsChunkPlugin</code> 可以将每个依赖树中相同的模块找出来，并提取出来单独进行处理，这样相当于减少了总体的打包模块数量。下面是一个简单的 <code>CommonsChunkPlugin</code> 配置（ Github 地址）：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> webpack.optimize.CommonsChunkPlugin(&#123;</span><br><span class="line">    <span class="comment">// 指定该代码块的名字</span></span><br><span class="line">    name: <span class="string">"commons"</span>,</span><br><span class="line">    <span class="comment">// 指定输出代码的文件名</span></span><br><span class="line">    filename: <span class="string">"commons.js"</span>,</span><br><span class="line">    <span class="comment">// 指定最小共享模块数</span></span><br><span class="line">    minChunks: <span class="number">3</span>,</span><br><span class="line">    <span class="comment">// 指定作用于哪些入口</span></span><br><span class="line">    chunks: [<span class="string">"pageA"</span>, <span class="string">"pageB"</span>，<span class="string">"pageC"</span>]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>其中 minChunks 需要单独解释一下。它代表一个最小值，当工程中至少有超过该值数量的入口引用了相同的一个模块时，这个模块才会被提取到 commonChunks 中。比如说工程中有 5 个入口文件，而 minChunks 是 3。那么当有 3 个或 3 个以上的入口文件引用了 react，react 就会出现在 commonChunks 中。相反如果只有 2 个入口引用了 react，那么 react 就会分别被打包到这两个入口生成的 JS 文件中。</p>
+<p>使用 <code>CommonsChunkPlugin</code> 不仅可以有效提升打包速度，也能减小最终的资源体积。通常由于一些公共的代码改动频率较低，将其提取为单独的 JS 文件对于用户端缓存也是一种优化。</p>
+<p><strong>从动态链接库的思想谈打包</strong></p>
+<p>在早期的 Windows 系统当中，由于受限于当时计算机内存空间较小的问题，出现了动态链接库这样一种节省内存的方式。我们知道当一段相同的子程序被多个程序调用的时候，相当于这段代码重复出现了多次，也会成倍地占用内存空间。为了节省内存，可以将这段共享的子程序存储为一个可执行文件，被多个程序调用时只在内存中生成和使用同一个实例即可。</p>
+<p>如果将类似的思路放在打包上面来看也可以起到优化的效果。相同的模块有可能会被多个入口引用，我们可以将这部分模块预先编译好，然后在项目打包的过程中直接去调用编译好的文件即可。这就是 Webpack 中 DllPlugin 的实现思路，当然它实际生成的还是 JS 文件而并不是真正的动态链接库，一般我们管它叫 vendor。</p>
+<p>在具体的配置上主要分为以下几步：</p>
+<blockquote>
 <ul>
-<li>它们支持组件化；</li>
-<li>它们有强大的社区支持；</li>
-<li>它们有很多（基于框架的）第三方库来解决问题；</li>
-<li>它们有很多（很好的）第三方组件;</li>
-<li>它们有浏览器扩展工具来帮助调试；</li>
-<li>它们适合做单页应用。</li>
+<li>配置动态链接库：首先需要为动态链接库单独创建一个 Webpack 配置文件，比如叫做 webpack.vendor.config.js。该配置对象需要引入 DllPlugin，其中的 entry 指定了把哪些模块打包为 vendor。</li>
+<li>打包动态链接库并生成 vendor 清单：使用该配置文件进行打包（示例中运行 npm run dll）。会生成一个 vendor.js 以及一个资源的清单，这个清单我们一般叫做 manifest.json，在内部每一个模块都会分配一个 ID。</li>
+<li>将 vendor 连接到项目中：在工程的 webpack.config.js 中我们需要配置 DllReferencePlugin 来获取刚刚打包出来的模块清单。这相当于工程代码和 vendor 连接的过程。</li>
 </ul>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_gif/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tiapMh3yNSjT3YSdLWh9FFhCibOEdzevK3v4gRsQ3pwmgKibMdX9j1pofpg/640?wx_fmt=gif&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
-<p>但这些都不是使用框架的根本原因。</p>
-<p>最最本质的原因是：</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tiahLqstvVxftIiakQcIX9Fpujq6JVMvzxQyS63q6q9icRnzk1EiagfsK2xA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
-<p>（UI 与状态同步非常困难）</p>
-<h2 id="是的，就是这原因，让我们来看看为什么"><a href="#是的，就是这原因，让我们来看看为什么" class="headerlink" title="是的，就是这原因，让我们来看看为什么"></a>是的，就是这原因，让我们来看看为什么</h2><p>假设你正在设计这样一个 Web 应用：用户可以通过群发电子邮件来邀请其他人（参加某活动）。UX/UI 设计师设计如下：（在用户填写任何邮箱地址之前，）有一个空白状态，并为此添加一些帮助信息；（当用户填写邮箱之后，）展示邮箱的地址，每个地址的右侧均有一个按钮用于删除对应的地址。</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tiaoaU3nnzrphgqDspErIADltUUIkqcSVaQcUtM3nvjxcSLGz0BBBowMQ/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
-<p>这个表单的状态，可以被设计为一个数组，里面包含若干对象，对象由邮箱地址和唯一标识组成。开始的时候，数组为空。当（用户）输入邮箱地址并按下回车键之后，往数组中添加一项并更新 UI。当用户点击删除按钮时，删除（数组中对应的）邮箱地址并更新 UI。你感觉到了吗？每当你改变状态时，你都需要更新 UI。</p>
-<p>（你可能会说：）那又怎样？好吧，让我们看看如何在不用框架的情况下实现它：</p>
-<h2 id="用原生（JS）实现相对复杂的-UI"><a href="#用原生（JS）实现相对复杂的-UI" class="headerlink" title="用原生（JS）实现相对复杂的 UI"></a>用原生（JS）实现相对复杂的 UI</h2><p>以下代码很好地说明了使用原生 JavaScript 实现一个相对复杂的 UI 所需的工作量，使用像  jQuery 这样经典的库也需要差不多的工作量。</p>
-<p>在这个例子中，HTML 负责创建静态页面，JavaScript 通过 <code>document.createElement</code> 动态改变（DOM 结构）。这引来了第一个问题：构建 UI 相关的 JavaScript 代码并不直观易读，我们将 UI 构建分为了两部分（译者注：应该是指 HTML与 JavaScript 两部分）。尽管我们使用了 <code>innerHTML</code>，可读性是增强了，但降低了（页面的）性能，同时可能存在 CSRF 漏洞。我们也可以使用模板引擎，但如果是大面积地修改 DOM，会面临两个问题：效率不高与需要重新绑定事件处理器。</p>
-<p>但这也不是（不使用框架的）最大问题。最大的问题是 <strong>每当状态发生改变时都要（手动）更新 UI</strong> 。每次状态更新时，都需要很多代码来改变 UI。当添加电子邮件地址时，只需要两行代码来更新状态，但要十三行代码更新 UI。（此例中）我们已经让 UI （界面与逻辑）尽可能简单了！！</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tiaeYA8HkaRPxeIJe7G9TDricSzPQlLicPzWo9WiaSrgv20wrgiazg2TxQ7aw/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
-<p>代码既难写又难理解，更麻烦的是它非常脆弱。假设我们需要（添加）同步服务器数据到邮件地址列表的功能，我们需要对比服务器返回结果与数组中数据的差异。这涉及对比所有数据的标识与内容，（当用户修改后，）可能需要在内存中保留一份标识相同但内容不同的数据。</p>
-<p>为了高效地改变 DOM，我们需要编写大量点对点（译者注：指状态到 UI）的代码。<strong>但只要你犯下了很小的错误，UI 与状态将不再保持同步：</strong>（可能会出现）丢失或呈现错误的信息、不再响应用户的操作，更糟糕的是触发了错误的动作（如点了删除按钮后删除了非对应的一项）。</p>
-<p>因此，保持 UI 与状态同步，需要编写大量乏味且非常脆弱的代码。</p>
-<h2 id="响应式-UI-拯救一切"><a href="#响应式-UI-拯救一切" class="headerlink" title="响应式 UI 拯救一切"></a>响应式 UI 拯救一切</h2><p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tia7jq3Pl9sCUwpq4N37tFfN3mEfJGHmGHUFcCNWJwENxlDCTQEXIc1Ow/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
-<p>所以，（之所以使用框架，）不是因为社区，不是因为工具，不是因为生态，不是因为第三方库……</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">目前为止，框架最大的改进是（为我们）提供了应用内部状态与 UI 同步的可靠保证。</span><br></pre></td></tr></table></figure>
-<p>只要你清楚特定框架的某些（特定）规则（如不可变状态），就差不多（可以正常使用）了。</p>
-<p><strong>我们只需要定义一次 UI 界面，不再需要为每个操作编写特定的 UI 代码，同时，每个相同的状态均有相同的输出（译者注：指 UI 一致）：</strong>当状态改变后，框架自动更新（对应的）视图。</p>
-<h2 id="框架是如何工作的呢"><a href="#框架是如何工作的呢" class="headerlink" title="框架是如何工作的呢?"></a>框架是如何工作的呢?</h2><p>基于两个基本的策略：</p>
-<ul>
-<li><p>重新渲染整个组件，如React。当组件中的状态发生改变时，在内存中计算出（新的）DOM 结构后与已有的 DOM 结构进行对比。实际上，这是非常昂贵的。因而采取（将真实 DOM）映射为虚拟 DOM ，通过对比状态变化前后虚拟 DOM 的不同，计算出变化后再改变真实 DOM 结构。这个过程称为调和（reconciliation）。</p>
-</li>
-<li><p>通过（添加）观察者监测变化，如 Angular 和 Vue.js。应用中状态的属性会被监测，当它们发生变化时，只有依赖了（发生变化）属性的 DOM 元素会被重新渲染。</p>
-</li>
-</ul>
-<h2 id="那-Web-components-呢"><a href="#那-Web-components-呢" class="headerlink" title="那 Web components 呢?"></a>那 Web components 呢?</h2><p>很多时候，人们会把 React、 Angular 和 Vue.js （等框架）与 Web components 进行对比。这显然体现了人们并不理解这些框架所提供的最大好处：保持 UI 与状态同步。Web components 并不提供这种同步机制。它仅仅提供了一个\标签，但它不提供任何（状态与 UI 之间的）协调机制。<strong>如果你在应用中使用 Web components 时，想保持 UI 与内部状态同步，则需要（开发者）手工完成，或者使用如 Stencil.js (内部和 React一样，使用虚拟 DOM)之类的库。</strong></p>
-<p>让我们明确一点：框架表现出的巨大潜力并不体现在组件化上，保持 UI 与状态同步才是具体的体现。Web components 并未提供相关的功能，你必须手工或使用第三方库去解决（同步的）问题。使用原生 JavaScript 去编写复杂、高效且易于维护的 UI 界面基本上是不可能的。<strong>这就是你需要使用现代 JavaScript 框架的根本原因。</strong></p>
-<h2 id="自己动手，丰衣足食"><a href="#自己动手，丰衣足食" class="headerlink" title="自己动手，丰衣足食"></a>自己动手，丰衣足食</h2><p>如果热衷于了解底层原理，想知道虚拟 DOM 的具体实现。那，为何不试着在不使用框架的情况下，仅使用虚拟 DOM 来重写原生 UI呢？</p>
-<p>这里是框架的核心，所有组件的基础类。</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tiaWK03oaKQ5dERI5nvat5miaPHGaWsATm4zNjGWP91D5hxq9vIJGbPsDA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
-<p>这里是重写后的 AddressList 组件（借助 babel 来支持 JSX 的转换）。</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tias3EN6vcN2cPIrqFwLgbbvzaiadnknbsoq5rCbI2YKibMvbIicrUf50wicQ/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
-<p><strong>现在 UI 是声明式的</strong>，我们并未使用任何框架。我们能任意添加新逻辑来改变状态的同时，不需要编写额外的代码来保持 UI 同步。问题解决了！</p>
-<p>现在，除了事件处理之外，这看起来就像个 React 应用对吧？我们有<code>haverender()</code> 、<code>componentDidMount()</code> 、<code>setState()</code> 等等。一旦解决了保持应用内 UI 与状态的同步问题，所有东西就会很自然地叠加起来（形成组件）。</p>
-<p>可以在这个 Github (<a href="https://github.com/gimenete/ui-state-sync" target="_blank" rel="noopener">https://github.com/gimenete/ui-state-sync</a>) 仓库中找到完整的源代码。</p>
-<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><ul>
-<li>现代 js 框架解决的主要问题是保持 UI 与状态同步。</li>
-<li>使用原生 JavaScript 编写复杂、高效而又易于维护的 UI 界面几乎是不可能的。</li>
-<li>Web components 并未提供解决同步问题的方案。</li>
-<li>使用现有的虚拟 DOM 库去搭建自己的框架并不困难。但并不建议这么做！</li>
-</ul>
+</blockquote>
+<p>由于配置代码比较多，这里不进行详细列举，请查看 Github 上的示例。</p>
+<p><strong>利用多进程</strong></p>
+<p>上面的方法都是从减小打包模块入手的，现在让我们换一个思路，在模块数不变的前提下，如何以更短的时间去完成打包和编译？</p>
+<p>答案就是利用多进程。这并不需要我们去写过多的代码，已经有工具做好了这件事。</p>
+<p>Happypack 是一个可以有效利用多进程来编译文件的工具。上面我们已经分析了打包主要分为依赖处理和文件编译两部分，其实这两部分是在交替进行的。比如工程的入口为 a.js，那么 Webpack 首先把 a.js 交给 loader 去编译。接着由于从 a.js 引用了 b.js 和 c.js，那么这两个 JS 文件也要进行编译。很容易想到 b.js 和 c.js 的编译过程其实是完全独立的两个任务，互相之间没有依赖关系也不在乎顺序。因此可以将它们分别交给不同的进程来处理，并最后将编译的结果传回主进程，这就是 Happypack 的核心思路。</p>
+<p>下面看一个简单的例子:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> HappyPack = <span class="built_in">require</span>(<span class="string">'happypack'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="built_in">module</span>: &#123;</span><br><span class="line">    loaders: [</span><br><span class="line">      test: <span class="regexp">/\.js$/</span>,</span><br><span class="line">      <span class="comment">// 替换原来的 loader 为 "happypack/loader":</span></span><br><span class="line">      loaders: [<span class="string">'happypack/loader'</span>],</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  plugins: [</span><br><span class="line">    <span class="keyword">new</span> HappyPack(&#123;</span><br><span class="line">      <span class="comment">// 配置实际的 loader</span></span><br><span class="line">      loaders: [<span class="string">'babel-loader?presets[]=es2015'</span>]</span><br><span class="line">    &#125;)</span><br><span class="line">  ];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>使用 HappyPack 也有一些限制，它只兼容部分主流的 loader，具体可以查看官方给出的<a href="https://github.com/amireh/happypack/wiki/Loader-Compatibility-List" target="_blank" rel="noopener">兼容性列表</a>。</p>
+<p>除了打包过程中的多进程，在压缩时也可以利用多进程。通过 UglifyjsWebpackPlugin 我们可以将每个资源的压缩过程交给单独的进程，以此来提升整体的压缩效率。这个插件并不在 Webpack 内部，需要我们单独安装。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i -D uglifyjs-webpack-plugin</span><br></pre></td></tr></table></figure>
+<p>然后在 webpack.config.js 中进行配置。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> UglifyJSPlugin = <span class="built_in">require</span>(<span class="string">'uglifyjs-webpack-plugin'</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  plugins: [</span><br><span class="line">    <span class="keyword">new</span> UglifyJSPlugin(&#123;</span><br><span class="line">      <span class="comment">// 默认是 false，所以需要手动开启</span></span><br><span class="line">      parallel: <span class="literal">true</span></span><br><span class="line">    &#125;)</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所有这些利用多进程的方法其实都是在充分地使用系统的计算能力和内存。对于单个进程来说 V8 虚拟机的内存限制为 1.4GB（64 位系统），当构建流程变得复杂之后就有可能造成内存溢出。利用多进程的方法可以有效防止这类问题。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>在做了一些项目的构建优化之后，我发现它也是遵循“二八定律”的。假设一个项目有 10 个可优化点，当我们优化掉其中最关键的 2 个的时候就可以提升 80% 的性能。而另外 8 个优化点全部做完可能也只能提升 20% 的性能。所以最重要的是认清当前应用的特点，找到构建性能的瓶颈，把关键点优化掉就够了。</p>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2018/06/04/现代JS框架存在的根本原因/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2018/07/13/web-engineer-05/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/06/04/现代JS框架存在的根本原因/" data-id="cjo8nffba0036nsghlhqg6th0" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/07/13/web-engineer-05/" data-id="cjp6l2p2o0000xbghf1ojy600" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2018/06/04/现代JS框架存在的根本原因/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2018/07/13/web-engineer-05/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -190,6 +206,10 @@
       <ul>
         
           <li>
+            <a href="/2018/11/23/node-06/">Node 学习笔记06 - 内存控制</a>
+          </li>
+        
+          <li>
             <a href="/2018/11/08/node-05/">Node 学习笔记05 - 异步I/O</a>
           </li>
         
@@ -198,15 +218,11 @@
           </li>
         
           <li>
-            <a href="/2018/10/28/node-04/">Node 学习笔记04 - 模块机制</a>
-          </li>
-        
-          <li>
             <a href="/2018/10/28/node-03/">Node 学习笔记03 - 命令行框架</a>
           </li>
         
           <li>
-            <a href="/2018/10/27/node-02/">Node 学习笔记02 - node 编程基础</a>
+            <a href="/2018/10/28/node-04/">Node 学习笔记04 - 模块机制</a>
           </li>
         
       </ul>

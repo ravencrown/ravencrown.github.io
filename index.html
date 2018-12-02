@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-node-05" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-node-06" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/08/node-05/">Node 学习笔记05 - 异步I/O</a>
+      <a class="article-title" href="/2018/11/23/node-06/">Node 学习笔记06 - 内存控制</a>
     </h1>
   
 
@@ -88,89 +88,20 @@
       
         <!-- Table of Contents -->
         
-        <p>异步I/O 和事件驱动和单线程，构成 Node 的基调。最初 Ryan Dahl 期望设计出一个高性能的 Web 服务器，后来演变成一个可以基于它构建各种高速、可伸缩网络应用的平台。</p>
-<p>与 Node 事件驱动、异步 I/O 设计理念比较相近的是 Nginx。Nginx 采用 C 编写。性能表现非常优异。区别在于，Nginx 具备面向客户端管理连接的能力，但是背后依然受限于各种同步方式的编程语言。</p>
-<p>Node 却是全方位的，即可以作为服务器端去处理客户端带来的大量并发请求，也能作为客户端向网络中的各个应用进行并发请求。</p>
-<h2 id="一、为什么要异步I-O"><a href="#一、为什么要异步I-O" class="headerlink" title="一、为什么要异步I/O"></a>一、为什么要异步I/O</h2><p>可以从用户体验和资源分配两方面分析</p>
-<p><strong>用户体验</strong></p>
-<p>假如一个资源来自于两个不同位置的数据返回，第一个资源需要 M 毫秒的耗时，第二个资源需要 N 毫秒的耗时。</p>
-<p>如果采用同步的方式<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 消费时间为 M</span></span><br><span class="line">getData(<span class="string">'from_db'</span>)</span><br><span class="line"><span class="comment">// 消费时间为 N</span></span><br><span class="line">getData(<span class="string">'from_remote_api'</span>)</span><br></pre></td></tr></table></figure></p>
-<p>如果采用异步的方式<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">getData(<span class="string">'from_db'</span>, (result) =&gt; &#123;</span><br><span class="line">    <span class="comment">// 消费时间为 M    </span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">getData(<span class="string">'from_remote_api'</span>, (result) =&gt; &#123;</span><br><span class="line">    <span class="comment">// 消费时间为 N</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
-<p>对比两者的时间总消耗，同步为 M+N，异步为 max(M, N)</p>
-<p>随着应用场景的复杂性的增加，情景会变成 M + N + … 和 max(M, N, …)</p>
-<p><strong>资源分配</strong></p>
-<p>假如业务场景中有一组互不相关的任务需要完成，现行的主流方法有</p>
-<blockquote>
-<ul>
-<li>单线程串行依次执行</li>
-<li>多线程并行</li>
-</ul>
-</blockquote>
-<p>但是这样子会面临以下缺点</p>
-<blockquote>
-<ul>
-<li>单线程同步编程模型会因阻塞 I/O 而导致硬件资源得不到更优的使用</li>
-<li>多线程编程模型一因为编程中的死锁、状态同步等问题让开发人员头疼</li>
-</ul>
-</blockquote>
-<p>Node 在两者之间给出了答案</p>
-<blockquote>
-<ul>
-<li>利用单线程，远离多线程的死锁、状态同步问题</li>
-<li>利用异步 I/O 让单线程远离阻塞，以更好的利用 CPU</li>
-</ul>
-</blockquote>
-<p>为了弥补单线程无法利用多核 CPU 的缺点，Node 提供了类似前端浏览器的 Web Worker 的子进程，该子进程可以通过工作进程高效利用 CPU 和 I/0。</p>
-<h2 id="二、异步-I-O-的现状"><a href="#二、异步-I-O-的现状" class="headerlink" title="二、异步 I/O 的现状"></a>二、异步 I/O 的现状</h2><p>异步/同步，阻塞/非阻塞 实际上是两回事。异步并不等于非阻塞。</p>
-<blockquote>
-<ul>
-<li>阻塞 I/O：调用之后一定要等到系统内核层面完成所有的操作后，调用才结束。造成了 CPU 等待 I/O，浪费等待时间，CPU 的处理能力得不到充分利用。</li>
-<li>非阻塞 I/O：非阻塞I/O 和阻塞I/O 区别在于调用之后立即返回，而且是不带数据直接返回。由于完整的 I/O 并没有完成，立即返回的并不是业务层期望的数据，而仅仅是当前调用的状态，为了获取完整的数据，应用程序需要重复调用 I/O 操作来确认是否完成。这种技术叫轮询</li>
-</ul>
-</blockquote>
-<p><strong>轮询</strong></p>
-<p>现存的轮询技术有以下几种</p>
-<blockquote>
-<ul>
-<li>read</li>
-<li>select</li>
-<li>poll</li>
-<li>epoll</li>
-<li>kqueue</li>
-</ul>
-</blockquote>
-<h2 id="三、Node-的异步-I-O"><a href="#三、Node-的异步-I-O" class="headerlink" title="三、Node 的异步 I/O"></a>三、Node 的异步 I/O</h2><p>Node 的执行模型是事件循环。完成整个异步 I/O 环节的有事件循环、观察者和请求对象。</p>
-<p><strong>关键词</strong></p>
-<blockquote>
-<ul>
-<li>Tick: 在进程启动时，Node 便会创建一个类似于 while(true) 的循环，每执行一次循环体的过程我们称为 Tick。</li>
-<li>观察者</li>
-<li>事件循环：典型的生产者/消费者的模型</li>
-<li>请求对象</li>
-<li>I/O 线程池</li>
-</ul>
-</blockquote>
-<p>事件循环、观察者、请求对象、I/O 线程池 构成了 Node 异步 I/O 模型的基本要素。</p>
-<h2 id="四、非-I-O-的异步API"><a href="#四、非-I-O-的异步API" class="headerlink" title="四、非 I/O 的异步API"></a>四、非 I/O 的异步API</h2><blockquote>
-<ul>
-<li>定时器 setTimeout(), setInterval()</li>
-<li>process.nextTick()</li>
-<li>setImmediate()</li>
-</ul>
-</blockquote>
-
+        <p>Node 和 V8</p>
+<h2 id="一、V8-的垃圾回收机制和内存限制"><a href="#一、V8-的垃圾回收机制和内存限制" class="headerlink" title="一、V8 的垃圾回收机制和内存限制"></a>一、V8 的垃圾回收机制和内存限制</h2>
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2018/11/08/node-05/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2018/11/23/node-06/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/11/08/node-05/" data-id="cjo8nmr2t004qnsgh8rjh0tv3" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/11/23/node-06/" data-id="cjozubkt30025vcghcbwo8w5p" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2018/11/08/node-05/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2018/11/23/node-06/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -218,7 +149,7 @@
   <div class="widget-wrap widget-wrap-categories">
     <h3 class="widget-title categories">分类</h3>
     <div class="widget" id="categories">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSS/">CSS</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Node/">Node</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/V8引擎/">V8引擎</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/游记/">游记</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/理财/">理财</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/笔记本/">笔记本</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络/">网络</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">3</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSS/">CSS</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Node/">Node</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/V8引擎/">V8引擎</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/前端工程化/">前端工程化</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/游记/">游记</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/理财/">理财</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/笔记本/">笔记本</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络/">网络</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -228,7 +159,7 @@
   <div class="widget-wrap widget-wrap-categories">
     <h3 class="widget-title tagcloud">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 16.2px;">C++</a> <a href="/tags/CSS/" style="font-size: 14px;">CSS</a> <a href="/tags/CSS3/" style="font-size: 14px;">CSS3</a> <a href="/tags/HTTPS/" style="font-size: 14px;">HTTPS</a> <a href="/tags/JavaScript/" style="font-size: 20.6px;">JavaScript</a> <a href="/tags/Koa/" style="font-size: 14px;">Koa</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a> <a href="/tags/Node/" style="font-size: 22.8px;">Node</a> <a href="/tags/React/" style="font-size: 14px;">React</a> <a href="/tags/Vue/" style="font-size: 16.2px;">Vue</a> <a href="/tags/Webpack/" style="font-size: 14px;">Webpack</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/学习力/" style="font-size: 18.4px;">学习力</a> <a href="/tags/理财/" style="font-size: 18.4px;">理财</a> <a href="/tags/随笔/" style="font-size: 18.4px;">随笔</a> <a href="/tags/香港/" style="font-size: 14px;">香港</a>
+      <a href="/tags/C/" style="font-size: 16.2px;">C++</a> <a href="/tags/CSS/" style="font-size: 14px;">CSS</a> <a href="/tags/CSS3/" style="font-size: 14px;">CSS3</a> <a href="/tags/GitChat-课程-非原创/" style="font-size: 22.8px;">GitChat 课程(非原创)</a> <a href="/tags/HTTPS/" style="font-size: 14px;">HTTPS</a> <a href="/tags/JavaScript/" style="font-size: 20.6px;">JavaScript</a> <a href="/tags/Koa/" style="font-size: 14px;">Koa</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a> <a href="/tags/Node/" style="font-size: 22.8px;">Node</a> <a href="/tags/React/" style="font-size: 14px;">React</a> <a href="/tags/Vue/" style="font-size: 16.2px;">Vue</a> <a href="/tags/Webpack/" style="font-size: 14px;">Webpack</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/学习力/" style="font-size: 18.4px;">学习力</a> <a href="/tags/理财/" style="font-size: 18.4px;">理财</a> <a href="/tags/随笔/" style="font-size: 18.4px;">随笔</a> <a href="/tags/香港/" style="font-size: 14px;">香港</a>
     </div>
   </div>
 
@@ -240,6 +171,10 @@
       <ul>
         
           <li>
+            <a href="/2018/11/23/node-06/">Node 学习笔记06 - 内存控制</a>
+          </li>
+        
+          <li>
             <a href="/2018/11/08/node-05/">Node 学习笔记05 - 异步I/O</a>
           </li>
         
@@ -248,15 +183,11 @@
           </li>
         
           <li>
-            <a href="/2018/10/28/node-04/">Node 学习笔记04 - 模块机制</a>
-          </li>
-        
-          <li>
             <a href="/2018/10/28/node-03/">Node 学习笔记03 - 命令行框架</a>
           </li>
         
           <li>
-            <a href="/2018/10/27/node-02/">Node 学习笔记02 - node 编程基础</a>
+            <a href="/2018/10/28/node-04/">Node 学习笔记04 - 模块机制</a>
           </li>
         
       </ul>
@@ -268,7 +199,7 @@
   <div class="widget-wrap widget-wrap-categories">
     <h3 class="widget-title archive">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 

@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-如何正确学习JavaScript" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Nginx的Location语法" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/01/20/如何正确学习JavaScript/">如何正确学习JavaScript</a>
+      <a class="article-title" href="/2016/12/07/Nginx的Location语法/">Nginx的Location语法</a>
     </h1>
   
 
@@ -79,7 +79,7 @@
           
   <div class="article-category1">
     
-    <a class="article-category-link" href="/categories/JavaScript/">分类：JavaScript</a>
+    <a class="article-category-link" href="/categories/Nginx/">分类：Nginx</a>
   </div>
 
         </div>
@@ -88,58 +88,31 @@
       
         <!-- Table of Contents -->
         
-        <p>最近刚入职了搜狐研发中心部门，在那边开始我的新的旅程，之前实习一直在做 Java 以及和云计算相关的东西，这次开始新的岗位：<code>前端开发攻城狮</code>…[嘿嘿😋]</p>
-<p>于是，开始了 JavaScript 新的旅程。入手了基本觉得不错的书籍，在这里分享下</p>
-<ul>
-<li><a href="https://item.jd.com/10951037.html" target="_blank" rel="noopener">《JavaScript 高级程序设计》</a></li>
-<li><a href="https://item.jd.com/11676671.html" target="_blank" rel="noopener">《你不知道的JavaScript上卷》</a></li>
-</ul>
-<p><code>红本</code>对于新手入门非常不错，特别是面向对象的章节，通俗易懂。</p>
-<p><code>《你不知道的JavaScript》</code>这本书比较深入，不过非常助于理解JavaScript的闭包/作用域/this/原型…</p>
-<p>还有一些相关的JavaScript相关的学习资料，一一列出😄</p>
-<h3 id="顶级博客"><a href="#顶级博客" class="headerlink" title="顶级博客"></a>顶级博客</h3><ul>
-<li><a href="https://xcoder.in/" target="_blank" rel="noopener">死月</a></li>
-<li><a href="http://www.ruanyifeng.com/blog/" target="_blank" rel="noopener">阮一峰</a></li>
-<li><a href="https://75team.com/" target="_blank" rel="noopener">奇舞团</a></li>
-<li><a href="https://imququ.com/" target="_blank" rel="noopener">Jerry Qu</a></li>
-</ul>
-<h3 id="国内前端大牛Github汇总"><a href="#国内前端大牛Github汇总" class="headerlink" title="国内前端大牛Github汇总"></a>国内前端大牛Github汇总</h3><ul>
-<li><a href="https://github.com/XadillaX" target="_blank" rel="noopener">死月</a></li>
-<li><a href="https://github.com/ruanyf" target="_blank" rel="noopener">https://github.com/ruanyf</a></li>
-<li><a href="https://github.com/cssmagic" target="_blank" rel="noopener">CSS魔法</a></li>
-<li><a href="https://github.com/bailicangdu" target="_blank" rel="noopener">bailicangdu</a></li>
-<li><a href="https://github.com/phodal" target="_blank" rel="noopener">phodal</a></li>
-<li><a href="https://github.com/yanhaijing" target="_blank" rel="noopener">颜海镜</a></li>
-<li><a href="https://github.com/RubyLouvre" target="_blank" rel="noopener">司徒正美</a></li>
-<li><a href="https://github.com/i5ting" target="_blank" rel="noopener">狼叔</a></li>
-<li><a href="https://github.com/youngwind" target="_blank" rel="noopener">梁少峰</a></li>
-<li><a href="https://github.com/justjavac" target="_blank" rel="noopener">justjavac</a></li>
-<li><a href="https://github.com/JacksonTian" target="_blank" rel="noopener">JacksonTian</a></li>
-<li><a href="https://github.com/brianway" target="_blank" rel="noopener">魏楚阳</a></li>
-<li><a href="https://github.com/yyx990803" target="_blank" rel="noopener">尤雨溪</a></li>
-<li><a href="https://github.com/Jinjiang" target="_blank" rel="noopener">勾三股四</a></li>
-<li><a href="https://github.com/xufei" target="_blank" rel="noopener">xufei</a></li>
-<li><a href="https://github.com/xinyu198736" target="_blank" rel="noopener">芋头</a></li>
-</ul>
-<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
-<li><a href="http://www.ruanyifeng.com/blog/javascript/" target="_blank" rel="noopener">阮一峰关于JavaScript的文章</a></li>
-<li><a href="http://www.cnblogs.com/TomXu/tag/JavaScript/" target="_blank" rel="noopener">汤姆大叔的JavaScript系列</a></li>
-<li><a href="https://github.com/AlloyTeam/CodeGuide" target="_blank" rel="noopener">腾讯Alloyteam代码规范</a></li>
-<li><a href="https://github.com/JacksonTian/fks" target="_blank" rel="noopener">前端技能汇总</a></li>
+        <p>location 有”定位”的意思, 根据URI来进行不同的定位.<br>在虚拟主机的配置中,是必不可少的,location可以把网站的不同部分,定位到不同的处理方式上.<br>比如, 碰到.php, 如何调用PHP解释器?  –这时就需要location</p>
+<h2 id="Location-的语法"><a href="#Location-的语法" class="headerlink" title="Location 的语法"></a>Location 的语法</h2><p>location 有”定位”的意思, 根据Uri来进行不同的定位. 在虚拟主机的配置中,是必不可少的,location可以把网站的不同部分,定位到不同的处理方式上. 比如, 碰到.php, 如何调用PHP解释器? –这时就需要location location 的语法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Syntax:	location [ = | ~ | ~* | ^~ ] uri &#123; ... &#125;</span><br><span class="line">location @name &#123; ... &#125;</span><br><span class="line">Default:	—</span><br><span class="line">Context:	server, location</span><br><span class="line"></span><br><span class="line">中括号可以不写任何参数,此时称为一般匹配,也可以写参数</span><br><span class="line">因此,大类型可以分为3种:</span><br><span class="line">location = patt &#123;&#125; [精准匹配]</span><br><span class="line">location patt&#123;&#125;  [一般匹配]</span><br><span class="line">location ~ patt&#123;&#125; [正则匹配]</span><br></pre></td></tr></table></figure>
+<p>location示例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">location = / &#123;</span><br><span class="line">    [ configuration A ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location / &#123;</span><br><span class="line">    [ configuration B ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /documents/ &#123;</span><br><span class="line">    [ configuration C ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ^~ /images/ &#123;</span><br><span class="line">    [ configuration D ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~* \.(gif|jpg|jpeg)$ &#123;</span><br><span class="line">    [ configuration E ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="如何发挥作用"><a href="#如何发挥作用" class="headerlink" title="如何发挥作用?"></a>如何发挥作用?</h3><p>首先看有没有精准匹配,如果有,则停止匹配过程.</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>如果 $uri == patt,匹配成功，使用configA</span><br><span class="line">location = / &#123;</span><br><span class="line">    root   /var/www/html/;</span><br><span class="line">    index  index.htm index.html;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line">  location / &#123;</span><br><span class="line">     root   /usr/local/nginx/html;</span><br><span class="line">    index  index.html index.htm;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果访问<a href="http://xxx.com/" target="_blank" rel="noopener">http://xxx.com/</a><br>定位流程是　</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1: 精准匹配中　”/”   ,得到index页为　　index.htm</span><br><span class="line">2: 再次访问 /index.htm , 此次内部转跳uri已经是”/index.htm” ,根目录为/usr/local/nginx/html</span><br><span class="line">3: 最终结果,访问了/usr/local/nginx/html/index.htm</span><br></pre></td></tr></table></figure>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>Nginx官网，<a href="http://nginx.org/en/docs/http/ngx_http_core_module.html#location" target="_blank" rel="noopener">Location Syntax</a></li>
 </ul>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2016/01/20/如何正确学习JavaScript/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2016/12/07/Nginx的Location语法/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/01/20/如何正确学习JavaScript/" data-id="cjo8nffb2002qnsghq6nr0cif" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/07/Nginx的Location语法/" data-id="cjozubkrb000ivcghyxmo5iqe" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2016/01/20/如何正确学习JavaScript/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2016/12/07/Nginx的Location语法/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -175,6 +148,10 @@
       <ul>
         
           <li>
+            <a href="/2018/11/23/node-06/">Node 学习笔记06 - 内存控制</a>
+          </li>
+        
+          <li>
             <a href="/2018/11/08/node-05/">Node 学习笔记05 - 异步I/O</a>
           </li>
         
@@ -183,15 +160,11 @@
           </li>
         
           <li>
-            <a href="/2018/10/28/node-04/">Node 学习笔记04 - 模块机制</a>
-          </li>
-        
-          <li>
             <a href="/2018/10/28/node-03/">Node 学习笔记03 - 命令行框架</a>
           </li>
         
           <li>
-            <a href="/2018/10/27/node-02/">Node 学习笔记02 - node 编程基础</a>
+            <a href="/2018/10/28/node-04/">Node 学习笔记04 - 模块机制</a>
           </li>
         
       </ul>

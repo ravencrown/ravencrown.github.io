@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-node-03" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-node/node-06" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/10/28/node-03/">Node 学习笔记03 - 命令行框架</a>
+      <a class="article-title" href="/2018/11/23/node/node-06/">Node 学习笔记06 - 内存控制</a>
     </h1>
   
 
@@ -88,26 +88,20 @@
       
         <!-- Table of Contents -->
         
-        <p>Node 两大命令行框架</p>
-<blockquote>
-<ul>
-<li>yargs</li>
-<li>commander</li>
-</ul>
-</blockquote>
-
+        <p>Node 和 V8</p>
+<h2 id="一、V8-的垃圾回收机制和内存限制"><a href="#一、V8-的垃圾回收机制和内存限制" class="headerlink" title="一、V8 的垃圾回收机制和内存限制"></a>一、V8 的垃圾回收机制和内存限制</h2>
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2018/10/28/node-03/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2018/11/23/node/node-06/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/10/28/node-03/" data-id="cjnt2fk11001kitghcs69ywr4" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/11/23/node/node-06/" data-id="cjp6m2l0a000x4ugh7bl5ytd8" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2018/10/28/node-03/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2018/11/23/node/node-06/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -155,7 +149,7 @@
   <div class="widget-wrap widget-wrap-categories">
     <h3 class="widget-title categories">分类</h3>
     <div class="widget" id="categories">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSS/">CSS</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Node/">Node</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/V8引擎/">V8引擎</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/游记/">游记</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/理财/">理财</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/笔记本/">笔记本</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络/">网络</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSS/">CSS</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Node/">Node</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/V8引擎/">V8引擎</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/前端工程化/">前端工程化</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/游记/">游记</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/理财/">理财</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/笔记本/">笔记本</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络/">网络</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -165,7 +159,7 @@
   <div class="widget-wrap widget-wrap-categories">
     <h3 class="widget-title tagcloud">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 16.75px;">C++</a> <a href="/tags/CSS/" style="font-size: 14px;">CSS</a> <a href="/tags/CSS3/" style="font-size: 14px;">CSS3</a> <a href="/tags/HTTPS/" style="font-size: 14px;">HTTPS</a> <a href="/tags/JavaScript/" style="font-size: 22.25px;">JavaScript</a> <a href="/tags/Koa/" style="font-size: 14px;">Koa</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a> <a href="/tags/Node/" style="font-size: 19.5px;">Node</a> <a href="/tags/React/" style="font-size: 14px;">React</a> <a href="/tags/Vue/" style="font-size: 16.75px;">Vue</a> <a href="/tags/Webpack/" style="font-size: 14px;">Webpack</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/学习力/" style="font-size: 19.5px;">学习力</a> <a href="/tags/理财/" style="font-size: 19.5px;">理财</a> <a href="/tags/随笔/" style="font-size: 16.75px;">随笔</a> <a href="/tags/香港/" style="font-size: 14px;">香港</a>
+      <a href="/tags/C/" style="font-size: 16.2px;">C++</a> <a href="/tags/CSS/" style="font-size: 14px;">CSS</a> <a href="/tags/CSS3/" style="font-size: 14px;">CSS3</a> <a href="/tags/GitChat-课程-非原创/" style="font-size: 22.8px;">GitChat 课程(非原创)</a> <a href="/tags/HTTPS/" style="font-size: 14px;">HTTPS</a> <a href="/tags/JavaScript/" style="font-size: 20.6px;">JavaScript</a> <a href="/tags/Koa/" style="font-size: 14px;">Koa</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a> <a href="/tags/Node/" style="font-size: 22.8px;">Node</a> <a href="/tags/React/" style="font-size: 14px;">React</a> <a href="/tags/Vue/" style="font-size: 16.2px;">Vue</a> <a href="/tags/Webpack/" style="font-size: 14px;">Webpack</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/学习力/" style="font-size: 18.4px;">学习力</a> <a href="/tags/理财/" style="font-size: 18.4px;">理财</a> <a href="/tags/随笔/" style="font-size: 18.4px;">随笔</a> <a href="/tags/香港/" style="font-size: 14px;">香港</a>
     </div>
   </div>
 
@@ -177,23 +171,23 @@
       <ul>
         
           <li>
-            <a href="/2018/10/28/node-03/">Node 学习笔记03 - 命令行框架</a>
+            <a href="/2018/11/23/node/node-06/">Node 学习笔记06 - 内存控制</a>
           </li>
         
           <li>
-            <a href="/2018/10/27/node-02/">Node 学习笔记02 - node 编程基础</a>
+            <a href="/2018/11/08/node/node-05/">Node 学习笔记05 - 异步I/O</a>
           </li>
         
           <li>
-            <a href="/2018/10/25/node-01/">Node 学习笔记01 - 应用场景</a>
+            <a href="/2018/11/08/平凡的世界/">平凡的世界读后感</a>
           </li>
         
           <li>
-            <a href="/2018/10/11/shuji/">阅读书籍推荐</a>
+            <a href="/2018/10/28/node/node-03/">Node 学习笔记03 - 命令行框架</a>
           </li>
         
           <li>
-            <a href="/2018/10/11/js-xuexijihua/">学习计划安排</a>
+            <a href="/2018/10/28/node/node-04/">Node 学习笔记04 - 模块机制</a>
           </li>
         
       </ul>
@@ -205,7 +199,7 @@
   <div class="widget-wrap widget-wrap-categories">
     <h3 class="widget-title archive">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 

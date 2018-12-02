@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Nginx的Location正则 | 渡鸦的网络日志</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Location正则123456789location / &amp;#123;    root   /usr/local/nginx/html;    index  index.html index.htm;&amp;#125; location ~ image &amp;#123;    root /var/www/image;    index index.html;&amp;#125; 如果我们访问  http://xx">
+<meta name="keywords" content="Nginx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx的Location正则">
+<meta property="og:url" content="http://www.xbroder.com/2016/12/12/nginx/Nginx的Location正则/index.html">
+<meta property="og:site_name" content="渡鸦的网络日志">
+<meta property="og:description" content="Location正则123456789location / &amp;#123;    root   /usr/local/nginx/html;    index  index.html index.htm;&amp;#125; location ~ image &amp;#123;    root /var/www/image;    index index.html;&amp;#125; 如果我们访问  http://xx">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://camo.githubusercontent.com/7df924e86acaa7b2d44f709bc86aec92d64444c0/687474703a2f2f692e696d6775722e636f6d2f655336424476622e706e67">
+<meta property="og:updated_time" content="2018-12-02T08:16:22.240Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nginx的Location正则">
+<meta name="twitter:description" content="Location正则123456789location / &amp;#123;    root   /usr/local/nginx/html;    index  index.html index.htm;&amp;#125; location ~ image &amp;#123;    root /var/www/image;    index index.html;&amp;#125; 如果我们访问  http://xx">
+<meta name="twitter:image" content="https://camo.githubusercontent.com/7df924e86acaa7b2d44f709bc86aec92d64444c0/687474703a2f2f692e696d6775722e636f6d2f655336424476622e706e67">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    
+    <div id="header-inner" class="inner">
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://www.xbroder.com"></form>
+      </div>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">渡鸦的网络日志</a>
+      </h1>
+      
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-nginx/Nginx的Location正则" class="article article-type-post" itemscope itemprop="blogPost">
+  
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Nginx的Location正则
+    </h1>
+  
+
+      </header>
+        <div class="article-meta">
+          
+            <div class="article-date">作者：陈广宵</div>
+            <a href="/2016/12/12/nginx/Nginx的Location正则/" class="article-date">
+  <time datetime="2016-12-12T02:15:34.000Z" itemprop="datePublished">日期：2016-12-12</time>
+</a>
+          
+          
+  <div class="article-category1">
+    
+    <a class="article-category-link" href="/categories/Nginx/">分类：Nginx</a>
+  </div>
+
+        </div>
+    
+    <div class="article-entry"  itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <h2 id="Location正则"><a href="#Location正则" class="headerlink" title="Location正则"></a>Location正则</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    root   /usr/local/nginx/html;</span><br><span class="line">    index  index.html index.htm;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">location ~ image &#123;</span><br><span class="line">    root /var/www/image;</span><br><span class="line">    index index.html;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果我们访问  <a href="http://xx.com/image/logo.png" target="_blank" rel="noopener">http://xx.com/image/logo.png</a><br>此时, “/” 与”/image/logo.png” 匹配<br>同时,”image”正则 与”image/logo.png”也能匹配,谁发挥作用?<br>正则表达式的成果将会使用.  </p>
+<p>图片真正会访问 /var/www/image/logo.png  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line">    root	/usr/local/nginx/html;</span><br><span class="line">    index	index.html index.htm;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">location /foo &#123;</span><br><span class="line">    root	/var/www/html;</span><br><span class="line">    index	index.html;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们访问<a href="http://xxx.com/foo" target="_blank" rel="noopener">http://xxx.com/foo</a><br> 对于uri “/foo”,   两个location的patt,都能匹配他们<br>即 ‘/’能从左前缀匹配 ‘/foo’, ‘/foo’也能左前缀匹配’/foo’,<br>此时, 真正访问 /var/www/html/index.html<br>原因:’/foo’匹配的更长,因此使用之.;  </p>
+<p><strong>Location的正则写法</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">location  = / &#123;</span><br><span class="line">    # 精确匹配 / ，主机名后面不能带任何字符串</span><br><span class="line">    [ configuration A ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location  / &#123;</span><br><span class="line">    # 因为所有的地址都以 / 开头，所以这条规则将匹配到所有请求</span><br><span class="line">    # 但是正则和最长字符串会优先匹配</span><br><span class="line">    [ configuration B ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /documents/ &#123;</span><br><span class="line">    # 匹配任何以 /documents/ 开头的地址，匹配符合以后，还要继续往下搜索</span><br><span class="line">    # 只有后面的正则表达式没有匹配到时，这一条才会采用这一条</span><br><span class="line">    [ configuration C ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~ /documents/Abc &#123;</span><br><span class="line">    # 匹配任何以 /documents/ 开头的地址，匹配符合以后，还要继续往下搜索</span><br><span class="line">    # 只有后面的正则表达式没有匹配到时，这一条才会采用这一条</span><br><span class="line">    [ configuration CC ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ^~ /images/ &#123;</span><br><span class="line">    # 匹配任何以 /images/ 开头的地址，匹配符合以后，停止往下搜索正则，采用这一条。</span><br><span class="line">    [ configuration D ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~* \.(gif|jpg|jpeg)$ &#123;</span><br><span class="line">    # 匹配所有以 gif,jpg或jpeg 结尾的请求</span><br><span class="line">    # 然而，所有请求 /images/ 下的图片会被 config D 处理，因为 ^~ 到达不了这一条正则</span><br><span class="line">    [ configuration E ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /images/ &#123;</span><br><span class="line">    # 字符匹配到 /images/，继续往下，会发现 ^~ 存在</span><br><span class="line">    [ configuration F ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location /images/abc &#123;</span><br><span class="line">    # 最长字符匹配到 /images/abc，继续往下，会发现 ^~ 存在</span><br><span class="line">    # F与G的放置顺序是没有关系的</span><br><span class="line">    [ configuration G ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~ /images/abc/ &#123;</span><br><span class="line">    # 只有去掉 config D 才有效：先最长匹配 config G 开头的地址，继续往下搜索，匹配到这一条正则，采用</span><br><span class="line">    [ configuration H ] </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~* /js/.*/\.js</span><br></pre></td></tr></table></figure>
+<ul>
+<li>以=开头表示精确匹配如 A 中只匹配根目录结尾的请求，后面不能带任何字符串。</li>
+<li>^~ 开头表示uri以某个常规字符串开头，不是正则匹配</li>
+<li>~ 开头表示区分大小写的正则匹配;</li>
+<li>~* 开头表示不区分大小写的正则匹配</li>
+<li>/ 通用匹配, 如果没有其它匹配,任何请求都会匹配到</li>
+</ul>
+<p><strong>顺序or优先级</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(location =) &gt; (location 完整路径) &gt; (location ^~ 路径) &gt; (location ~,~* 正则顺序) &gt; (location 部分起始路径) &gt; (/)</span><br></pre></td></tr></table></figure>
+<p><strong>location解析过程如下图</strong>  </p>
+<p><img src="https://camo.githubusercontent.com/7df924e86acaa7b2d44f709bc86aec92d64444c0/687474703a2f2f692e696d6775722e636f6d2f655336424476622e706e67" alt="location解析过程"></p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>Nginx官网，<a href="http://nginx.org/en/docs/http/ngx_http_core_module.html#location" target="_blank" rel="noopener">Location Syntax</a></li>
+</ul>
+
+      
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2016/12/12/nginx/Nginx的Location正则/" data-id="cjp6m3dj1001i4ughrjycfevg" class="article-share-link">分享</a>
+      
+      
+        <a href="http://www.xbroder.com/2016/12/12/nginx/Nginx的Location正则/#disqus_thread" class="article-comment-link">留言</a>
+      
+      
+        
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+      
+    </footer>
+  </div>
+  
+    
+ <script src="/jquery/jquery.min.js"></script>
+  <div id="random_posts">
+    <h2>推荐文章</h2>
+    <div class="random_posts_ul">
+      <script>
+          var random_count =4
+          var site = {BASE_URI:'/'};
+          function load_random_posts(obj) {
+              var arr=site.posts;
+              if (!obj) return;
+              // var count = $(obj).attr('data-count') || 6;
+              for (var i, tmp, n = arr.length; n; i = Math.floor(Math.random() * n), tmp = arr[--n], arr[n] = arr[i], arr[i] = tmp);
+              arr = arr.slice(0, random_count);
+              var html = '<ul>';
+            
+              for(var j=0;j<arr.length;j++){
+                var item=arr[j];
+                html += '<li><strong>' + 
+                item.date + ':&nbsp;&nbsp;<a href="' + (site.BASE_URI+item.uri) + '">' + 
+                (item.title || item.uri) + '</a></strong>';
+                if(item.excerpt){
+                  html +='<div class="post-excerpt">'+item.excerpt+'</div>';
+                }
+                html +='</li>';
+                
+              }
+              $(obj).html(html + '</ul>');
+          }
+          $('.random_posts_ul').each(function () {
+              var c = this;
+              if (!site.posts || !site.posts.length){
+                  $.getJSON(site.BASE_URI + 'js/posts.js',function(json){site.posts = json;load_random_posts(c)});
+              } 
+               else{
+                load_random_posts(c);
+              }
+          });
+      </script>
+    </div>
+  </div>
+
+    
+<nav id="article-nav">
+  
+    <a href="/2016/12/17/nginx/Nginx重定向Rewrite/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Nginx重定向Rewrite
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/12/07/nginx/Nginx的Location语法/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Nginx的Location语法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+  
+  <div class="comments" id="comments">
+    
+     
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+      </section>
+      
+       
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+       
+      
+      
+           <div id="gitment_comments"></div>
+    
+  </div>
+ 
+
+
+
+
+</section>
+         
+    <aside id="sidebar">
+  
+    
+
+  
+    
+  
+    
+
+  
+    
+  
+    
+  
+    
+
+  
+    
+  
+</aside>
+
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-left">
+      &copy; 2014 - 2018 陈广宵&nbsp;|&nbsp;
+      主题 <a href="https://github.com/giscafer/hexo-theme-cafe/" target="_blank">Cafe</a>
+    </div>
+     <div id="footer-right">
+      联系方式&nbsp;|&nbsp;chengx@guangxiao.me
+    </div>
+  </div>
+</footer>
+ <script src="/jquery/jquery.min.js"></script>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    <img class="back-to-top-btn" src="/images/fly-to-top.png"/>
+<script>
+// Elevator script included on the page, already.
+window.onload = function() {
+  var elevator = new Elevator({
+    selector:'.back-to-top-btn',
+    element: document.querySelector('.back-to-top-btn'),
+    duration: 1000 // milliseconds
+  });
+}
+</script>
+      
+
+<script>
+  var disqus_shortname = 'true';
+  
+  var disqus_url = 'http://www.xbroder.com/2016/12/12/nginx/Nginx的Location正则/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+
+
+
+
+<!-- author:forvoid begin -->
+<!-- author:forvoid begin -->
+
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script> 
+  <script>
+  var gitment = new Gitment({
+    // id: '页面 ID', // 可选。默认为 location.href
+    owner: 'ravencrown',
+    repo: 'ravencrown.github.io',
+    oauth: {
+    client_id: '20c3780df7c8f14ab7ca',
+    client_secret: '7ab19a1a82c9f2b8bbef0dd9071c86dc8fcaaa2d',
+    }
+  })
+  gitment.render(document.getElementById("gitment_comments"))
+</script>
+
+
+<!-- author:forvoid end -->
+
+<!-- author:forvoid end -->
+
+
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      })
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      })
+    </script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+ <script src="/js/is.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<script src="/js/elevator.js"></script>
+  </div>
+</body>
+</html>

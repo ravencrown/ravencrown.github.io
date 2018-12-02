@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Nginx的Gzip设置 | 渡鸦的网络日志</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Gzip配置参数123456789101112131415gzip配置的常用参数gzip on|off;  #是否开启gzipgzip_buffers 32 4K| 16 8K #缓冲(压缩在内存中缓冲几块? 每块多大?)gzip_comp_level [1-9] #推荐6 压缩级别(级别越高,压的越小,越浪费CPU计算资源)gzip_disable #正则匹配UA 什么样的Uri不进行gzipg">
+<meta name="keywords" content="Nginx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx的Gzip设置">
+<meta property="og:url" content="http://www.xbroder.com/2016/12/29/nginx/Nginx的Gzip配置/index.html">
+<meta property="og:site_name" content="渡鸦的网络日志">
+<meta property="og:description" content="Gzip配置参数123456789101112131415gzip配置的常用参数gzip on|off;  #是否开启gzipgzip_buffers 32 4K| 16 8K #缓冲(压缩在内存中缓冲几块? 每块多大?)gzip_comp_level [1-9] #推荐6 压缩级别(级别越高,压的越小,越浪费CPU计算资源)gzip_disable #正则匹配UA 什么样的Uri不进行gzipg">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-12-02T08:16:20.213Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nginx的Gzip设置">
+<meta name="twitter:description" content="Gzip配置参数123456789101112131415gzip配置的常用参数gzip on|off;  #是否开启gzipgzip_buffers 32 4K| 16 8K #缓冲(压缩在内存中缓冲几块? 每块多大?)gzip_comp_level [1-9] #推荐6 压缩级别(级别越高,压的越小,越浪费CPU计算资源)gzip_disable #正则匹配UA 什么样的Uri不进行gzipg">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    
+    <div id="header-inner" class="inner">
+      <nav id="sub-nav">
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://www.xbroder.com"></form>
+      </div>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">渡鸦的网络日志</a>
+      </h1>
+      
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-nginx/Nginx的Gzip配置" class="article article-type-post" itemscope itemprop="blogPost">
+  
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Nginx的Gzip设置
+    </h1>
+  
+
+      </header>
+        <div class="article-meta">
+          
+            <div class="article-date">作者：陈广宵</div>
+            <a href="/2016/12/29/nginx/Nginx的Gzip配置/" class="article-date">
+  <time datetime="2016-12-29T15:02:24.000Z" itemprop="datePublished">日期：2016-12-29</time>
+</a>
+          
+          
+  <div class="article-category1">
+    
+    <a class="article-category-link" href="/categories/Nginx/">分类：Nginx</a>
+  </div>
+
+        </div>
+    
+    <div class="article-entry"  itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <h2 id="Gzip配置参数"><a href="#Gzip配置参数" class="headerlink" title="Gzip配置参数"></a>Gzip配置参数</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">gzip配置的常用参数</span><br><span class="line">gzip on|off;  #是否开启gzip</span><br><span class="line">gzip_buffers 32 4K| 16 8K #缓冲(压缩在内存中缓冲几块? 每块多大?)</span><br><span class="line">gzip_comp_level [1-9] #推荐6 压缩级别(级别越高,压的越小,越浪费CPU计算资源)</span><br><span class="line">gzip_disable #正则匹配UA 什么样的Uri不进行gzip</span><br><span class="line">gzip_min_length 200 # 开始压缩的最小长度(再小就不要压缩了,意义不在)</span><br><span class="line">gzip_http_version 1.0|1.1 # 开始压缩的http协议版本(可以不设置,目前几乎全是1.1协议)</span><br><span class="line">gzip_proxied          # 设置请求者代理服务器,该如何缓存内容</span><br><span class="line">gzip_types text/plain  application/xml # 对哪些类型的文件用压缩 如txt,xml,html ,css</span><br><span class="line">gzip_vary on|off  # 是否传输gzip压缩标志 Vary是用来标志缓存的依据.</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">注意:</span></span><br><span class="line"><span class="meta">#</span><span class="bash">图片/mp3这样的二进制文件,不必压缩</span></span><br><span class="line"><span class="meta">#</span><span class="bash">因为压缩率比较小, 比如100-&gt;80字节,而且压缩也是耗费CPU资源的.</span></span><br><span class="line"><span class="meta">#</span><span class="bash">比较小的文件不必压缩,</span></span><br></pre></td></tr></table></figure>
+<p><strong>思考:</strong></p>
+<ul>
+<li>如果2个人,一个浏览器支持gzip,一个浏览器不支持gzip2个同时请求同个页面, chinaCache缓存压缩后,还是未压缩的?</li>
+<li>如果1人,再次请求页面,chinaCache返回压缩后的缓存内容,还是压缩前的缓存内容?</li>
+</ul>
+<p>这个时候 Vary的作用体现出来.即——缓存的内容受 Accept-Encoding头信息的影响.  </p>
+<p>所以如果<br>请求时,不支持gzip, 缓存服务器将会生成一份未gzip的内容.<br>请求时,支持gzip, 缓存服务器将会生成一份gzip的内容.  </p>
+<p>下次再请求时, 缓存服务器会考虑客户端的Accept-Encoding因素,并合理的返回信息  </p>
+<p>Nginx对于图片,js等静态文件的缓存设置<br>注:这个缓存是指针对浏览器所做的缓存,不是指服务器端的数据缓存.  </p>
+<p>主要知识点: location expires指令  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">location ~ \.(jpg|jpeg|png|gif)$ &#123;</span><br><span class="line">    expires 1d;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~ \.js$ &#123;</span><br><span class="line">    expires 1h;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>设置并载入新配置文件,用firebug观察,<br>会发现 图片内容,没有再次产生新的请求,原因–利用了本地缓存的效果.  </p>
+<p><strong>注: 在大型的新闻站,或文章站中,图片变动的可能性很小,建议做1周左右的缓存Js,css等小时级的缓存.</strong></p>
+<p>如果信息流动比较快,也可以不用expires指令,<br>用last_modified, etag功能(主流的web服务器都支持这2个头信息)  </p>
+<p>原理是:<br>响应: 计算响应内容的签名, etag 和 上次修改时间<br>请求: 发送 etatg, If-Modified-Since 头信息.<br>服务器收到后,判断etag是否一致, 最后修改时间是否大于if-Modifiled-Since<br>如果监测到服务器的内容有变化,则返回304,<br>浏览器就知道,内容没变,直接用缓存.  </p>
+<p><strong>304 比起上面的expires 指令多了1次请求,但是比200状态,少了传输内容.</strong></p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_gzip_module.html" target="_blank" rel="noopener">Nginx Gzip Module</a></li>
+<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html" target="_blank" rel="noopener">Nginx Gzip Static Module</a></li>
+</ul>
+
+      
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://www.xbroder.com/2016/12/29/nginx/Nginx的Gzip配置/" data-id="cjp6m3bwi001f4ughuo4qssru" class="article-share-link">分享</a>
+      
+      
+        <a href="http://www.xbroder.com/2016/12/29/nginx/Nginx的Gzip配置/#disqus_thread" class="article-comment-link">留言</a>
+      
+      
+        
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+      
+    </footer>
+  </div>
+  
+    
+ <script src="/jquery/jquery.min.js"></script>
+  <div id="random_posts">
+    <h2>推荐文章</h2>
+    <div class="random_posts_ul">
+      <script>
+          var random_count =4
+          var site = {BASE_URI:'/'};
+          function load_random_posts(obj) {
+              var arr=site.posts;
+              if (!obj) return;
+              // var count = $(obj).attr('data-count') || 6;
+              for (var i, tmp, n = arr.length; n; i = Math.floor(Math.random() * n), tmp = arr[--n], arr[n] = arr[i], arr[i] = tmp);
+              arr = arr.slice(0, random_count);
+              var html = '<ul>';
+            
+              for(var j=0;j<arr.length;j++){
+                var item=arr[j];
+                html += '<li><strong>' + 
+                item.date + ':&nbsp;&nbsp;<a href="' + (site.BASE_URI+item.uri) + '">' + 
+                (item.title || item.uri) + '</a></strong>';
+                if(item.excerpt){
+                  html +='<div class="post-excerpt">'+item.excerpt+'</div>';
+                }
+                html +='</li>';
+                
+              }
+              $(obj).html(html + '</ul>');
+          }
+          $('.random_posts_ul').each(function () {
+              var c = this;
+              if (!site.posts || !site.posts.length){
+                  $.getJSON(site.BASE_URI + 'js/posts.js',function(json){site.posts = json;load_random_posts(c)});
+              } 
+               else{
+                load_random_posts(c);
+              }
+          });
+      </script>
+    </div>
+  </div>
+
+    
+<nav id="article-nav">
+  
+    <a href="/2016/12/29/nginx/Nginx做负载均衡器以及proxy缓存配置/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Nginx做负载均衡器以及proxy缓存配置
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/12/26/nginx/Nginx的Expires缓存设置/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Expires缓存设置</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+  
+  <div class="comments" id="comments">
+    
+     
+    <section id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+      </section>
+      
+       
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+       
+      
+      
+           <div id="gitment_comments"></div>
+    
+  </div>
+ 
+
+
+
+
+</section>
+         
+    <aside id="sidebar">
+  
+    
+
+  
+    
+  
+    
+
+  
+    
+  
+    
+  
+    
+
+  
+    
+  
+</aside>
+
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-left">
+      &copy; 2014 - 2018 陈广宵&nbsp;|&nbsp;
+      主题 <a href="https://github.com/giscafer/hexo-theme-cafe/" target="_blank">Cafe</a>
+    </div>
+     <div id="footer-right">
+      联系方式&nbsp;|&nbsp;chengx@guangxiao.me
+    </div>
+  </div>
+</footer>
+ <script src="/jquery/jquery.min.js"></script>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+    <img class="back-to-top-btn" src="/images/fly-to-top.png"/>
+<script>
+// Elevator script included on the page, already.
+window.onload = function() {
+  var elevator = new Elevator({
+    selector:'.back-to-top-btn',
+    element: document.querySelector('.back-to-top-btn'),
+    duration: 1000 // milliseconds
+  });
+}
+</script>
+      
+
+<script>
+  var disqus_shortname = 'true';
+  
+  var disqus_url = 'http://www.xbroder.com/2016/12/29/nginx/Nginx的Gzip配置/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+
+
+
+
+<!-- author:forvoid begin -->
+<!-- author:forvoid begin -->
+
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script> 
+  <script>
+  var gitment = new Gitment({
+    // id: '页面 ID', // 可选。默认为 location.href
+    owner: 'ravencrown',
+    repo: 'ravencrown.github.io',
+    oauth: {
+    client_id: '20c3780df7c8f14ab7ca',
+    client_secret: '7ab19a1a82c9f2b8bbef0dd9071c86dc8fcaaa2d',
+    }
+  })
+  gitment.render(document.getElementById("gitment_comments"))
+</script>
+
+
+<!-- author:forvoid end -->
+
+<!-- author:forvoid end -->
+
+
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      })
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      })
+    </script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+ <script src="/js/is.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<script src="/js/elevator.js"></script>
+  </div>
+</body>
+</html>

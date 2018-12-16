@@ -591,7 +591,7 @@ a.article-title:hover {
 }
 .article-entry p,
 .article-entry table {
-  line-height: 1.6em;
+  line-height: 190%;
   margin: 0.8em 0;
 }
 .article-entry h1,

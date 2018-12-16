@@ -1783,6 +1783,16 @@ span.ua .location:before {
   border-radius: 1em;
   background: #f5f5d5;
 }
+.widget-wrap-categories.widget-recent_posts {
+  border: none;
+}
+.widget-wrap-categories.widget-recent_posts .widget-title {
+  font-size: 1.5em;
+}
+.widget-wrap-categories.widget-recent_posts .widget ul li .more {
+  color: #567;
+  font-size: 1.2em;
+}
 .widget-wrap-categories .widget {
   padding: 15px 15px 0px;
   margin-left: 1em;

@@ -113,7 +113,7 @@
 <h2 id="JavaScript-模块发展简史"><a href="#JavaScript-模块发展简史" class="headerlink" title="JavaScript 模块发展简史"></a>JavaScript 模块发展简史</h2><p>让我们先来回顾一下 JavaScript 模块的历史是怎样演化的。</p>
 <p><strong>script 标签</strong></p>
 <p>最原始的模块实现方式是通过在页面中插入多个 script 标签。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=<span class="string">"//mycdn.com/moduleA.js"</span>&gt;&lt;/script&gt;</span><br><span class="line">&lt;script src=<span class="string">"//mycdn.com/moduleB.js"</span>&gt;&lt;/script&gt;</span><br><span class="line">&lt;script src=<span class="string">"//mycdn.com/main.js"</span>&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=<span class="string">"//mycdn.com/moduleA.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">&lt;script src=<span class="string">"//mycdn.com/moduleB.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">&lt;script src=<span class="string">"//mycdn.com/main.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
 <p>这种方法的缺陷是所有这些脚本都是共用全局的作用域。在任何一个 JavaScript 文件中进行顶层作用域的变量或函数声明，都会暴露在全局中，使得其它脚本也相应获取。当应用的规模和复杂度上升，这些脚本之间很容易发生命名冲突，从而导致不可预知的问题。</p>
 <h2 id="立即执行函数表达式"><a href="#立即执行函数表达式" class="headerlink" title="立即执行函数表达式"></a>立即执行函数表达式</h2><p>后来随着 Web 的发展，人们发现通过立即执行函数表达式（ IIFE ）可以解决命名空间的问题。IIFE 的实现原理是把代码包裹在一个函数中，并且在声明这个函数之后立即执行它，这样相当于为代码单独创建了一个作用域。比如在下面的代码中我们创建了一个立即执行函数表达式，变量的声明处于它自己的函数作用域内，与其它的模块作用域隔离开。</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// foobar 并不会暴露在全局作用域</span></span><br><span class="line">  <span class="keyword">var</span> foobar = <span class="string">'Hello IIFE!'</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(foobar);</span><br><span class="line">&#125;)()</span><br></pre></td></tr></table></figure>
@@ -181,7 +181,7 @@
 </blockquote>
 <p>当浏览器执行这个 bundle.js 时，首先会执行入口文件的逻辑，接着会利用 Webpack 提供好的模块以及模块的加载方法来根据依赖关系一步步执行整个应用。以上就是一个简单的 Webpack 处理打包的过程。</p>
 <h2 id="ES6-Module-与浏览器"><a href="#ES6-Module-与浏览器" class="headerlink" title="ES6 Module 与浏览器"></a>ES6 Module 与浏览器</h2><p>到写这篇文章为止，现代的浏览器已经开始逐渐支持 JavaScript 模块语法，包括 Chrome、Safari、Edge 以及 Firefox（后两者需要开启实验特性标识），这意味着我们也可以不使用 Webpack 等打包工具，而直接采用 ES6 Module 的语法编写我们的模块。下面的示例可以直接运行在支持 ES6 Module 的浏览器上：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=<span class="string">"module"</span> src=<span class="string">"app.js"</span>&gt;&lt;/script&gt;</span><br><span class="line"><span class="comment">// main.js</span></span><br><span class="line"><span class="keyword">import</span> &#123;log&#125; <span class="keyword">from</span> <span class="string">"./module.js"</span>;</span><br><span class="line">log();</span><br><span class="line"><span class="comment">// module.js</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> log = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'module.js loaded.'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=<span class="string">"module"</span> src=<span class="string">"app.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="comment">// main.js</span></span><br><span class="line"><span class="keyword">import</span> &#123;log&#125; <span class="keyword">from</span> <span class="string">"./module.js"</span>;</span><br><span class="line">log();</span><br><span class="line"><span class="comment">// module.js</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> log = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'module.js loaded.'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>不过这种方式目前还存在两个问题：</p>
 <blockquote>
 <ul>
@@ -195,7 +195,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/07/05/web_engineer/web-engineer-02/" data-id="cjp6m0xyu00064ughxegx3yxx" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/07/05/web_engineer/web-engineer-02/" data-id="cjpr5sb58004l32ghipxo2gf2" class="article-share-link">分享</a>
       
       
         <a href="http://www.xbroder.com/2018/07/05/web_engineer/web-engineer-02/#disqus_thread" class="article-comment-link">留言</a>
@@ -315,8 +315,6 @@
     
   
     
-  
-    
 
   
     
@@ -328,8 +326,7 @@
   
   <div class="outer">
     <div id="footer-left">
-      &copy; 2014 - 2018 陈广宵&nbsp;|&nbsp;
-      主题 <a href="https://github.com/giscafer/hexo-theme-cafe/" target="_blank">Cafe</a>
+      &copy; 2014 - 2018 陈广宵
     </div>
      <div id="footer-right">
       联系方式&nbsp;|&nbsp;chengx@guangxiao.me

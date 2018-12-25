@@ -591,7 +591,7 @@ a.article-title:hover {
 }
 .article-entry p,
 .article-entry table {
-  line-height: 1.6em;
+  line-height: 190%;
   margin: 0.8em 0;
 }
 .article-entry h1,
@@ -1782,6 +1782,16 @@ span.ua .location:before {
   border: 1px solid #d3d3d3;
   border-radius: 1em;
   background: #f5f5d5;
+}
+.widget-wrap-categories.widget-recent_posts {
+  border: none;
+}
+.widget-wrap-categories.widget-recent_posts .widget-title {
+  font-size: 1.5em;
+}
+.widget-wrap-categories.widget-recent_posts .widget ul li .more {
+  color: #567;
+  font-size: 1.2em;
 }
 .widget-wrap-categories .widget {
   padding: 15px 15px 0px;

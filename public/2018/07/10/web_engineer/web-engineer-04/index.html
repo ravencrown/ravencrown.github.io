@@ -105,7 +105,7 @@
 <h2 id="从零开始-Webpack"><a href="#从零开始-Webpack" class="headerlink" title="从零开始 Webpack"></a>从零开始 Webpack</h2><p>让我们从一个最简单的工程开始认识 Webpack，首先在一个空的工程目录下，使用 npm 进行初始化并安装 Webpack：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm init</span><br><span class="line">npm i webpack --save-dev</span><br></pre></td></tr></table></figure>
 <p>接下来我们在工程中创建三个文件：index.html、app.js 和 module.js。</p>
-<p>index.html：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;html lang=<span class="string">"zh-CN"</span>&gt;</span><br><span class="line">  &lt;body&gt;</span><br><span class="line">    &lt;script src=<span class="string">"dist/bundle.js"</span>&gt;&lt;/script&gt;</span><br><span class="line">  &lt;<span class="regexp">/body&gt;</span></span><br><span class="line"><span class="regexp">&lt;/</span>html&gt;</span><br></pre></td></tr></table></figure></p>
+<p>index.html：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;html lang=<span class="string">"zh-CN"</span>&gt;</span><br><span class="line">  &lt;body&gt;</span><br><span class="line">    &lt;script src=<span class="string">"dist/bundle.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">  &lt;<span class="regexp">/body&gt;</span></span><br><span class="line"><span class="regexp">&lt;/</span>html&gt;</span><br></pre></td></tr></table></figure></p>
 <p>app.js：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> moduleLog <span class="keyword">from</span> <span class="string">'./module.js'</span>;</span><br><span class="line"><span class="built_in">document</span>.write(<span class="string">'app.js loaded.'</span>);</span><br><span class="line">moduleLog();</span><br></pre></td></tr></table></figure></p>
 <p>module.js：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">document</span>.write(<span class="string">'module.js loaded.'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>接下来执行 Webpack 命令来生成我们的第一个打包结果：</p>
@@ -197,7 +197,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/07/10/web_engineer/web-engineer-04/" data-id="cjp6m12wd00094ughhnlsmjqr" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/07/10/web_engineer/web-engineer-04/" data-id="cjpr5sb5c004w32ghtkpy676r" class="article-share-link">分享</a>
       
       
         <a href="http://www.xbroder.com/2018/07/10/web_engineer/web-engineer-04/#disqus_thread" class="article-comment-link">留言</a>
@@ -317,8 +317,6 @@
     
   
     
-  
-    
 
   
     
@@ -330,8 +328,7 @@
   
   <div class="outer">
     <div id="footer-left">
-      &copy; 2014 - 2018 陈广宵&nbsp;|&nbsp;
-      主题 <a href="https://github.com/giscafer/hexo-theme-cafe/" target="_blank">Cafe</a>
+      &copy; 2014 - 2018 陈广宵
     </div>
      <div id="footer-right">
       联系方式&nbsp;|&nbsp;chengx@guangxiao.me

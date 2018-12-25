@@ -1,67 +1,81 @@
 ---
 layout: post
-title: Vue 源码分析（二）：源码目录设计
-date: 2018-05-09 22:39:05
+title: Vue 源码分析（一）：vue-flow
+date: 2018-05-09 20:31:12
 tags: Vue
 categories: JavaScript
 ---
 
-Vue.js 的源码都在 src 目录之下，把源码 down 下来之后可以看到 src 目录下的结构
+Flow 是 facebook 出品的 JavaScript 静态类型检查工具，Vue 的源码采用了 Flow 做静态类型检查，所以要熟悉 Vue 的源码分析，首先要了解 Flow。
 
-![image](https://user-images.githubusercontent.com/9835391/46247775-e265ad00-c442-11e8-9cdb-1e13864452d3.png)
+Flow 有两种类型检查
 
+> - 类型推断：通过变量的使用上下文来推断出变量类型，然后根据这些推断来检查类型。
+> - 事先注释好我们期待的类型，Flow 会基于这些注释来判断。
 
-## 一、compiler 目录结构
+看以下例子
 
-compiler 都是与编译相关的逻辑，例如 virtual-dom，template，render()等等。它包括把模板解析成 ast 语法树，ast 语法树优化，代码生成等功能。
+```js
+/*@flow*/``
 
-编译的工作可以在构建时做（借助 webpack、vue-loader 等辅助插件）；也可以在运行时做，使用包含构建功能的 Vue.js。显然，编译是一项耗性能的工作，所以更推荐前者——离线编译。
+// function split(str) {
+//     return str.split(' ')
+// }
+  
+// split(11) // Cannot call str.split because property split is missing in Number [1]
 
-![image](https://user-images.githubusercontent.com/9835391/46247795-3bcddc00-c443-11e8-907e-c438a4da0f07.png)
+/** -------- */
 
-## 二、core 
+/*@flow*/
+// function add(x, y){
+//     return x + y
+// }
 
-core 目录包含了 Vue.js 的核心代码，包括内置组件、全局 API 封装，Vue 实例化、观察者、虚拟 DOM、工具函数等等。还有一些组件例如 keep-alive 等等。
-
-这里的代码可谓是 Vue.js 的灵魂。
-
-![image](https://user-images.githubusercontent.com/9835391/46247894-a3d0f200-c444-11e8-8e85-5c59ec212881.png)
-
-## 三、platform
-
-Vue.js 是一个跨平台的 MVVM 框架，它可以跑在 web 上，也可以配合 weex 跑在 native 客户端上。platform 是 Vue.js 的入口，2 个目录代表 2 个主要入口，分别打包成运行在 web 上和 weex 上的 Vue.js。
-
-![image](https://user-images.githubusercontent.com/9835391/46247896-b2b7a480-c444-11e8-854c-fb75f02cb891.png)
-
-## 四、server
-
-Vue.js 2.0 支持了服务端渲染，所有服务端渲染相关的逻辑都在这个目录下。注意：这部分代码是跑在服务端的 Node.js，不要和跑在浏览器端的 Vue.js 混为一谈。
-
-服务端渲染主要的工作是把组件渲染为服务器端的 HTML 字符串，将它们直接发送到浏览器，最后将静态标记"混合"为客户端上完全交互的应用程序。
-
-![image](https://user-images.githubusercontent.com/9835391/46247913-da0e7180-c444-11e8-8eb2-a1d5398053ba.png)
-
-## 五、sfc
-
-通常我们开发 Vue.js 都会借助 webpack 构建， 然后通过 .vue 单文件来编写组件。
-
-这个目录下的代码逻辑会把 .vue 文件内容解析成一个 JavaScript 的对象。
-
-![image](https://user-images.githubusercontent.com/9835391/46247925-f27e8c00-c444-11e8-8981-2f05da1ec49a.png)
-
-## 六、shared
-
-Vue.js 会定义一些工具方法或者常量，这里定义的工具方法都是会被浏览器端的 Vue.js（core目录代码、或者 platform 目录代码） 和服务端的 Vue.js（server目录） 所共享的。
-
-![image](https://user-images.githubusercontent.com/9835391/46247928-0629f280-c445-11e8-94ce-87e3e9f05aba.png)
-
-## 七、总结
-
-从 Vue.js 的目录设计可以看到，作者把功能模块拆分的非常清楚，相关的逻辑放在一个独立的目录下维护，并且把复用的代码也抽成一个独立目录。
-
-这样的目录设计让代码的阅读性和可维护性都变强，是非常值得学习和推敲的。
+// add('Hello', 11) // no error
 
 
+/*@flow*/
+// function add(x: number, y: number): number {
+//     return x + y
+// }
 
+// add('Hello', 11) // Cannot call add with 'Hello' bound to x because string [1] is incompatible with number [2].
+
+/*@flow*/
+
+// var arr: Array<number> = [1, 2, 3]
+
+// arr.push('Hello') //Cannot call arr.push because string [1] is incompatible with number [2] in array element.
+
+
+/*@flow*/
+
+class Bar {
+    x: string;           // x 是字符串
+    y: string | number | void;  // y 可以是字符串或者数字
+    z: boolean;
+
+    constructor(x: string, y: string | number | void) {
+        this.x = x
+        this.y = y
+        this.z = false
+    }
+}
+
+var bar: Bar = new Bar('hello', 4)
+
+var obj: { a: string, b: number, c: Array<string>, d: Bar } = {
+    a: 'hello',
+    b: 11,
+    c: ['hello', 'world'],
+    d: new Bar('hello', 3)
+}
+
+```
+
+## 参考资料
+
+[官网](https://flow.org/en/docs/install/)
+[Type Annotations](https://flow.org/en/docs/types/)
 
 

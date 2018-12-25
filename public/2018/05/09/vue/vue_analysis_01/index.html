@@ -3,28 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Vue 源码分析（二）：源码目录设计 | 渡鸦的网络日志</title>
+  <title>Vue 源码分析（一）：vue-flow | 渡鸦的网络日志</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Vue.js 的源码都在 src 目录之下，把源码 down 下来之后可以看到 src 目录下的结构  一、compiler 目录结构compiler 都是与编译相关的逻辑，例如 virtual-dom，template，render()等等。它包括把模板解析成 ast 语法树，ast 语法树优化，代码生成等功能。 编译的工作可以在构建时做（借助 webpack、vue-loader 等辅助插件）">
+  <meta name="description" content="Flow 是 facebook 出品的 JavaScript 静态类型检查工具，Vue 的源码采用了 Flow 做静态类型检查，所以要熟悉 Vue 的源码分析，首先要了解 Flow。 Flow 有两种类型检查   类型推断：通过变量的使用上下文来推断出变量类型，然后根据这些推断来检查类型。 事先注释好我们期待的类型，Flow 会基于这些注释来判断。   看以下例子 1234567891011121">
 <meta name="keywords" content="Vue">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Vue 源码分析（二）：源码目录设计">
+<meta property="og:title" content="Vue 源码分析（一）：vue-flow">
 <meta property="og:url" content="http://www.xbroder.com/2018/05/09/vue/vue_analysis_01/index.html">
 <meta property="og:site_name" content="渡鸦的网络日志">
-<meta property="og:description" content="Vue.js 的源码都在 src 目录之下，把源码 down 下来之后可以看到 src 目录下的结构  一、compiler 目录结构compiler 都是与编译相关的逻辑，例如 virtual-dom，template，render()等等。它包括把模板解析成 ast 语法树，ast 语法树优化，代码生成等功能。 编译的工作可以在构建时做（借助 webpack、vue-loader 等辅助插件）">
+<meta property="og:description" content="Flow 是 facebook 出品的 JavaScript 静态类型检查工具，Vue 的源码采用了 Flow 做静态类型检查，所以要熟悉 Vue 的源码分析，首先要了解 Flow。 Flow 有两种类型检查   类型推断：通过变量的使用上下文来推断出变量类型，然后根据这些推断来检查类型。 事先注释好我们期待的类型，Flow 会基于这些注释来判断。   看以下例子 1234567891011121">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://user-images.githubusercontent.com/9835391/46247775-e265ad00-c442-11e8-9cdb-1e13864452d3.png">
-<meta property="og:image" content="https://user-images.githubusercontent.com/9835391/46247795-3bcddc00-c443-11e8-907e-c438a4da0f07.png">
-<meta property="og:image" content="https://user-images.githubusercontent.com/9835391/46247894-a3d0f200-c444-11e8-8e85-5c59ec212881.png">
-<meta property="og:image" content="https://user-images.githubusercontent.com/9835391/46247896-b2b7a480-c444-11e8-854c-fb75f02cb891.png">
-<meta property="og:image" content="https://user-images.githubusercontent.com/9835391/46247913-da0e7180-c444-11e8-8eb2-a1d5398053ba.png">
-<meta property="og:image" content="https://user-images.githubusercontent.com/9835391/46247925-f27e8c00-c444-11e8-8981-2f05da1ec49a.png">
-<meta property="og:image" content="https://user-images.githubusercontent.com/9835391/46247928-0629f280-c445-11e8-94ce-87e3e9f05aba.png">
-<meta property="og:updated_time" content="2018-12-02T08:16:57.159Z">
+<meta property="og:updated_time" content="2018-12-16T16:36:26.098Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Vue 源码分析（二）：源码目录设计">
-<meta name="twitter:description" content="Vue.js 的源码都在 src 目录之下，把源码 down 下来之后可以看到 src 目录下的结构  一、compiler 目录结构compiler 都是与编译相关的逻辑，例如 virtual-dom，template，render()等等。它包括把模板解析成 ast 语法树，ast 语法树优化，代码生成等功能。 编译的工作可以在构建时做（借助 webpack、vue-loader 等辅助插件）">
-<meta name="twitter:image" content="https://user-images.githubusercontent.com/9835391/46247775-e265ad00-c442-11e8-9cdb-1e13864452d3.png">
+<meta name="twitter:title" content="Vue 源码分析（一）：vue-flow">
+<meta name="twitter:description" content="Flow 是 facebook 出品的 JavaScript 静态类型检查工具，Vue 的源码采用了 Flow 做静态类型检查，所以要熟悉 Vue 的源码分析，首先要了解 Flow。 Flow 有两种类型检查   类型推断：通过变量的使用上下文来推断出变量类型，然后根据这些推断来检查类型。 事先注释好我们期待的类型，Flow 会基于这些注释来判断。   看以下例子 1234567891011121">
   
   
     <link rel="icon" href="/favicon.png">
@@ -80,7 +72,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Vue 源码分析（二）：源码目录设计
+      Vue 源码分析（一）：vue-flow
     </h1>
   
 
@@ -89,7 +81,7 @@
           
             <div class="article-date">作者：陈广宵</div>
             <a href="/2018/05/09/vue/vue_analysis_01/" class="article-date">
-  <time datetime="2018-05-09T14:39:05.000Z" itemprop="datePublished">日期：2018-05-09</time>
+  <time datetime="2018-05-09T12:31:12.000Z" itemprop="datePublished">日期：2018-05-09</time>
 </a>
           
           
@@ -104,32 +96,23 @@
       
         <!-- Table of Contents -->
         
-        <p>Vue.js 的源码都在 src 目录之下，把源码 down 下来之后可以看到 src 目录下的结构</p>
-<p><img src="https://user-images.githubusercontent.com/9835391/46247775-e265ad00-c442-11e8-9cdb-1e13864452d3.png" alt="image"></p>
-<h2 id="一、compiler-目录结构"><a href="#一、compiler-目录结构" class="headerlink" title="一、compiler 目录结构"></a>一、compiler 目录结构</h2><p>compiler 都是与编译相关的逻辑，例如 virtual-dom，template，render()等等。它包括把模板解析成 ast 语法树，ast 语法树优化，代码生成等功能。</p>
-<p>编译的工作可以在构建时做（借助 webpack、vue-loader 等辅助插件）；也可以在运行时做，使用包含构建功能的 Vue.js。显然，编译是一项耗性能的工作，所以更推荐前者——离线编译。</p>
-<p><img src="https://user-images.githubusercontent.com/9835391/46247795-3bcddc00-c443-11e8-907e-c438a4da0f07.png" alt="image"></p>
-<h2 id="二、core"><a href="#二、core" class="headerlink" title="二、core"></a>二、core</h2><p>core 目录包含了 Vue.js 的核心代码，包括内置组件、全局 API 封装，Vue 实例化、观察者、虚拟 DOM、工具函数等等。还有一些组件例如 keep-alive 等等。</p>
-<p>这里的代码可谓是 Vue.js 的灵魂。</p>
-<p><img src="https://user-images.githubusercontent.com/9835391/46247894-a3d0f200-c444-11e8-8e85-5c59ec212881.png" alt="image"></p>
-<h2 id="三、platform"><a href="#三、platform" class="headerlink" title="三、platform"></a>三、platform</h2><p>Vue.js 是一个跨平台的 MVVM 框架，它可以跑在 web 上，也可以配合 weex 跑在 native 客户端上。platform 是 Vue.js 的入口，2 个目录代表 2 个主要入口，分别打包成运行在 web 上和 weex 上的 Vue.js。</p>
-<p><img src="https://user-images.githubusercontent.com/9835391/46247896-b2b7a480-c444-11e8-854c-fb75f02cb891.png" alt="image"></p>
-<h2 id="四、server"><a href="#四、server" class="headerlink" title="四、server"></a>四、server</h2><p>Vue.js 2.0 支持了服务端渲染，所有服务端渲染相关的逻辑都在这个目录下。注意：这部分代码是跑在服务端的 Node.js，不要和跑在浏览器端的 Vue.js 混为一谈。</p>
-<p>服务端渲染主要的工作是把组件渲染为服务器端的 HTML 字符串，将它们直接发送到浏览器，最后将静态标记”混合”为客户端上完全交互的应用程序。</p>
-<p><img src="https://user-images.githubusercontent.com/9835391/46247913-da0e7180-c444-11e8-8eb2-a1d5398053ba.png" alt="image"></p>
-<h2 id="五、sfc"><a href="#五、sfc" class="headerlink" title="五、sfc"></a>五、sfc</h2><p>通常我们开发 Vue.js 都会借助 webpack 构建， 然后通过 .vue 单文件来编写组件。</p>
-<p>这个目录下的代码逻辑会把 .vue 文件内容解析成一个 JavaScript 的对象。</p>
-<p><img src="https://user-images.githubusercontent.com/9835391/46247925-f27e8c00-c444-11e8-8981-2f05da1ec49a.png" alt="image"></p>
-<h2 id="六、shared"><a href="#六、shared" class="headerlink" title="六、shared"></a>六、shared</h2><p>Vue.js 会定义一些工具方法或者常量，这里定义的工具方法都是会被浏览器端的 Vue.js（core目录代码、或者 platform 目录代码） 和服务端的 Vue.js（server目录） 所共享的。</p>
-<p><img src="https://user-images.githubusercontent.com/9835391/46247928-0629f280-c445-11e8-94ce-87e3e9f05aba.png" alt="image"></p>
-<h2 id="七、总结"><a href="#七、总结" class="headerlink" title="七、总结"></a>七、总结</h2><p>从 Vue.js 的目录设计可以看到，作者把功能模块拆分的非常清楚，相关的逻辑放在一个独立的目录下维护，并且把复用的代码也抽成一个独立目录。</p>
-<p>这样的目录设计让代码的阅读性和可维护性都变强，是非常值得学习和推敲的。</p>
+        <p>Flow 是 facebook 出品的 JavaScript 静态类型检查工具，Vue 的源码采用了 Flow 做静态类型检查，所以要熟悉 Vue 的源码分析，首先要了解 Flow。</p>
+<p>Flow 有两种类型检查</p>
+<blockquote>
+<ul>
+<li>类型推断：通过变量的使用上下文来推断出变量类型，然后根据这些推断来检查类型。</li>
+<li>事先注释好我们期待的类型，Flow 会基于这些注释来判断。</li>
+</ul>
+</blockquote>
+<p>看以下例子</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*@flow*/</span><span class="string">``</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// function split(str) &#123;</span></span><br><span class="line"><span class="comment">//     return str.split(' ')</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br><span class="line">  </span><br><span class="line"><span class="comment">// split(11) // Cannot call str.split because property split is missing in Number [1]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/** -------- */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*@flow*/</span></span><br><span class="line"><span class="comment">// function add(x, y)&#123;</span></span><br><span class="line"><span class="comment">//     return x + y</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// add('Hello', 11) // no error</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/*@flow*/</span></span><br><span class="line"><span class="comment">// function add(x: number, y: number): number &#123;</span></span><br><span class="line"><span class="comment">//     return x + y</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// add('Hello', 11) // Cannot call add with 'Hello' bound to x because string [1] is incompatible with number [2].</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*@flow*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// var arr: Array&lt;number&gt; = [1, 2, 3]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// arr.push('Hello') //Cannot call arr.push because string [1] is incompatible with number [2] in array element.</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/*@flow*/</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Bar</span> </span>&#123;</span><br><span class="line">    x: string;           <span class="comment">// x 是字符串</span></span><br><span class="line">    y: string | number | <span class="keyword">void</span>;  <span class="comment">// y 可以是字符串或者数字</span></span><br><span class="line">    z: boolean;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constructor</span>(x: string, y: string | number | void) &#123;</span><br><span class="line">        <span class="keyword">this</span>.x = x</span><br><span class="line">        <span class="keyword">this</span>.y = y</span><br><span class="line">        <span class="keyword">this</span>.z = <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> bar: Bar = <span class="keyword">new</span> Bar(<span class="string">'hello'</span>, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj: &#123; <span class="attr">a</span>: string, <span class="attr">b</span>: number, <span class="attr">c</span>: <span class="built_in">Array</span>&lt;string&gt;, <span class="attr">d</span>: Bar &#125; = &#123;</span><br><span class="line">    a: <span class="string">'hello'</span>,</span><br><span class="line">    b: <span class="number">11</span>,</span><br><span class="line">    c: [<span class="string">'hello'</span>, <span class="string">'world'</span>],</span><br><span class="line">    d: <span class="keyword">new</span> Bar(<span class="string">'hello'</span>, <span class="number">3</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://flow.org/en/docs/install/" target="_blank" rel="noopener">官网</a><br><a href="https://flow.org/en/docs/types/" target="_blank" rel="noopener">Type Annotations</a></p>
 
       
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/05/09/vue/vue_analysis_01/" data-id="cjp6m411f001x4ughlmls26u2" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/05/09/vue/vue_analysis_01/" data-id="cjpr5sb51004832ghc602byka" class="article-share-link">分享</a>
       
       
         <a href="http://www.xbroder.com/2018/05/09/vue/vue_analysis_01/#disqus_thread" class="article-comment-link">留言</a>
@@ -187,19 +170,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2018/06/04/javascript/现代JS框架存在的根本原因/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/05/09/vue/vue_analysis_02/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">上一篇</strong>
       <div class="article-nav-title">
         
-          现代JS框架存在的根本原因
+          Vue 源码分析（二）：源码目录设计
         
       </div>
     </a>
   
   
-    <a href="/2018/05/09/vue/vue_analysis_02/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2017/07/12/京东入职篇章/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title">Vue 源码分析（一）：vue-flow</div>
+      <div class="article-nav-title">京东入职新篇</div>
     </a>
   
 </nav>
@@ -249,8 +232,6 @@
     
   
     
-  
-    
 
   
     
@@ -262,8 +243,7 @@
   
   <div class="outer">
     <div id="footer-left">
-      &copy; 2014 - 2018 陈广宵&nbsp;|&nbsp;
-      主题 <a href="https://github.com/giscafer/hexo-theme-cafe/" target="_blank">Cafe</a>
+      &copy; 2014 - 2018 陈广宵
     </div>
      <div id="footer-right">
       联系方式&nbsp;|&nbsp;chengx@guangxiao.me

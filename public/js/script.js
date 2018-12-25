@@ -1,4 +1,5 @@
 (function($){
+
   // Search
   var $searchWrap = $('#search-form-wrap'),
     isSearchAnim = false,
@@ -146,4 +147,6 @@
 
     $container.removeClass('mobile-nav-on');
   });
+
+  
 })(jQuery);

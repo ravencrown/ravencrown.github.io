@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-京东入职篇章" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-vue/vue_analysis_02" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/07/12/京东入职篇章/">京东入职新篇</a>
+      <a class="article-title" href="/2018/05/09/vue/vue_analysis_02/">Vue 源码分析（二）：源码目录设计</a>
     </h1>
   
 
@@ -79,7 +79,7 @@
           
   <div class="article-category1">
     
-    <a class="article-category-link" href="/categories/随笔/">分类：随笔</a>
+    <a class="article-category-link" href="/categories/JavaScript/">分类：JavaScript</a>
   </div>
 
         </div>
@@ -88,24 +88,39 @@
       
         <!-- Table of Contents -->
         
-        <p>前两天终于从<code>乐视体育</code>离职了，持续很长一段时间的<code>乐视风波</code>，对我而言，算是结束了，有些不舍，有些不服。</p>
-<p>即将要开始在<code>京东商城</code>的刷副本升级旅程了。</p>
-<p>不舍在于，多少也呆了差不多一年，交了好多好同事，虽然同事都陆陆续续早已离职，高就<code>小米</code>、<code>滴滴</code>、<code>美团</code>了。</p>
-<p>很多人都坚信老贾终有一天王者归来…希望有这一天吧</p>
-<p>一阵风吹来，希望能吹起新的篇章吧。</p>
+        <p>Vue.js 的源码都在 src 目录之下，把源码 down 下来之后可以看到 src 目录下的结构</p>
+<p><img src="https://user-images.githubusercontent.com/9835391/46247775-e265ad00-c442-11e8-9cdb-1e13864452d3.png" alt="image"></p>
+<h2 id="一、compiler-目录结构"><a href="#一、compiler-目录结构" class="headerlink" title="一、compiler 目录结构"></a>一、compiler 目录结构</h2><p>compiler 都是与编译相关的逻辑，例如 virtual-dom，template，render()等等。它包括把模板解析成 ast 语法树，ast 语法树优化，代码生成等功能。</p>
+<p>编译的工作可以在构建时做（借助 webpack、vue-loader 等辅助插件）；也可以在运行时做，使用包含构建功能的 Vue.js。显然，编译是一项耗性能的工作，所以更推荐前者——离线编译。</p>
+<p><img src="https://user-images.githubusercontent.com/9835391/46247795-3bcddc00-c443-11e8-907e-c438a4da0f07.png" alt="image"></p>
+<h2 id="二、core"><a href="#二、core" class="headerlink" title="二、core"></a>二、core</h2><p>core 目录包含了 Vue.js 的核心代码，包括内置组件、全局 API 封装，Vue 实例化、观察者、虚拟 DOM、工具函数等等。还有一些组件例如 keep-alive 等等。</p>
+<p>这里的代码可谓是 Vue.js 的灵魂。</p>
+<p><img src="https://user-images.githubusercontent.com/9835391/46247894-a3d0f200-c444-11e8-8e85-5c59ec212881.png" alt="image"></p>
+<h2 id="三、platform"><a href="#三、platform" class="headerlink" title="三、platform"></a>三、platform</h2><p>Vue.js 是一个跨平台的 MVVM 框架，它可以跑在 web 上，也可以配合 weex 跑在 native 客户端上。platform 是 Vue.js 的入口，2 个目录代表 2 个主要入口，分别打包成运行在 web 上和 weex 上的 Vue.js。</p>
+<p><img src="https://user-images.githubusercontent.com/9835391/46247896-b2b7a480-c444-11e8-854c-fb75f02cb891.png" alt="image"></p>
+<h2 id="四、server"><a href="#四、server" class="headerlink" title="四、server"></a>四、server</h2><p>Vue.js 2.0 支持了服务端渲染，所有服务端渲染相关的逻辑都在这个目录下。注意：这部分代码是跑在服务端的 Node.js，不要和跑在浏览器端的 Vue.js 混为一谈。</p>
+<p>服务端渲染主要的工作是把组件渲染为服务器端的 HTML 字符串，将它们直接发送到浏览器，最后将静态标记”混合”为客户端上完全交互的应用程序。</p>
+<p><img src="https://user-images.githubusercontent.com/9835391/46247913-da0e7180-c444-11e8-8eb2-a1d5398053ba.png" alt="image"></p>
+<h2 id="五、sfc"><a href="#五、sfc" class="headerlink" title="五、sfc"></a>五、sfc</h2><p>通常我们开发 Vue.js 都会借助 webpack 构建， 然后通过 .vue 单文件来编写组件。</p>
+<p>这个目录下的代码逻辑会把 .vue 文件内容解析成一个 JavaScript 的对象。</p>
+<p><img src="https://user-images.githubusercontent.com/9835391/46247925-f27e8c00-c444-11e8-8981-2f05da1ec49a.png" alt="image"></p>
+<h2 id="六、shared"><a href="#六、shared" class="headerlink" title="六、shared"></a>六、shared</h2><p>Vue.js 会定义一些工具方法或者常量，这里定义的工具方法都是会被浏览器端的 Vue.js（core目录代码、或者 platform 目录代码） 和服务端的 Vue.js（server目录） 所共享的。</p>
+<p><img src="https://user-images.githubusercontent.com/9835391/46247928-0629f280-c445-11e8-94ce-87e3e9f05aba.png" alt="image"></p>
+<h2 id="七、总结"><a href="#七、总结" class="headerlink" title="七、总结"></a>七、总结</h2><p>从 Vue.js 的目录设计可以看到，作者把功能模块拆分的非常清楚，相关的逻辑放在一个独立的目录下维护，并且把复用的代码也抽成一个独立目录。</p>
+<p>这样的目录设计让代码的阅读性和可维护性都变强，是非常值得学习和推敲的。</p>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2017/07/12/京东入职篇章/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2018/05/09/vue/vue_analysis_02/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2017/07/12/京东入职篇章/" data-id="cjozubku9002zvcghunnk1783" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/05/09/vue/vue_analysis_02/" data-id="cjpr5sb4z004332ghn6c8yi2g" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2017/07/12/京东入职篇章/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2018/05/09/vue/vue_analysis_02/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -120,22 +135,10 @@
   
 
 
-</section>
-         
-    <aside id="sidebar">
-  
-    
 
-  
-    
-  
-    
 
-  
-    
-  
-    
-  <div class="widget-wrap widget-wrap-categories">
+
+  <div class="widget-wrap widget-wrap-categories widget-recent_posts">
     <h3 class="widget-title recent-posts">最新文章</h3>
     <div class="widget">
       <ul>
@@ -153,17 +156,32 @@
           </li>
         
           <li>
-            <a href="/2018/10/28/node/node-03/">Node 学习笔记03 - 命令行框架</a>
-          </li>
-        
-          <li>
             <a href="/2018/10/28/node/node-04/">Node 学习笔记04 - 模块机制</a>
           </li>
         
+          <li>
+            <a href="/2018/10/28/node/node-03/">Node 学习笔记03 - 命令行框架</a>
+          </li>
+        
+        <li><a class="more" href="/archives"><strong>更多文章......<strong></a></li>
       </ul>
     </div>
   </div>
 
+
+</section>
+         
+    <aside id="sidebar">
+  
+    
+
+  
+    
+  
+    
+
+  
+    
   
     
 
@@ -177,8 +195,7 @@
   
   <div class="outer">
     <div id="footer-left">
-      &copy; 2014 - 2018 陈广宵&nbsp;|&nbsp;
-      主题 <a href="https://github.com/giscafer/hexo-theme-cafe/" target="_blank">Cafe</a>
+      &copy; 2014 - 2018 陈广宵
     </div>
      <div id="footer-right">
       联系方式&nbsp;|&nbsp;chengx@guangxiao.me

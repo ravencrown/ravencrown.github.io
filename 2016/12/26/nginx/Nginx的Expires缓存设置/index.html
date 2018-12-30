@@ -105,7 +105,7 @@
 <p>当为max时，会把Expires设置为 “Thu, 31 Dec 2037 23:55:55 GMT”， Cache-Control 设置到 10 年；  </p>
 <p>当为off时，表示不增加或修改Expires 和 Cache-Control 。  </p>
 <p>例如</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> curl -I http://su.bdimg.com/static/superplus/css/super_min_2b5190eb.css</span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: JSP3/2.0.4</span><br><span class="line">Date: Fri, 31 Oct 2014 07:28:20 GMT</span><br><span class="line">Content-Type: text/css</span><br><span class="line">Content-Length: 25076</span><br><span class="line">Connection: keep-alive</span><br><span class="line">ETag: “1121644245”</span><br><span class="line">Last-Modified: Wed, 24 Sep 2014 15:50:22 GMT</span><br><span class="line">Expires: Mon, 23 Mar 2015 16:29:25 GMT</span><br><span class="line">Age: 3164335</span><br><span class="line">Cache-Control: max-age=15552000</span><br><span class="line">Accept-Ranges: bytes</span><br><span class="line">Vary: Accept-Encoding</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> curl -I http://su.bdimg.com/static/superplus/css/super_min_2b5190eb.css</span></span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: JSP3/2.0.4</span><br><span class="line">Date: Fri, 31 Oct 2014 07:28:20 GMT</span><br><span class="line">Content-Type: text/css</span><br><span class="line">Content-Length: 25076</span><br><span class="line">Connection: keep-alive</span><br><span class="line">ETag: “1121644245”</span><br><span class="line">Last-Modified: Wed, 24 Sep 2014 15:50:22 GMT</span><br><span class="line">Expires: Mon, 23 Mar 2015 16:29:25 GMT</span><br><span class="line">Age: 3164335</span><br><span class="line">Cache-Control: max-age=15552000</span><br><span class="line">Accept-Ranges: bytes</span><br><span class="line">Vary: Accept-Encoding</span><br></pre></td></tr></table></figure>
 <p>Date 的意思是服务器发送消息的时间； Age 的意思有点复杂，它的存在暗示你访问的服务器不是源服务器，而是一台缓存服务器，Age 的大小表示这个资源已经”存活了”多长时间，所以这个值不会大于 源服务器设置的最大缓存时间。  </p>
 <p>这里Expires 表示过期时间，Cache-Control 表示最大的存活时间，在服务器端的Nginx 我们可以用 expires 指令来定义这两项。  </p>
 <p>另: 304 也是一种很好的缓存手段<br>原理是: 服务器响应文件内容是,同时响应etag标签(内容的签名,内容一变,他也变), 和 last_modified_since 2个标签值<br>浏览器下次去请求时,头信息发送这两个标签, 服务器检测文件有没有发生变化,如无,直接头信息返回 etag,last_modified_since<br>浏览器知道内容无改变,于是直接调用本地缓存.<br>这个过程,也请求了服务器,但是传着的内容极少.<br>对于变化周期较短的,如静态html,js,css,比较适于用这个方式  </p>
@@ -117,7 +117,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/26/nginx/Nginx的Expires缓存设置/" data-id="cjpr5sb4c002v32ghojw0n8pd" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/26/nginx/Nginx的Expires缓存设置/" data-id="cjqb2pvum0044hpghvxf40s8b" class="article-share-link">分享</a>
       
       
         <a href="http://www.xbroder.com/2016/12/26/nginx/Nginx的Expires缓存设置/#disqus_thread" class="article-comment-link">留言</a>
@@ -175,11 +175,11 @@
     
 <nav id="article-nav">
   
-    <a href="/2016/12/29/nginx/Nginx做负载均衡器以及proxy缓存配置/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2016/12/29/nginx/Nginx的Gzip配置/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">上一篇</strong>
       <div class="article-nav-title">
         
-          Nginx做负载均衡器以及proxy缓存配置
+          Nginx的Gzip设置
         
       </div>
     </a>

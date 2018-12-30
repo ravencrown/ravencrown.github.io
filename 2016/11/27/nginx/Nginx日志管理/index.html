@@ -111,7 +111,7 @@
 <h3 id="声明一个独特的log-format并命名"><a href="#声明一个独特的log-format并命名" class="headerlink" title="声明一个独特的log_format并命名"></a>声明一个独特的log_format并命名</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_format  mylog '$remote_addr- "$request" '</span><br><span class="line"> 	'$status $body_bytes_sent "$http_referer" '</span><br><span class="line">    '"$http_user_agent" "$http_x_forwarded_for"';</span><br></pre></td></tr></table></figure>
 <p>在下面的server/location,我们就可以引用 mylog</p>
 <p>在server段中,这样来声明<br>Nginx允许针对不同的server做不同的Log ,(有的web服务器不支持,如lighttp)</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">access_log logs/access_8080.log mylog;  </span><br><span class="line"><span class="meta">#</span>声明log   log位置          log格式;</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">access_log logs/access_8080.log mylog;  </span><br><span class="line"><span class="meta">#</span><span class="bash">声明<span class="built_in">log</span>   <span class="built_in">log</span>位置          <span class="built_in">log</span>格式;</span></span><br></pre></td></tr></table></figure>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
 <li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_log_module.html" target="_blank" rel="noopener">Module ngx_http_log_module</a></li>
 </ul>
@@ -120,7 +120,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/11/27/nginx/Nginx日志管理/" data-id="cjpr5sb4b002u32ghmcvvq5l2" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/11/27/nginx/Nginx日志管理/" data-id="cjqb2pvus004bhpgh0hnkvsah" class="article-share-link">分享</a>
       
       
         <a href="http://www.xbroder.com/2016/11/27/nginx/Nginx日志管理/#disqus_thread" class="article-comment-link">留言</a>

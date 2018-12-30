@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-nginx/Nginx的Expires缓存设置" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-nginx/Nginx的Gzip配置" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/12/26/nginx/Nginx的Expires缓存设置/">Expires缓存设置</a>
+      <a class="article-title" href="/2016/12/29/nginx/Nginx的Gzip配置/">Nginx的Gzip设置</a>
     </h1>
   
 
@@ -88,35 +88,40 @@
       
         <!-- Table of Contents -->
         
-        <h2 id="Expires-设置"><a href="#Expires-设置" class="headerlink" title="Expires 设置"></a>Expires 设置</h2><p>对于网站的图片,尤其是新闻站, 图片一旦发布, 改动的可能是非常小的.我们希望 能否在用户访问一次后, 图片缓存在用户的浏览器端,且时间比较长的缓存.<br>可以, 用到 nginx的expires设置 .<br>nginx中设置过期时间,非常简单,<br>在location或if段里,来写.</p>
-<p>格式</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">expire -1;</span><br><span class="line">expire 0;</span><br><span class="line">expire 1h;</span><br><span class="line">expire max;</span><br><span class="line">expire off;</span><br></pre></td></tr></table></figure>
-<p>这个指令表示在HTTP响应头中是否增加或修改Expires 和 Cache-Control ，仅当响应状态是200, 201, 204, 206, 301, 302, 303, 304, 或者 307的时候有效。  </p>
-<p>当expire 为负时，会在响应头增加Cache-Control: no-cache；  </p>
-<p>当为正或者0时，就表示Cache-Control: max-age=指定的时间(秒)；  </p>
-<p>当为max时，会把Expires设置为 “Thu, 31 Dec 2037 23:55:55 GMT”， Cache-Control 设置到 10 年；  </p>
-<p>当为off时，表示不增加或修改Expires 和 Cache-Control 。  </p>
-<p>例如</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> curl -I http://su.bdimg.com/static/superplus/css/super_min_2b5190eb.css</span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: JSP3/2.0.4</span><br><span class="line">Date: Fri, 31 Oct 2014 07:28:20 GMT</span><br><span class="line">Content-Type: text/css</span><br><span class="line">Content-Length: 25076</span><br><span class="line">Connection: keep-alive</span><br><span class="line">ETag: “1121644245”</span><br><span class="line">Last-Modified: Wed, 24 Sep 2014 15:50:22 GMT</span><br><span class="line">Expires: Mon, 23 Mar 2015 16:29:25 GMT</span><br><span class="line">Age: 3164335</span><br><span class="line">Cache-Control: max-age=15552000</span><br><span class="line">Accept-Ranges: bytes</span><br><span class="line">Vary: Accept-Encoding</span><br></pre></td></tr></table></figure>
-<p>Date 的意思是服务器发送消息的时间； Age 的意思有点复杂，它的存在暗示你访问的服务器不是源服务器，而是一台缓存服务器，Age 的大小表示这个资源已经”存活了”多长时间，所以这个值不会大于 源服务器设置的最大缓存时间。  </p>
-<p>这里Expires 表示过期时间，Cache-Control 表示最大的存活时间，在服务器端的Nginx 我们可以用 expires 指令来定义这两项。  </p>
-<p>另: 304 也是一种很好的缓存手段<br>原理是: 服务器响应文件内容是,同时响应etag标签(内容的签名,内容一变,他也变), 和 last_modified_since 2个标签值<br>浏览器下次去请求时,头信息发送这两个标签, 服务器检测文件有没有发生变化,如无,直接头信息返回 etag,last_modified_since<br>浏览器知道内容无改变,于是直接调用本地缓存.<br>这个过程,也请求了服务器,但是传着的内容极少.<br>对于变化周期较短的,如静态html,js,css,比较适于用这个方式  </p>
+        <h2 id="Gzip配置参数"><a href="#Gzip配置参数" class="headerlink" title="Gzip配置参数"></a>Gzip配置参数</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">gzip配置的常用参数</span><br><span class="line">gzip on|off;  #是否开启gzip</span><br><span class="line">gzip_buffers 32 4K| 16 8K #缓冲(压缩在内存中缓冲几块? 每块多大?)</span><br><span class="line">gzip_comp_level [1-9] #推荐6 压缩级别(级别越高,压的越小,越浪费CPU计算资源)</span><br><span class="line">gzip_disable #正则匹配UA 什么样的Uri不进行gzip</span><br><span class="line">gzip_min_length 200 # 开始压缩的最小长度(再小就不要压缩了,意义不在)</span><br><span class="line">gzip_http_version 1.0|1.1 # 开始压缩的http协议版本(可以不设置,目前几乎全是1.1协议)</span><br><span class="line">gzip_proxied          # 设置请求者代理服务器,该如何缓存内容</span><br><span class="line">gzip_types text/plain  application/xml # 对哪些类型的文件用压缩 如txt,xml,html ,css</span><br><span class="line">gzip_vary on|off  # 是否传输gzip压缩标志 Vary是用来标志缓存的依据.</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>注意:</span><br><span class="line"><span class="meta">#</span>图片/mp3这样的二进制文件,不必压缩</span><br><span class="line"><span class="meta">#</span>因为压缩率比较小, 比如100-&gt;80字节,而且压缩也是耗费CPU资源的.</span><br><span class="line"><span class="meta">#</span>比较小的文件不必压缩,</span><br></pre></td></tr></table></figure>
+<p><strong>思考:</strong></p>
+<ul>
+<li>如果2个人,一个浏览器支持gzip,一个浏览器不支持gzip2个同时请求同个页面, chinaCache缓存压缩后,还是未压缩的?</li>
+<li>如果1人,再次请求页面,chinaCache返回压缩后的缓存内容,还是压缩前的缓存内容?</li>
+</ul>
+<p>这个时候 Vary的作用体现出来.即——缓存的内容受 Accept-Encoding头信息的影响.  </p>
+<p>所以如果<br>请求时,不支持gzip, 缓存服务器将会生成一份未gzip的内容.<br>请求时,支持gzip, 缓存服务器将会生成一份gzip的内容.  </p>
+<p>下次再请求时, 缓存服务器会考虑客户端的Accept-Encoding因素,并合理的返回信息  </p>
+<p>Nginx对于图片,js等静态文件的缓存设置<br>注:这个缓存是指针对浏览器所做的缓存,不是指服务器端的数据缓存.  </p>
+<p>主要知识点: location expires指令  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">location ~ \.(jpg|jpeg|png|gif)$ &#123;</span><br><span class="line">    expires 1d;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~ \.js$ &#123;</span><br><span class="line">    expires 1h;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>设置并载入新配置文件,用firebug观察,<br>会发现 图片内容,没有再次产生新的请求,原因–利用了本地缓存的效果.  </p>
+<p><strong>注: 在大型的新闻站,或文章站中,图片变动的可能性很小,建议做1周左右的缓存Js,css等小时级的缓存.</strong></p>
+<p>如果信息流动比较快,也可以不用expires指令,<br>用last_modified, etag功能(主流的web服务器都支持这2个头信息)  </p>
+<p>原理是:<br>响应: 计算响应内容的签名, etag 和 上次修改时间<br>请求: 发送 etatg, If-Modified-Since 头信息.<br>服务器收到后,判断etag是否一致, 最后修改时间是否大于if-Modifiled-Since<br>如果监测到服务器的内容有变化,则返回304,<br>浏览器就知道,内容没变,直接用缓存.  </p>
+<p><strong>304 比起上面的expires 指令多了1次请求,但是比200状态,少了传输内容.</strong></p>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
-<li>Nginx官网，<a href="http://nginx.org/en/docs/http/ngx_http_headers_module.html#expires" target="_blank" rel="noopener">Location Expires</a></li>
+<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_gzip_module.html" target="_blank" rel="noopener">Nginx Gzip Module</a></li>
+<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html" target="_blank" rel="noopener">Nginx Gzip Static Module</a></li>
 </ul>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2016/12/26/nginx/Nginx的Expires缓存设置/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2016/12/29/nginx/Nginx的Gzip配置/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/26/nginx/Nginx的Expires缓存设置/" data-id="cjpr5sb4c002v32ghojw0n8pd" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/29/nginx/Nginx的Gzip配置/" data-id="cjpr5sb4f002z32ghf1egzeo6" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2016/12/26/nginx/Nginx的Expires缓存设置/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2016/12/29/nginx/Nginx的Gzip配置/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -140,6 +145,10 @@
       <ul>
         
           <li>
+            <a href="/2018/12/13/reprint/rep02/">深入Babel，这一篇就够了</a>
+          </li>
+        
+          <li>
             <a href="/2018/12/12/reprint/rep01/">一口(很长的)气了解 babel</a>
           </li>
         
@@ -153,10 +162,6 @@
         
           <li>
             <a href="/2018/11/08/平凡的世界/">平凡的世界读后感</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/28/node/node-03/">Node 学习笔记03 - 命令行框架</a>
           </li>
         
         <li><a class="more" href="/archives"><strong>更多文章......<strong></a></li>

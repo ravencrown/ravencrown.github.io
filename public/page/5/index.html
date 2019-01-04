@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-nginx/Nginx重定向Rewrite" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-nginx/Nginx的Gzip配置" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/12/17/nginx/Nginx重定向Rewrite/">Nginx重定向Rewrite</a>
+      <a class="article-title" href="/2016/12/29/nginx/Nginx的Gzip配置/">Nginx的Gzip设置</a>
     </h1>
   
 
@@ -88,105 +88,40 @@
       
         <!-- Table of Contents -->
         
-        <h2 id="Rewrite语法"><a href="#Rewrite语法" class="headerlink" title="Rewrite语法"></a>Rewrite语法</h2><p>rewrite功能就是，使用nginx提供的全局变量或自己设置的变量，结合正则表达式和标志位实现url重写以及重定向。rewrite只能放在server{},location{},if{}中，并且只能对域名后边的除去传递的参数外的字符串起作用，例如 <a href="http://seanlook.com/a/we/index.php?id=1&amp;u=str" target="_blank" rel="noopener">http://seanlook.com/a/we/index.php?id=1&amp;u=str</a> 只对/a/we/index.php重写。语法rewrite regex replacement [flag];  </p>
-<p>如果相对域名或参数字符串起作用，可以使用全局变量匹配，也可以使用proxy_pass反向代理。</p>
-<p>表明看rewrite和location功能有点像，都能实现跳转，主要区别在于rewrite是在同一域名内更改获取资源的路径，而location是对一类路径做控制访问或反向代理，可以proxy_pass到其他机器。很多情况下rewrite也会写在location里，它们的执行顺序是：  </p>
+        <h2 id="Gzip配置参数"><a href="#Gzip配置参数" class="headerlink" title="Gzip配置参数"></a>Gzip配置参数</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">gzip配置的常用参数</span><br><span class="line">gzip on|off;  #是否开启gzip</span><br><span class="line">gzip_buffers 32 4K| 16 8K #缓冲(压缩在内存中缓冲几块? 每块多大?)</span><br><span class="line">gzip_comp_level [1-9] #推荐6 压缩级别(级别越高,压的越小,越浪费CPU计算资源)</span><br><span class="line">gzip_disable #正则匹配UA 什么样的Uri不进行gzip</span><br><span class="line">gzip_min_length 200 # 开始压缩的最小长度(再小就不要压缩了,意义不在)</span><br><span class="line">gzip_http_version 1.0|1.1 # 开始压缩的http协议版本(可以不设置,目前几乎全是1.1协议)</span><br><span class="line">gzip_proxied          # 设置请求者代理服务器,该如何缓存内容</span><br><span class="line">gzip_types text/plain  application/xml # 对哪些类型的文件用压缩 如txt,xml,html ,css</span><br><span class="line">gzip_vary on|off  # 是否传输gzip压缩标志 Vary是用来标志缓存的依据.</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>注意:</span><br><span class="line"><span class="meta">#</span>图片/mp3这样的二进制文件,不必压缩</span><br><span class="line"><span class="meta">#</span>因为压缩率比较小, 比如100-&gt;80字节,而且压缩也是耗费CPU资源的.</span><br><span class="line"><span class="meta">#</span>比较小的文件不必压缩,</span><br></pre></td></tr></table></figure>
+<p><strong>思考:</strong></p>
 <ul>
-<li>执行server块的rewrite指令</li>
-<li>执行location匹配</li>
-<li>执行选定的location中的rewrite指令</li>
+<li>如果2个人,一个浏览器支持gzip,一个浏览器不支持gzip2个同时请求同个页面, chinaCache缓存压缩后,还是未压缩的?</li>
+<li>如果1人,再次请求页面,chinaCache返回压缩后的缓存内容,还是压缩前的缓存内容?</li>
 </ul>
-<p>如果其中某步URI被重写，则重新循环执行1-3，直到找到真实存在的文件；循环超过10次，则返回500 Internal Server Error错误。  </p>
-<h2 id="flag标志位"><a href="#flag标志位" class="headerlink" title="flag标志位"></a>flag标志位</h2><ul>
-<li>last : 相当于Apache的[L]标记，表示完成rewrite</li>
-<li>break : 停止执行当前虚拟主机的后续rewrite指令集</li>
-<li>redirect : 返回302临时重定向，地址栏会显示跳转后的地址</li>
-<li>permanent : 返回301永久重定向，地址栏会显示跳转后的地址</li>
-</ul>
-<p>因为301和302不能简单的只返回状态码，还必须有重定向的URL，这就是return指令无法返回301,302的原因了。这里 last 和 break 区别有点难以理解：  </p>
-<ul>
-<li>last一般写在server和if中，而break一般使用在location中</li>
-<li>last不终止重写后的url匹配，即新的url会再从server走一遍匹配流程，而break终止重写后的匹配</li>
-<li>break和last都能组织继续执行后面的rewrite指令  </li>
-</ul>
-<h2 id="if指令与全局变量"><a href="#if指令与全局变量" class="headerlink" title="if指令与全局变量"></a>if指令与全局变量</h2><p>if判断指令<br>语法为if(condition){…}，对给定的条件condition进行判断。如果为真，大括号内的rewrite指令将被执行，if条件(conditon)可以是如下任何内容：</p>
-<ul>
-<li>当表达式只是一个变量时，如果值为空或任何以0开头的字符串都会当做false</li>
-<li>直接比较变量和内容时，使用=或!=</li>
-<li>~正则表达式匹配，~*不区分大小写的匹配，!~区分大小写的不匹配</li>
-</ul>
-<p>-f和!-f用来判断是否存在文件<br>-d和!-d用来判断是否存在目录<br>-e和!-e用来判断是否存在文件或目录<br>-x和!-x用来判断文件是否可执行  </p>
-<p>例如</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ($http_user_agent ~ MSIE) &#123;</span><br><span class="line">    rewrite ^(.*)$ /msie/$<span class="number">1</span> <span class="keyword">break</span>;</span><br><span class="line">&#125; <span class="comment">//如果UA包含"MSIE"，rewrite请求到/msid/目录下</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($http_cookie ~* <span class="string">"id=([^;]+)(?:;|$)"</span>) &#123;</span><br><span class="line">    set $id $<span class="number">1</span>;</span><br><span class="line">&#125; <span class="comment">//如果cookie匹配正则，设置变量$id等于正则引用部分</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($request_method = POST) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">405</span>;</span><br><span class="line">&#125; <span class="comment">//如果提交方法为POST，则返回状态405（Method not allowed）。return不能返回301,302</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($slow) &#123;</span><br><span class="line">    limit_rate <span class="number">10</span>k;</span><br><span class="line">&#125; <span class="comment">//限速，$slow可以通过 set 指令设置</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!-f $request_filename)&#123;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">    proxy_pass  http:<span class="comment">//127.0.0.1; </span></span><br><span class="line">&#125; <span class="comment">//如果请求的文件名不存在，则反向代理到localhost 。这里的break也是停止rewrite检查</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($args ~ post=<span class="number">140</span>)&#123;</span><br><span class="line">    rewrite ^ http:<span class="comment">//example.com/ permanent;</span></span><br><span class="line">&#125; <span class="comment">//如果query string中包含"post=140"，永久重定向到example.com</span></span><br><span class="line"></span><br><span class="line">location ~* \.(gif|jpg|png|swf|flv)$ &#123;</span><br><span class="line">    valid_referers none blocked www.jefflei.com www.leizhenfang.com;</span><br><span class="line">    <span class="keyword">if</span> ($invalid_referer) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">404</span>;</span><br><span class="line">    &#125; <span class="comment">//防盗链</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="全局变量"><a href="#全局变量" class="headerlink" title="全局变量"></a>全局变量</h2><ul>
-<li>$args ： #这个变量等于请求行中的参数，同$query_string</li>
-<li>$content_length ： 请求头中的Content-length字段。</li>
-<li>$content_type ： 请求头中的Content-Type字段。</li>
-<li>$document_root ： 当前请求在root指令中指定的值。</li>
-<li>$host ： 请求主机头字段，否则为服务器名称。</li>
-<li>$http_user_agent ： 客户端agent信息</li>
-<li>$http_cookie ： 客户端cookie信息</li>
-<li>$limit_rate ： 这个变量可以限制连接速率。</li>
-<li>$request_method ： 客户端请求的动作，通常为GET或POST。</li>
-<li>$remote_addr ： 客户端的IP地址。</li>
-<li>$remote_port ： 客户端的端口。</li>
-<li>$remote_user ： 已经经过Auth Basic Module验证的用户名。</li>
-<li>$request_filename ： 当前请求的文件路径，由root或alias指令与URI请求生成。</li>
-<li>$scheme ： HTTP方法（如http，https）。</li>
-<li>$server_protocol ： 请求使用的协议，通常是HTTP/1.0或HTTP/1.1。</li>
-<li>$server_addr ： 服务器地址，在完成一次系统调用后可以确定这个值。</li>
-<li>$server_name ： 服务器名称。</li>
-<li>$server_port ： 请求到达服务器的端口号。</li>
-<li>$request_uri ： 包含请求参数的原始URI，不包含主机名，如：”/foo/bar.php?arg=baz”。</li>
-<li>$uri ： 不带请求参数的当前URI，$uri不包含主机名，如”/foo/bar.html”。</li>
-<li>$document_uri ： 与$uri相同。</li>
-</ul>
-<p>例如</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">例：http://localhost:88/test1/test2/test.php</span><br><span class="line">$host：localhost</span><br><span class="line">$server_port：88</span><br><span class="line">$request_uri：http://localhost:88/test1/test2/test.php</span><br><span class="line">$document_uri：/test1/test2/test.php</span><br><span class="line">$document_root：/var/www/html</span><br><span class="line">$request_filename：/var/www/html/test1/test2/test.php</span><br></pre></td></tr></table></figure>
-<h2 id="常用正则"><a href="#常用正则" class="headerlink" title="常用正则"></a>常用正则</h2><ul>
-<li>. ： 匹配除换行符以外的任意字符</li>
-<li>? ： 重复0次或1次</li>
-<li><ul>
-<li>： 重复1次或更多次</li>
-</ul>
-</li>
-<li><ul>
-<li>： 重复0次或更多次</li>
-</ul>
-</li>
-<li>\d ：匹配数字</li>
-<li>^ ： 匹配字符串的开始</li>
-<li>$ ： 匹配字符串的介绍</li>
-<li>{n} ： 重复n次</li>
-<li>{n,} ： 重复n次或更多次</li>
-<li>[c] ： 匹配单个字符c</li>
-<li>[a-z] ： 匹配a-z小写字母的任意一个</li>
-</ul>
-<p>小括号()之间匹配的内容，可以在后面通过$1来引用，$2表示的是前面第二个()里的内容。正则里面容易让人困惑的是\转义特殊字符。</p>
-<h2 id="rewrite实例"><a href="#rewrite实例" class="headerlink" title="rewrite实例"></a>rewrite实例</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    # 定义image日志格式</span><br><span class="line">    log_format imagelog '[$time_local] ' $image_file ' ' $image_type ' ' $body_bytes_sent ' ' $status;</span><br><span class="line">    # 开启重写日志</span><br><span class="line">    rewrite_log on;</span><br><span class="line"> </span><br><span class="line">    server &#123;</span><br><span class="line">        root /home/www;</span><br><span class="line"> </span><br><span class="line">        location / &#123;</span><br><span class="line">                # 重写规则信息</span><br><span class="line">                error_log logs/rewrite.log notice; </span><br><span class="line">                # 注意这里要用‘’单引号引起来，避免&#123;&#125;</span><br><span class="line">                rewrite '^/images/([a-z]&#123;2&#125;)/([a-z0-9]&#123;5&#125;)/(.*)\.(png|jpg|gif)$' /data?file=$3.$4;</span><br><span class="line">                # 注意不能在上面这条规则后面加上“last”参数，否则下面的set指令不会执行</span><br><span class="line">                set $image_file $3;</span><br><span class="line">                set $image_type $4;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        location /data &#123;</span><br><span class="line">                # 指定针对图片的日志格式，来分析图片类型和大小</span><br><span class="line">                access_log logs/images.log mian;</span><br><span class="line">                root /data/images;</span><br><span class="line">                # 应用前面定义的变量。判断首先文件在不在，不在再判断目录在不在，如果还不在就跳转到最后一个url里</span><br><span class="line">                try_files /$arg_file /image404.html;</span><br><span class="line">        &#125;</span><br><span class="line">        location = /image404.html &#123;</span><br><span class="line">                # 图片不存在返回特定的信息</span><br><span class="line">                return 404 "image not found\n";</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>对形如/images/ef/uh7b3/test.png的请求，重写到/data?file=test.png，于是匹配到location /data，先看/data/images/test.png文件存不存在，如果存在则正常响应，如果不存在则重写tryfiles到新的image404 location，直接返回404状态码。</p>
-<p>例2</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rewrite ^/images/(.*)_(\d+)x(\d+)\.(png|jpg|gif)$ /resizer/$1.$4?width=$2&amp;height=$3? last;</span><br></pre></td></tr></table></figure>
-<p>对形如/images/bla_500x400.jpg的文件请求，重写到/resizer/bla.jpg?width=500&amp;height=400地址，并会继续尝试匹配location。</p>
+<p>这个时候 Vary的作用体现出来.即——缓存的内容受 Accept-Encoding头信息的影响.  </p>
+<p>所以如果<br>请求时,不支持gzip, 缓存服务器将会生成一份未gzip的内容.<br>请求时,支持gzip, 缓存服务器将会生成一份gzip的内容.  </p>
+<p>下次再请求时, 缓存服务器会考虑客户端的Accept-Encoding因素,并合理的返回信息  </p>
+<p>Nginx对于图片,js等静态文件的缓存设置<br>注:这个缓存是指针对浏览器所做的缓存,不是指服务器端的数据缓存.  </p>
+<p>主要知识点: location expires指令  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">location ~ \.(jpg|jpeg|png|gif)$ &#123;</span><br><span class="line">    expires 1d;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~ \.js$ &#123;</span><br><span class="line">    expires 1h;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>设置并载入新配置文件,用firebug观察,<br>会发现 图片内容,没有再次产生新的请求,原因–利用了本地缓存的效果.  </p>
+<p><strong>注: 在大型的新闻站,或文章站中,图片变动的可能性很小,建议做1周左右的缓存Js,css等小时级的缓存.</strong></p>
+<p>如果信息流动比较快,也可以不用expires指令,<br>用last_modified, etag功能(主流的web服务器都支持这2个头信息)  </p>
+<p>原理是:<br>响应: 计算响应内容的签名, etag 和 上次修改时间<br>请求: 发送 etatg, If-Modified-Since 头信息.<br>服务器收到后,判断etag是否一致, 最后修改时间是否大于if-Modifiled-Since<br>如果监测到服务器的内容有变化,则返回304,<br>浏览器就知道,内容没变,直接用缓存.  </p>
+<p><strong>304 比起上面的expires 指令多了1次请求,但是比200状态,少了传输内容.</strong></p>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
-<li><p>Nginx官网，<a href="http://nginx.org/en/docs/http/ngx_http_rewrite_module.html#rewrite" target="_blank" rel="noopener">Location Rewrite语法</a></p>
-</li>
-<li><p>Nginx官网，<a href="http://nginx.org/en/docs/http/ngx_http_rewrite_module.html" target="_blank" rel="noopener">Rewrite Module</a></p>
-</li>
+<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_gzip_module.html" target="_blank" rel="noopener">Nginx Gzip Module</a></li>
+<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html" target="_blank" rel="noopener">Nginx Gzip Static Module</a></li>
 </ul>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2016/12/17/nginx/Nginx重定向Rewrite/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2016/12/29/nginx/Nginx的Gzip配置/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/17/nginx/Nginx重定向Rewrite/" data-id="cjpr5sb4o003f32ghm0d7q2o4" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/29/nginx/Nginx的Gzip配置/" data-id="cjpr5sb4f002z32ghf1egzeo6" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2016/12/17/nginx/Nginx重定向Rewrite/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2016/12/29/nginx/Nginx的Gzip配置/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -210,6 +145,14 @@
       <ul>
         
           <li>
+            <a href="/2018/12/13/reprint/rep02/">深入Babel，这一篇就够了</a>
+          </li>
+        
+          <li>
+            <a href="/2018/12/12/reprint/rep01/">一口(很长的)气了解 babel</a>
+          </li>
+        
+          <li>
             <a href="/2018/11/23/node/node-06/">Node 学习笔记06 - 内存控制</a>
           </li>
         
@@ -219,14 +162,6 @@
         
           <li>
             <a href="/2018/11/08/平凡的世界/">平凡的世界读后感</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/28/node/node-04/">Node 学习笔记04 - 模块机制</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/28/node/node-03/">Node 学习笔记03 - 命令行框架</a>
           </li>
         
         <li><a class="more" href="/archives"><strong>更多文章......<strong></a></li>

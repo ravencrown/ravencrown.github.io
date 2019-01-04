@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-web_engineer/web-engineer-05" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-富爸爸穷爸爸笔记" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/13/web_engineer/web-engineer-05/">前端工程化（五）：摆脱冗长的等待——构建流程优化</a>
+      <a class="article-title" href="/2018/07/22/富爸爸穷爸爸笔记/">富爸爸穷爸爸笔记</a>
     </h1>
   
 
@@ -79,7 +79,7 @@
           
   <div class="article-category1">
     
-    <a class="article-category-link" href="/categories/前端工程化/">分类：前端工程化</a>
+    <a class="article-category-link" href="/categories/理财/">分类：理财</a>
   </div>
 
         </div>
@@ -88,89 +88,141 @@
       
         <!-- Table of Contents -->
         
-        <p>随着 JavaScript 应用规模和复杂度不断提升，构建速度逐渐成为了让开发者头疼的问题。不仅是本地工程启动慢，在进行发布时每次开发和 QA 都要等好几分钟才能进行验证，拖慢了开发效率。这篇文章会讲解如何从 npm 和 Webpack 的角度进行优化让构建更快。</p>
-<p>下文会聊到很多种策略，首先需要强调的是，一种优化策略通常只是针对一类场景，不是所有的优化点放在我们的项目中都有效。因此我会先从原理上去分析构建的流程，以及在这些流程部分中哪些容易成为性能的瓶颈。希望大家在遇到类似的问题时能对症下药，分析出问题的原因，然后找到对应的解决方案进行优化。</p>
-<h2 id="从-npm-install-开始"><a href="#从-npm-install-开始" class="headerlink" title="从 npm install 开始"></a>从 npm install 开始</h2><p>假设我们刚刚把工程代码从 git 仓库拉下来，准备进行构建和发布。那么对于一般 JavaScript 应用来说，第一步通常是使用 npm/Yarn 等包管理器安装项目依赖。对于我们来说很简单，只是执行一个命令（以下以 npm 为例）：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br></pre></td></tr></table></figure>
-<p>接下来 npm 在安装流程中会经历以下几个阶段：</p>
-<blockquote>
-<ol>
-<li>分析包依赖关系和确定版本。npm 首先会检查是否有版本描述文件，通过它来获取包的下载地址和版本等信息。如果没有版本描述文件则要根据 package.json 和 semver 规则来进一步分析。比如一个包的版本是 ^1.1.0，则 npm 会去仓库获取符合该语义规则的最新版本。然后通过依赖关系递归地去获取更多的包及其相应版本，最后得到项目所有需要的包信息。</li>
-<li>接下来 npm 会获取包的下载地址。在版本描述文件中一般会有 resolve 字段，这就是用来记录每个包下载地址的。如果没有的话 npm 会调用仓库的接口，比如它会告诉仓库需要 split 这个包的 1.1.2 版本，接着仓库会返回一个压缩包地址，如果没有找到则会返回 404，安装过程即报错终止。</li>
-<li>下载包（或使用缓存）。有了下载地址之后，npm 会首先检查缓存，如果已经下载过同样的包（包名、版本、仓库均相同），就直接使用缓存。相反如果没有找到缓存则会再从仓库下载。</li>
-<li>将下载后的压缩包解压（或者直接使用缓存）拷贝到 node_modules。在这个过程中有些包还会调用其生命周期函数，如 preinstall、postinstall 等。</li>
-</ol>
-</blockquote>
-<p><strong>固化 npm 包信息</strong></p>
-<p>在上面的流程中，第一个耗时的事情就是递归地分析包的依赖关系和版本。一个项目中有几十个甚至上百个包是很正常的事情，并且大多数包都有其自身的依赖。npm 需要逐层去分析每个依赖的版本，最后再将这些树状关系拍平，在大型工程中这是个很耗时的过程。</p>
-<p>优化的办法很简单，就是在项目中维护一份版本描述文件。可以使用包括 shrinkwrap.json（ npm 5 以下）、package-lock.json（ npm 5）和 yarn.lock（ Yarn ），任何其中一个都可以。版本描述文件中已经记录了依赖包的各种信息，也就不用再重新获取一遍了。在一般的实际工程中，使用了版本描述文件可以使整个 npm install 的过程缩短 10s 以上，这个收益是非常可观的。</p>
-<p><strong>仓库与镜像</strong></p>
-<p>在国内一般我们使用淘宝提供的 npm 仓库来提升下载包的速度。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm config set registry https:<span class="comment">//registry.npm.taobao.org</span></span><br></pre></td></tr></table></figure>
-<p>但是有时仅仅设置了仓库还不够，有些包定义了生命周期函数（比如上面提到的 postinstall ）用来在安装过程中执行特定的脚本。这些脚本很多是用来下载第三方的辅助文件，比如 node-sass 需要下载二进制包来编译 SASS。而像这样的文件通常放在外网直接下载很慢，需要指到国内的镜像地址。在“去哪儿网”我们搭了一个<a href="https://ued.qunar.com/mirrors/" target="_blank" rel="noopener">镜像平台</a>用来放一些常用文件的镜像，有需要的同学可以自取。</p>
-<p><strong>查找臃肿的依赖</strong></p>
-<p>开发过程中难免会添加一些冗余的包，可能最初我们只是想测试它的功能，但是后来忘记去掉，亦或是我们在使用某一个非常庞大的工具类库，只为了其中的一个接口，而实际上却存在更加轻量简洁的解决方案。</p>
-<p>这里推荐一个用来检测依赖大小的工具叫 <a href="https://github.com/nolanlawson/slow-deps" target="_blank" rel="noopener">slow-deps</a>，通过它我们可以找到哪些东西影响了 npm install 的速度。</p>
-<p><img src="http://images.gitbook.cn/29530f20-c29e-11e7-b5a3-55d241c83e13" alt=""></p>
-<p>从上图可以清晰地看出每个包的安装时间、包的大小、以及它自身依赖的情况。如果哪个包太大，我们可以尝试寻找一些轻量级的替代解决方案。</p>
-<h2 id="打包流程分析与优化"><a href="#打包流程分析与优化" class="headerlink" title="打包流程分析与优化"></a>打包流程分析与优化</h2><p>相信很多 Webpack 的使用者都经历过打包速度慢的问题。我之前也是被这个问题困扰过一段时间，后来发现影响 Webpack 打包速度一般来说也就那么几个因素，只要找到项目中构建性能的瓶颈并将其优化掉就能大幅缩短整体构建时间。</p>
-<p>如果把整个 Webpack 打包的过程理想化，那么可以将其看作为一个函数。输入是所有工程模块，包括项目中模块和 node_modules 中的模块，输出自然就是最终的 JS、CSS、HTML 等静态资源。在这个函数的内部主要就做了这两件事情：</p>
-<blockquote>
-<ol>
-<li>依赖处理。从 Webpack 配置中的入口文件开始，逐层进行依赖分析，最终得到整个应用的依赖树。</li>
-<li>文件编译。每个依赖树中的文件都要根据配置来决定要把它交给哪些 loader 来处理，打包过程中最耗时的地方也就在这。假如说我们工程中有 TypeScript 模块，那就要用对应的 ts-loader 来将其编译为 JavaScript。如果是 SASS，那就用 sass-loader 来编译为 CSS。有时我们还会使用链式的 loader 来对文件进行多步处理。</li>
-</ol>
-</blockquote>
-<p>下面我们分几个切入点来讲如何使 loader 来更快地完成工作。</p>
-<p><strong>减少不必要的编译过程</strong></p>
-<p>每个 loader 都有其作用的范围，我们应该使这个范围尽可能缩小来避免冗余的工作。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>: &#123;</span><br><span class="line">  <span class="comment">// 配置 Webpack 完全忽略的目录</span></span><br><span class="line">  noParse: [<span class="regexp">/moment-with-locales/</span>],</span><br><span class="line">  loaders: [</span><br><span class="line">    &#123;</span><br><span class="line">      test: <span class="regexp">/\.ts$/</span>,</span><br><span class="line">      <span class="comment">// 配置 loader 忽略的目录</span></span><br><span class="line">      exclude: [<span class="regexp">/node_modules/</span>],</span><br><span class="line">      loaders: [<span class="string">'typescript-loader'</span>]</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      test: <span class="regexp">/\.js$/</span>,</span><br><span class="line">      <span class="comment">// 忽略目录（除了某几个子目录）</span></span><br><span class="line">      exclude: <span class="regexp">/node_modules\/(?!(MY-MODULE|ANOTHER-ONE)\/).*/</span>,</span><br><span class="line">      loaders: [<span class="string">'babel-loader'</span>]</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>noParse</code> 是整个 Webpack 完全忽略的目录，甚至连 <code>require</code>、<code>import</code> 都不会处理，所以它应该是完全独立的模块（比如某些打包好的框架类库）。<code>exclude</code> 只对 loader 生效，或是 loader 忽略该目录，最常见的用法是忽略 nodemodules。但是当我们只想对 nodemodules 中的某几个目录使用 loader 时，也可以通过上面例子中的正则匹配来实现。</p>
-<p><strong>公共代码与 CommonsChunkPlugin</strong></p>
-<p>如何有效地减小构建时间？首先应该优先关注最耗时的部分，而最耗时的部分往往是框架类库等比较大的模块。可以利用 <a href="https://github.com/webpack-contrib/webpack-bundle-analyzer" target="_blank" rel="noopener">webpack-bundle-analyzer</a> 这样的工具进行打包结果分析，找出体积占比最大的模块。</p>
-<p>有一天一个同事找我说他们用 Webpack 的时候总是出现内存溢出的问题，导致打包到一半就终止了。我看了他们的项目，发现这个问题在于有太多重复打包的模块。首先，这是个后台管理系统，包含 20 多个页面，每个页面都对应一个入口 js。其次，它使用了 Ant Design，并且每个入口 js 都单独引用了所有组件的样式，这意味着相同的样式代码被 loader 重复处理了 20 多次。一份完整的 Ant Design 样式就已经很大了，而在这个工程中将同一份样式编译 20 多次，也难怪会内存溢出了。</p>
-<p>这种情况一般可使用 <code>CommonsChunkPlugin</code> 来提取相同模块。如果说将打包过程理解成每个入口都各自生成一个依赖树的话，那么通过 <code>CommonsChunkPlugin</code> 可以将每个依赖树中相同的模块找出来，并提取出来单独进行处理，这样相当于减少了总体的打包模块数量。下面是一个简单的 <code>CommonsChunkPlugin</code> 配置（ Github 地址）：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> webpack.optimize.CommonsChunkPlugin(&#123;</span><br><span class="line">    <span class="comment">// 指定该代码块的名字</span></span><br><span class="line">    name: <span class="string">"commons"</span>,</span><br><span class="line">    <span class="comment">// 指定输出代码的文件名</span></span><br><span class="line">    filename: <span class="string">"commons.js"</span>,</span><br><span class="line">    <span class="comment">// 指定最小共享模块数</span></span><br><span class="line">    minChunks: <span class="number">3</span>,</span><br><span class="line">    <span class="comment">// 指定作用于哪些入口</span></span><br><span class="line">    chunks: [<span class="string">"pageA"</span>, <span class="string">"pageB"</span>，<span class="string">"pageC"</span>]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>其中 minChunks 需要单独解释一下。它代表一个最小值，当工程中至少有超过该值数量的入口引用了相同的一个模块时，这个模块才会被提取到 commonChunks 中。比如说工程中有 5 个入口文件，而 minChunks 是 3。那么当有 3 个或 3 个以上的入口文件引用了 react，react 就会出现在 commonChunks 中。相反如果只有 2 个入口引用了 react，那么 react 就会分别被打包到这两个入口生成的 JS 文件中。</p>
-<p>使用 <code>CommonsChunkPlugin</code> 不仅可以有效提升打包速度，也能减小最终的资源体积。通常由于一些公共的代码改动频率较低，将其提取为单独的 JS 文件对于用户端缓存也是一种优化。</p>
-<p><strong>从动态链接库的思想谈打包</strong></p>
-<p>在早期的 Windows 系统当中，由于受限于当时计算机内存空间较小的问题，出现了动态链接库这样一种节省内存的方式。我们知道当一段相同的子程序被多个程序调用的时候，相当于这段代码重复出现了多次，也会成倍地占用内存空间。为了节省内存，可以将这段共享的子程序存储为一个可执行文件，被多个程序调用时只在内存中生成和使用同一个实例即可。</p>
-<p>如果将类似的思路放在打包上面来看也可以起到优化的效果。相同的模块有可能会被多个入口引用，我们可以将这部分模块预先编译好，然后在项目打包的过程中直接去调用编译好的文件即可。这就是 Webpack 中 DllPlugin 的实现思路，当然它实际生成的还是 JS 文件而并不是真正的动态链接库，一般我们管它叫 vendor。</p>
-<p>在具体的配置上主要分为以下几步：</p>
-<blockquote>
+        <p>《富爸爸穷爸爸》系列对一个人提高财商非常用帮助，读完《富爸爸穷爸爸》会用人用一种立马去创业的冲动。又跑去买了《富爸爸穷爸爸》系列的其他几本书，后面读完会补充上笔记。以下是《富爸爸穷爸爸》的一些句子摘录</p>
 <ul>
-<li>配置动态链接库：首先需要为动态链接库单独创建一个 Webpack 配置文件，比如叫做 webpack.vendor.config.js。该配置对象需要引入 DllPlugin，其中的 entry 指定了把哪些模块打包为 vendor。</li>
-<li>打包动态链接库并生成 vendor 清单：使用该配置文件进行打包（示例中运行 npm run dll）。会生成一个 vendor.js 以及一个资源的清单，这个清单我们一般叫做 manifest.json，在内部每一个模块都会分配一个 ID。</li>
-<li>将 vendor 连接到项目中：在工程的 webpack.config.js 中我们需要配置 DllReferencePlugin 来获取刚刚打包出来的模块清单。这相当于工程代码和 vendor 连接的过程。</li>
+<li>富人之所以越来越富，穷人之所以越来越穷，中产阶级之所以总是在债务的泥潭中挣扎，其中一个主要原因就是，他们对金钱的认识不是来自学校，而是来自家庭。大多数人都是从父母那儿了解钱是怎么回事的。</li>
 </ul>
-</blockquote>
-<p>由于配置代码比较多，这里不进行详细列举，请查看 Github 上的示例。</p>
-<p><strong>利用多进程</strong></p>
-<p>上面的方法都是从减小打包模块入手的，现在让我们换一个思路，在模块数不变的前提下，如何以更短的时间去完成打包和编译？</p>
-<p>答案就是利用多进程。这并不需要我们去写过多的代码，已经有工具做好了这件事。</p>
-<p>Happypack 是一个可以有效利用多进程来编译文件的工具。上面我们已经分析了打包主要分为依赖处理和文件编译两部分，其实这两部分是在交替进行的。比如工程的入口为 a.js，那么 Webpack 首先把 a.js 交给 loader 去编译。接着由于从 a.js 引用了 b.js 和 c.js，那么这两个 JS 文件也要进行编译。很容易想到 b.js 和 c.js 的编译过程其实是完全独立的两个任务，互相之间没有依赖关系也不在乎顺序。因此可以将它们分别交给不同的进程来处理，并最后将编译的结果传回主进程，这就是 Happypack 的核心思路。</p>
-<p>下面看一个简单的例子:</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> HappyPack = <span class="built_in">require</span>(<span class="string">'happypack'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="built_in">module</span>: &#123;</span><br><span class="line">    loaders: [</span><br><span class="line">      test: <span class="regexp">/\.js$/</span>,</span><br><span class="line">      <span class="comment">// 替换原来的 loader 为 "happypack/loader":</span></span><br><span class="line">      loaders: [<span class="string">'happypack/loader'</span>],</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  plugins: [</span><br><span class="line">    <span class="keyword">new</span> HappyPack(&#123;</span><br><span class="line">      <span class="comment">// 配置实际的 loader</span></span><br><span class="line">      loaders: [<span class="string">'babel-loader?presets[]=es2015'</span>]</span><br><span class="line">    &#125;)</span><br><span class="line">  ];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>使用 HappyPack 也有一些限制，它只兼容部分主流的 loader，具体可以查看官方给出的<a href="https://github.com/amireh/happypack/wiki/Loader-Compatibility-List" target="_blank" rel="noopener">兼容性列表</a>。</p>
-<p>除了打包过程中的多进程，在压缩时也可以利用多进程。通过 UglifyjsWebpackPlugin 我们可以将每个资源的压缩过程交给单独的进程，以此来提升整体的压缩效率。这个插件并不在 Webpack 内部，需要我们单独安装。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i -D uglifyjs-webpack-plugin</span><br></pre></td></tr></table></figure>
-<p>然后在 webpack.config.js 中进行配置。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> UglifyJSPlugin = <span class="built_in">require</span>(<span class="string">'uglifyjs-webpack-plugin'</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  plugins: [</span><br><span class="line">    <span class="keyword">new</span> UglifyJSPlugin(&#123;</span><br><span class="line">      <span class="comment">// 默认是 false，所以需要手动开启</span></span><br><span class="line">      parallel: <span class="literal">true</span></span><br><span class="line">    &#125;)</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>所有这些利用多进程的方法其实都是在充分地使用系统的计算能力和内存。对于单个进程来说 V8 虚拟机的内存限制为 1.4GB（64 位系统），当构建流程变得复杂之后就有可能造成内存溢出。利用多进程的方法可以有效防止这类问题。</p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>在做了一些项目的构建优化之后，我发现它也是遵循“二八定律”的。假设一个项目有 10 个可优化点，当我们优化掉其中最关键的 2 个的时候就可以提升 80% 的性能。而另外 8 个优化点全部做完可能也只能提升 20% 的性能。所以最重要的是认清当前应用的特点，找到构建性能的瓶颈，把关键点优化掉就够了。</p>
+<ul>
+<li><p>“那是学校教你们的法子，”他笑着说，“但生活可不是这样教你的。我得说生活才是最好的老师。大多数时候，生活不会和你说什么，它只是推着你转，每一次推，它都像是在说：‘喂，醒一醒，我要让你学点东西。’”</p>
+</li>
+<li><p>假如你学会了生活这门课程，做任何事情你都会游刃有余。如果你学不会，生活照样会推着你转。人们通常会做两件事，一些人在生活推着他转的同时，抓住生活赐予的每个机会；而另一些人则非常生气，去与生活抗争。他们与老板抗争，与工作抗争，甚至与自己的配偶抗争，他们不知道生活同时也给了他们机会。”</p>
+</li>
+<li><p>“生活推着我们所有的人，有些人放弃了，有些人在抗争。少数人学会了这门课程，取得了进步，他们欢迎生活来推动他们，对他们来说，这种推动意味着他们需要并愿意去学习一些东西。他们学习，然后取得进步。但大多数人放弃了，还有一部分人像你一样在抗争。”</p>
+</li>
+<li><p>如果你认为是我的问题，你就会想改变我；如果你认为问题在你那儿，你就会改变自己，学习一些东西让自己变得更聪明。大多数人认为世界上除了自己外，其他人都应该改变。让我告诉你吧，改变自己比改变他人更容易。”</p>
+</li>
+<li><p>有些人会这么做，只因为他们和他们的家庭需要钱而接受这份工资。但他们所做的也只是等待，等待加薪，因为他们认为更多的钱能解决问题。大部分人接受这样的工资，还有一些人会再找一份工作，仍旧干得很努力，但仍只能得到很少的报酬。”</p>
+</li>
+<li><p>学习怎样让钱为你工作是一个持续终生的过程。大多数人上了4年大学后，学习也就到头了。可我知道我会用一辈子去研究钱这东西，因为我研究得越深，就越发现我还有更多的东西要学习。大多数人从不研究这个问题，他们去上班，挣工资，平衡收支，仅此而已，他们不明白自己为什么老缺钱，于是以为多挣点钱就能解决问题，但几乎没有人意识到缺乏财商教育才是问题的关键。”</p>
+</li>
+</ul>
+<ul>
+<li><p>“起床，上班，付账，再起床，再上班，再付账……他们的生活从此被这两种感觉所控制：恐惧和贪婪。给他们更多的钱，他们就会以更高的开支重复这种循环。这就是我所说的‘老鼠赛跑’。”</p>
+</li>
+<li><p>永远不要忘记，你有两种感情——恐惧和欲望，如果你让它们来控制你的思想，你就会落入一生中最大的陷阱。一直生活在恐惧中，从不追求自己的梦想，这是残酷的。为钱拼命工作，以为钱能买来快乐，这也是残酷的。</p>
+</li>
+<li><p>如果你们想学，我就会把你们带上这条布满荆棘的道路，大多数人都会选择避开它。我会带你们去大多数人都害怕去的地方，跟着我，你们就要抛弃为钱工作的观念，学习如何让钱为你们工作。”</p>
+</li>
+</ul>
+<ul>
+<li><p>据说，对很多人来说在公众面前讲话比死还可怕。精神病学认为，害怕在公众面前说话是因为害怕被排斥、害怕冒尖、害怕被批评、害怕被嘲笑、害怕被别人所不容。简言之，是害怕与别人不同。这种心理阻碍了人们去想新办法来解决问题。</p>
+</li>
+<li><p>同时还要注意降低负债和支出，这也会让你有更多的钱投入资产项。很快，你就会有钱来考虑进行一些投资了</p>
+</li>
+<li><p>只要你拥有足够的财务知识，你就不必害怕去“冒险”</p>
+</li>
+<li><p>如果你盲从于别人，你的财务状况就会像下图展示的那样。作为一个自己有房子的雇员，你努力工作的结果如下：</p>
+</li>
+<li><p>假如你决定集中精力创建自己的事业，又该怎样确立目标呢？对大多数人而言，他们的目标是保住他们的工作并靠工资取得他们想要的资产。</p>
+</li>
+<li><p>大多数人在努力致富时，总是试图在15厘米厚的混凝土上建造帝国大厦。</p>
+</li>
+<li><p>“富人获得资产，而穷人和中产阶级获得负债，只不过他们以为那些负债就是资产。”</p>
+</li>
+<li><p>资产就是能把钱放进你口袋里的东西, 负债是把钱从你口袋里取走的东西。</p>
+</li>
+</ul>
+<ul>
+<li><p>第三个秘诀是：“关注自己的事业。”存在财务问题的人经常耗费一生为别人工作，其中许多人在他们不能工作时就变得一无所有。</p>
+</li>
+<li><p>从事你所学的专业的可怕后果在于，它会让你忘记关注自己的事业。人们耗尽一生去关注别人的事业并使他人致富。</p>
+</li>
+<li><p>为了财务安全，人们需要关注自己的事业。你的事业的重心是你的资产项，而不是你的收入项</p>
+</li>
+<li><p>对成年人而言，把支出保持在低水平、减少借款并勤劳地工作会帮你打下一个稳固的资产基础</p>
+</li>
+<li><p>我见过许多年轻夫妇，在结婚后不久就陷入了即使工作多年也无法摆脱债务的生活方式中。</p>
+</li>
+</ul>
+<ul>
+<li><p>如果你对法律一无所知，就很容易被欺负；如果你了解法律，你就有还击的机会。这也是富爸爸高薪雇用聪明的会计师和律师的原因</p>
+</li>
+<li><p>第一是会计，也就是我说的财务知识。如果你想建立一个自己的商业帝国，财务知识是非常重要的。你管理的钱越多，就越要精确，否则这幢大厦就会倒塌。这需要左脑来处理，是细节的部分。财务知识能帮助你读懂财务报表，还能让你辨别一项生意的优势和劣势。</p>
+</li>
+<li><p>第二是投资，我把它称为钱生钱的科学。投资涉及策略和方案，这要右脑来做，是属于创造的部分。</p>
+</li>
+<li><p>第三是了解市场，它是供给与需求的科学。这要求了解受感情驱动的市场的“技术面”</p>
+</li>
+<li><p>第四是法律。例如：利用一个具有会计、投资和市场运营的企业会使你的财富实现爆炸性地增长。了解减税优惠政策和公司法的人会比雇员和小业主更快致富。这就像一个人在走，而另一个人却在飞，久而久之这种差距就</p>
+</li>
+<li><p>雇员挣钱、纳税，并靠剩下的钱为生；企业挣钱、花钱，并只为剩下来的钱缴税。</p>
+</li>
+<li><p>《开公司致富》，就对私营公司所具有的能力提供了很好的看法。</p>
+</li>
+<li><p>原因很简单，这是我生命中最快乐的事情，我更喜欢变化而不是害怕变化，我更喜欢能挣到数百万美元而不是去担心能不能升职。当今我们所处的时代是历史上从未有过的最激动人心的时代，当后人回顾今天这段历史时，他们一定会感叹这是一个让人心情激荡的时代。旧的东西消亡了，新的东西产生了，到处都在发生翻天覆地的变化，这的确让人兴奋不已。</p>
+</li>
+<li><p>那么究竟为什么要努力提高自己的财商呢？如果你这样做了，你就会获得巨大的成功；如果不这样做，对你来说，这个时代就会让你恐慌。你会发现一些人勇敢地走在了时代的前面，而另一些人却只能紧紧地抓住生活的救生圈。</p>
+</li>
+<li><p>300年前，土地是一种财富，所以，谁拥有土地，谁就拥有财富。后来，美国依靠工厂和工业产品上升为世界头号强国，工业家占有了财富。今天，信息便是财富。问题是，信息以光一样的速度在全世界迅速传播，这种新的财富不再像土地和工厂那样具有明确的范围和界限。变化会越来越快，越来越显著，百万富翁的人数会极大地增加，同样，也会有许多人被远远地抛在后面。</p>
+</li>
+<li><p>他们没有意识到已有的某种思想或方法在昨天还是一种资产，今天却已经变成了负债。</p>
+</li>
+<li><p>富人往往更富有创造性，愿意经过精心筹划后再去冒险。</p>
+</li>
+<li><p>我知道在现实生活中他们也会做同样的事情——眼看着有许多大生意可做，手头上却没有钱。</p>
+</li>
+<li><p>拥有理财能力就意味着拥有更多的选择机会。如果机会并没按你的预想降临，那么你还能做点什么来改善自己的财务状况呢？如果机会降临了，你却没有钱，银行也不帮你，那你又该做些什么来利用这一机会使自己受益呢？如果你的预感是错误的，你所预计的事情并没有发生，你又如何将一笔小钱变成数百万美元？这就是理财能力。当你想要的没有出现时，你能想出多少种理财方法来把一笔小钱变成数百万美元。这就要看你在解决财务问题上有怎样的创造性了。</p>
+</li>
+<li><p>那么，为什么你想提高自己的理财能力呢？因为你想成为能够自己创造机遇的人。你能够坦然地接受发生的任何事情，并努力使事情变得更好。很</p>
+</li>
+<li><p>我发展自己的财商是因为我想参加这场世界上最快、最大的金钱游戏。以我自己的观点来看，我愿意加入这场史无前例的人性革命的洪流，并投身到这个靠脑力而不是体力来工作的时代。除此之外，这也是一场行动，正在发生，紧追猛赶，惊险且充满乐趣。</p>
+</li>
+<li><p>1．辛苦工作，薪水的50%用于缴税，省下的钱拿去储蓄。你的存款利率为5%，而且利息还要再缴税。<br>2．花些时间来提高你的财商，增强你的动脑能力，从而增加你的资产。</p>
+</li>
+<li><p>1.财务知识。即阅读理解数字的能力。2．投资策略。即以钱生钱的科学。3．市场、供给与需求。贝尔提供了市场所需要的东西，比尔·盖茨也是如此。用2万美元买了一套值7.5万美元的房子，以6万美元的价格卖出，也就是抓住了市场所创造的机会。在市场上，总是有买方，就有卖方。</p>
+</li>
+<li><p>我之所以想不断地提高自己的财商，是因为每当市场发生变化时，一些人会去乞求保住一份工作，而另一些人会接到生活抛给他们的酸柠檬——我们每个人偶尔都会有这样的坏运气——然后将其变成数以百万计的美元。这就是财商。</p>
+</li>
+<li><p>下面是我用例证的5个原因：<br>1．激励人们学习更多的知识；<br>2．告诉人们如果打好基础，将来的道路就会平坦很多；<br>3．告诉人们每个人都能获得巨大的财富；<br>4．告诉人们条条大路通罗马；<br>5．告诉人们财务知识并不深奥。</p>
+</li>
+<li><p>在任何一项投资中，成功的办法都是运用你的技术知识、智慧以及对于这个游戏的热爱来减少意外、降低风险。当然，风险总是存在的，但你的财商可以提高你应付意外的能力</p>
+</li>
+</ul>
+<ul>
+<li><p>大部分人无法致富仅仅是因为他们没有受到理财训练，因而不知道机会其实就在眼前。</p>
+</li>
+<li><p>致富也是同样的道理，但不幸的是，大部分人贫穷的主要原因就在于他们太担心失去。胜利者不害怕失败，但失败者害怕。失败是成功过程中的一个组成部分，如果避开失败，也就不会成功。</p>
+</li>
+<li><p>1．第一类也是最普遍的一类，即进行一揽子投资的人。他们联系一家从事经营个人投资。2．第二类是自己创造投资机会的投资者。</p>
+</li>
+<li><p>如何寻找其他人都忽视的机会。</p>
+</li>
+<li><p>大多数人眼睁睁地让缺少资金阻止了他们去达成交易，如果你能越过这个障碍，你就能比那些没能掌握这些技能的人早一步成为百万富翁</p>
+</li>
+<li><p>怎样把精明的人组织起来？</p>
+</li>
+</ul>
+<ul>
+<li><p>正如一句格言所说：“工作（job）一词就是‘比破产强一点’（justoverbroke）</p>
+</li>
+<li><p>相反，我劝告年轻人在找工作时要看能从中学到什么，而不是只看能挣多少钱。在选择某种职业或陷入“老鼠赛跑”的陷阱之前，要仔细看看脚下的路，弄清楚自己到底想获得什么技能。</p>
+</li>
+<li><p>我经常向人们提一个问题：“你终日忙碌的目的是什么？”就像那只小老鼠一样，我想知道人们是否会想一想，这样辛苦地工作到头来究竟是为了什么？未来的日子又会怎样呢？</p>
+</li>
+</ul>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2018/07/13/web_engineer/web-engineer-05/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2018/07/22/富爸爸穷爸爸笔记/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/07/13/web_engineer/web-engineer-05/" data-id="cjpr5sb59004p32ghxhid8axa" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/07/22/富爸爸穷爸爸笔记/" data-id="cjpr5sb2o000w32ghezppugx2" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2018/07/13/web_engineer/web-engineer-05/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2018/07/22/富爸爸穷爸爸笔记/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -194,6 +246,14 @@
       <ul>
         
           <li>
+            <a href="/2018/12/13/reprint/rep02/">深入Babel，这一篇就够了</a>
+          </li>
+        
+          <li>
+            <a href="/2018/12/12/reprint/rep01/">一口(很长的)气了解 babel</a>
+          </li>
+        
+          <li>
             <a href="/2018/11/23/node/node-06/">Node 学习笔记06 - 内存控制</a>
           </li>
         
@@ -203,14 +263,6 @@
         
           <li>
             <a href="/2018/11/08/平凡的世界/">平凡的世界读后感</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/28/node/node-04/">Node 学习笔记04 - 模块机制</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/28/node/node-03/">Node 学习笔记03 - 命令行框架</a>
           </li>
         
         <li><a class="more" href="/archives"><strong>更多文章......<strong></a></li>

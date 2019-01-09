@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-javascript/现代JS框架存在的根本原因" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-web_engineer/web-engineer-01" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/04/javascript/现代JS框架存在的根本原因/">现代JS框架存在的根本原因</a>
+      <a class="article-title" href="/2018/07/01/web_engineer/web-engineer-01/">前端工程化（一）：当我们谈论前端工程化时，我们谈论什么(一)</a>
     </h1>
   
 
@@ -79,7 +79,7 @@
           
   <div class="article-category1">
     
-    <a class="article-category-link" href="/categories/JavaScript/">分类：JavaScript</a>
+    <a class="article-category-link" href="/categories/前端工程化/">分类：前端工程化</a>
   </div>
 
         </div>
@@ -88,73 +88,64 @@
       
         <!-- Table of Contents -->
         
-        <p><strong>【本文转载自 奇舞周刊 微信公众号】</strong></p>
-<p>我曾见过很多很多人盲目地使用（前端）框架，如 React，Angular 或 Vue等等。这些框架提供了许多有意思的东西，然而通常人们（自以为）使用框架是因为：</p>
+        <p>在日常前端开发工作中，你是否困惑于 npm、Yarn、Browserify、Gulp、Grunt、Webpack 等工具而不清楚它们有什么区别？是否觉得手头的项目环境过于复杂，各种配置已经超出了可控的范围，以至于都不敢更改它？你是否觉得工程模块太多构建太慢，点击发布按钮要等几分钟才能看到效果？</p>
+<p>如果答案是肯定的，那么你可能遇到了有关前端工程化的问题。在这篇文章以及接下来的课程中，我会去解释前端工程化，并且尝试去解决上面的那些问题。</p>
+<h2 id="前端工程化是什么？"><a href="#前端工程化是什么？" class="headerlink" title="前端工程化是什么？"></a>前端工程化是什么？</h2><p>这是个很大的概念，但是在我们的日常开发中又很常见。当我们对一个工程进行设计并把它拆分成各个组件和模块时，我们是在做工程化；当我们用 Webpack 构建项目，配置好各个环境的打包配置时，我们是在做工程化；当我们为项目添加了 ESLint，并在每次提交之前自动检查代码质量时，我们是在做工程化。</p>
+<p>如果要用一句话来概括，在我的理解中前端工程化是把前端开发工作带入到更加系统和规范体系的一系列过程。这个过程会包括源代码的预编译、模块处理、代码压缩等构建方面的工作。工程化会尽可能保证开发者的开发体验更加友好，保证源代码的质量以及依赖的完整性。工程化也会尽可能高效地将构建完成后的代码送达给客户端，来追求更加良好的用户体验。所有这些都属于工程化。</p>
+<h2 id="为什么要了解前端工程化？"><a href="#为什么要了解前端工程化？" class="headerlink" title="为什么要了解前端工程化？"></a>为什么要了解前端工程化？</h2><p>如果一个开发者想做现代 JavaScirpt 应用，那么他就有理由了解前端工程化，因为通过工程化可以提高代码质量，降低开发成本。</p>
+<p>会有人质疑说现在的前端开发是不是过于复杂了？一个没有用过 npm 和 Webpack 的开发者想写一个 Hello World 可能都需要学习和配置半天。在以前没有所谓“工程化”的时候，还不是照样写代码和发布代码来实现用户需求。</p>
+<p>其实我们可以打个比方，把发送给客户端的页面理解成呈献给用户的一道菜。前端开发者是厨师，而工程化可以使开发者遵循正确的做菜流程——洗菜、切菜、炒菜，而不是将生的东西直接放到用户面前。</p>
+<p>在 Web 技术刚开始的时候，还没有前端工程化这样一个东西。人们只是简单地把 HTML、CSS 和 JavaScript 直接混在一起丢到用户。而就如人类对于食物的追求在不断进步一样，虽然在最初级的阶段需求只是能填饱肚子，但慢慢地人们开始追求食物的质量。对于前端来说也是一样，用户的需求从最开始简单的页面在向复杂的应用发展。前端需要做的事情更多，同时也要追求更友好的用户体验。</p>
+<p>对于厨师来说，要想做出高质量的食物需要顺手的工具以及正确的烹饪方法。对于开发者来说，要想输出高质量的代码也同样需要工程化来辅助。作为一个前端工程师，光会写代码是不够的，最多只是提供了好的原材料。要想将代码转化为高质量的产出提供给用户，必须要了解工程化。</p>
+<p>另外，工程化也是为开发者服务的。通过预编译语言、模块热加载等技术可以提升开发效率，而利用自动化测试、lint 工具等可以保证代码的功能和质量。工程化可以有效降低开发成本，谁不想省下埋头 debug 的时间去做更有趣的事呢。</p>
+<h2 id="从工程化出现之前说起"><a href="#从工程化出现之前说起" class="headerlink" title="从工程化出现之前说起"></a>从工程化出现之前说起</h2><p>前端工程化不是凭空出现的，一定是为了解决当时的一些问题而出现的，让我们先简单回溯一下前端开发的历史。</p>
+<p>曾经的 Web 开发不同于现在，页面功能比较简单。开发者想添加一段逻辑，最直接的做法就是在 HTML 中插入一个 script 标签，然后直接在里面书写代码。听上去似乎十分原始，但在当时确实很多都是这样做的，而且在业务需求简单的时候这也确实是最直接了当的实现方式。但是这种原始的做法也必然有它的缺点，主要有以下两个方面：</p>
+<blockquote>
 <ul>
-<li>它们支持组件化；</li>
-<li>它们有强大的社区支持；</li>
-<li>它们有很多（基于框架的）第三方库来解决问题；</li>
-<li>它们有很多（很好的）第三方组件;</li>
-<li>它们有浏览器扩展工具来帮助调试；</li>
-<li>它们适合做单页应用。</li>
+<li>全局作用域的污染。由于在每个 script 标签下顶层作用域即全局作用域，直接进行变量和函数声明会造成全局命名空间污染。假如一个页面有多个 script 标签，它们之间很有可能发生命名冲突。</li>
+<li>代码重用性差。在一个多页面应用的场景下，经常会有一些逻辑是这些页面之间共有的，此时我们不得不将这些代码复制粘贴到各个页面中。而当此处逻辑改动的时候我们也需要去更新所有页面的代码，造成很多额外的成本。</li>
 </ul>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_gif/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tiapMh3yNSjT3YSdLWh9FFhCibOEdzevK3v4gRsQ3pwmgKibMdX9j1pofpg/640?wx_fmt=gif&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
-<p>但这些都不是使用框架的根本原因。</p>
-<p>最最本质的原因是：</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tiahLqstvVxftIiakQcIX9Fpujq6JVMvzxQyS63q6q9icRnzk1EiagfsK2xA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
-<p>（UI 与状态同步非常困难）</p>
-<h2 id="是的，就是这原因，让我们来看看为什么"><a href="#是的，就是这原因，让我们来看看为什么" class="headerlink" title="是的，就是这原因，让我们来看看为什么"></a>是的，就是这原因，让我们来看看为什么</h2><p>假设你正在设计这样一个 Web 应用：用户可以通过群发电子邮件来邀请其他人（参加某活动）。UX/UI 设计师设计如下：（在用户填写任何邮箱地址之前，）有一个空白状态，并为此添加一些帮助信息；（当用户填写邮箱之后，）展示邮箱的地址，每个地址的右侧均有一个按钮用于删除对应的地址。</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tiaoaU3nnzrphgqDspErIADltUUIkqcSVaQcUtM3nvjxcSLGz0BBBowMQ/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
-<p>这个表单的状态，可以被设计为一个数组，里面包含若干对象，对象由邮箱地址和唯一标识组成。开始的时候，数组为空。当（用户）输入邮箱地址并按下回车键之后，往数组中添加一项并更新 UI。当用户点击删除按钮时，删除（数组中对应的）邮箱地址并更新 UI。你感觉到了吗？每当你改变状态时，你都需要更新 UI。</p>
-<p>（你可能会说：）那又怎样？好吧，让我们看看如何在不用框架的情况下实现它：</p>
-<h2 id="用原生（JS）实现相对复杂的-UI"><a href="#用原生（JS）实现相对复杂的-UI" class="headerlink" title="用原生（JS）实现相对复杂的 UI"></a>用原生（JS）实现相对复杂的 UI</h2><p>以下代码很好地说明了使用原生 JavaScript 实现一个相对复杂的 UI 所需的工作量，使用像  jQuery 这样经典的库也需要差不多的工作量。</p>
-<p>在这个例子中，HTML 负责创建静态页面，JavaScript 通过 <code>document.createElement</code> 动态改变（DOM 结构）。这引来了第一个问题：构建 UI 相关的 JavaScript 代码并不直观易读，我们将 UI 构建分为了两部分（译者注：应该是指 HTML与 JavaScript 两部分）。尽管我们使用了 <code>innerHTML</code>，可读性是增强了，但降低了（页面的）性能，同时可能存在 CSRF 漏洞。我们也可以使用模板引擎，但如果是大面积地修改 DOM，会面临两个问题：效率不高与需要重新绑定事件处理器。</p>
-<p>但这也不是（不使用框架的）最大问题。最大的问题是 <strong>每当状态发生改变时都要（手动）更新 UI</strong> 。每次状态更新时，都需要很多代码来改变 UI。当添加电子邮件地址时，只需要两行代码来更新状态，但要十三行代码更新 UI。（此例中）我们已经让 UI （界面与逻辑）尽可能简单了！！</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tiaeYA8HkaRPxeIJe7G9TDricSzPQlLicPzWo9WiaSrgv20wrgiazg2TxQ7aw/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
-<p>代码既难写又难理解，更麻烦的是它非常脆弱。假设我们需要（添加）同步服务器数据到邮件地址列表的功能，我们需要对比服务器返回结果与数组中数据的差异。这涉及对比所有数据的标识与内容，（当用户修改后，）可能需要在内存中保留一份标识相同但内容不同的数据。</p>
-<p>为了高效地改变 DOM，我们需要编写大量点对点（译者注：指状态到 UI）的代码。<strong>但只要你犯下了很小的错误，UI 与状态将不再保持同步：</strong>（可能会出现）丢失或呈现错误的信息、不再响应用户的操作，更糟糕的是触发了错误的动作（如点了删除按钮后删除了非对应的一项）。</p>
-<p>因此，保持 UI 与状态同步，需要编写大量乏味且非常脆弱的代码。</p>
-<h2 id="响应式-UI-拯救一切"><a href="#响应式-UI-拯救一切" class="headerlink" title="响应式 UI 拯救一切"></a>响应式 UI 拯救一切</h2><p><img src="https://mmbiz.qpic.cn/mmbiz_jpg/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tia7jq3Pl9sCUwpq4N37tFfN3mEfJGHmGHUFcCNWJwENxlDCTQEXIc1Ow/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
-<p>所以，（之所以使用框架，）不是因为社区，不是因为工具，不是因为生态，不是因为第三方库……</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">目前为止，框架最大的改进是（为我们）提供了应用内部状态与 UI 同步的可靠保证。</span><br></pre></td></tr></table></figure>
-<p>只要你清楚特定框架的某些（特定）规则（如不可变状态），就差不多（可以正常使用）了。</p>
-<p><strong>我们只需要定义一次 UI 界面，不再需要为每个操作编写特定的 UI 代码，同时，每个相同的状态均有相同的输出（译者注：指 UI 一致）：</strong>当状态改变后，框架自动更新（对应的）视图。</p>
-<h2 id="框架是如何工作的呢"><a href="#框架是如何工作的呢" class="headerlink" title="框架是如何工作的呢?"></a>框架是如何工作的呢?</h2><p>基于两个基本的策略：</p>
+</blockquote>
+<p>后来逐渐有一些针对这些问题的解决办法。首先，可以将 HTML 中内联的 JavaScript 提取出来成为单独的 JavaScript 文件。比如说一些页面公有的逻辑可以放在类似 common.js 中来被各个页面引用，这可以解决各个页面之间重用的问题。至于全局作用域污染的问题，则可以使用立即执行函数表达式将它包起来（ IIFE ），只把接口暴露到全局上。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 通过立即执行函数表达式将作用域隔离</span></span><br><span class="line">  <span class="keyword">var</span> foo = <span class="string">'bar'</span>;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+<p>看上去问题已经得到了解决，然而随着页面逻辑的复杂度增加开发者又面临了新的问题：</p>
+<blockquote>
 <ul>
-<li><p>重新渲染整个组件，如React。当组件中的状态发生改变时，在内存中计算出（新的）DOM 结构后与已有的 DOM 结构进行对比。实际上，这是非常昂贵的。因而采取（将真实 DOM）映射为虚拟 DOM ，通过对比状态变化前后虚拟 DOM 的不同，计算出变化后再改变真实 DOM 结构。这个过程称为调和（reconciliation）。</p>
-</li>
-<li><p>通过（添加）观察者监测变化，如 Angular 和 Vue.js。应用中状态的属性会被监测，当它们发生变化时，只有依赖了（发生变化）属性的 DOM 元素会被重新渲染。</p>
-</li>
+<li>页面 JavaScript 文件的引用顺序。由于 HTML 页面引用和处理 JavaScript 文件只能是顺序的（不考虑 async 等），因此页面的 JavaScript 之间依赖关系也必须是顺序的。而我们知道一个大型工程内部的模块依赖关系通常是树状的（比如 index.js 依赖 a、b、c 三个模块，而 a、b、c 又有各自的依赖），简单的顺序依赖关系无法满足需求。例如在 jQuery 最流行的时期，jQuery 本身以及其相关的插件之间有着各种各样的依赖关系，有些库可能自身包含 jQuery，不同的插件可能需要不同的 jQuery 版本，这些问题都不是简单的顺序依赖关系可以解决的。</li>
+<li>页面引用的 JavaScript 文件的长度与数量如何权衡。随着页面逻辑的增加，工程中的 JavaScript 文件越来越长，也越来越难以维护。一个页面的单个 JavaScript 文件可能有数千行甚至上万行。而如果按照功能来把页面逻辑切割成一个个小的 JavaScript 文件，则最终会走到另一个极端——页面请求过多。我们知道每个 HTTP 请求都是需要连接时间的，对于小模块而言每一个都要单独建立连接总归得不偿失，必然会导致页面渲染速度的下降。</li>
 </ul>
-<h2 id="那-Web-components-呢"><a href="#那-Web-components-呢" class="headerlink" title="那 Web components 呢?"></a>那 Web components 呢?</h2><p>很多时候，人们会把 React、 Angular 和 Vue.js （等框架）与 Web components 进行对比。这显然体现了人们并不理解这些框架所提供的最大好处：保持 UI 与状态同步。Web components 并不提供这种同步机制。它仅仅提供了一个\标签，但它不提供任何（状态与 UI 之间的）协调机制。<strong>如果你在应用中使用 Web components 时，想保持 UI 与内部状态同步，则需要（开发者）手工完成，或者使用如 Stencil.js (内部和 React一样，使用虚拟 DOM)之类的库。</strong></p>
-<p>让我们明确一点：框架表现出的巨大潜力并不体现在组件化上，保持 UI 与状态同步才是具体的体现。Web components 并未提供相关的功能，你必须手工或使用第三方库去解决（同步的）问题。使用原生 JavaScript 去编写复杂、高效且易于维护的 UI 界面基本上是不可能的。<strong>这就是你需要使用现代 JavaScript 框架的根本原因。</strong></p>
-<h2 id="自己动手，丰衣足食"><a href="#自己动手，丰衣足食" class="headerlink" title="自己动手，丰衣足食"></a>自己动手，丰衣足食</h2><p>如果热衷于了解底层原理，想知道虚拟 DOM 的具体实现。那，为何不试着在不使用框架的情况下，仅使用虚拟 DOM 来重写原生 UI呢？</p>
-<p>这里是框架的核心，所有组件的基础类。</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tiaWK03oaKQ5dERI5nvat5miaPHGaWsATm4zNjGWP91D5hxq9vIJGbPsDA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
-<p>这里是重写后的 AddressList 组件（借助 babel 来支持 JSX 的转换）。</p>
-<p><img src="https://mmbiz.qpic.cn/mmbiz_png/MpGQUHiaib4ib6GG6Sc1ZOGEIJic6Y21ia3tias3EN6vcN2cPIrqFwLgbbvzaiadnknbsoq5rCbI2YKibMvbIicrUf50wicQ/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1" alt=""></p>
-<p><strong>现在 UI 是声明式的</strong>，我们并未使用任何框架。我们能任意添加新逻辑来改变状态的同时，不需要编写额外的代码来保持 UI 同步。问题解决了！</p>
-<p>现在，除了事件处理之外，这看起来就像个 React 应用对吧？我们有<code>haverender()</code> 、<code>componentDidMount()</code> 、<code>setState()</code> 等等。一旦解决了保持应用内 UI 与状态的同步问题，所有东西就会很自然地叠加起来（形成组件）。</p>
-<p>可以在这个 Github (<a href="https://github.com/gimenete/ui-state-sync" target="_blank" rel="noopener">https://github.com/gimenete/ui-state-sync</a>) 仓库中找到完整的源代码。</p>
-<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><ul>
-<li>现代 js 框架解决的主要问题是保持 UI 与状态同步。</li>
-<li>使用原生 JavaScript 编写复杂、高效而又易于维护的 UI 界面几乎是不可能的。</li>
-<li>Web components 并未提供解决同步问题的方案。</li>
-<li>使用现有的虚拟 DOM 库去搭建自己的框架并不困难。但并不建议这么做！</li>
-</ul>
+</blockquote>
+<p>上面所说的这些问题都属于前端开发的“原始时期”，那时候还没有工程化这种说法。然而逐渐暴露出来的问题已经让人们觉得不能再简单粗暴地采用如此原始的开发方式，模块化是第一步。</p>
+<h2 id="走向正轨的第一步——模块化"><a href="#走向正轨的第一步——模块化" class="headerlink" title="走向正轨的第一步——模块化"></a>走向正轨的第一步——模块化</h2><p>一个设计良好的系统应该是模块化的。一个最简单的原因，在一个模块化的系统中，当外界的需求亦或环境变化的时候，开发者可以更快地将问题定位到相应的模块，而不必面对纠缠在一起的逻辑不知如何下手。模块化可以使系统具备更强的可维护性。</p>
+<p>被封装良好的模块应该具备特定且单一的功能，对外界只提供接口，而将具体实现封装在内部。Webpack 中有一个核心的理念——”一切皆模块”，即 HTML、JavaScript、CSS、图片等等都是模块，在后面的文章中会展开讲。</p>
+<p>虽然模块化很重要，但是 JavaScript 诞生的时候并不具备模块这一特性，这主要是因为早期 Web 中的脚本大都比较简单，在设计之初只是为了实现 Web 上一些简单的功能。一直到 CommonJS 以及 AMD 的出现，为前端定义了模块的标准。也有了实现这些模块化的库，比如 RequireJS 以及 Browserify。可以让开发者将自己工程中的代码按模块进行划分，模块之间也不再仅仅是简单的顺序依赖关系。</p>
+<p>另外在将代码提供给客户端之前，开发者可以通过 Browserify、Webpack 这些工具将工程代码进行打包，把所有依赖模块打包为单一的 JavaScript 文件。这样一来，对于开发者而言开发体验更加友好，因为开发中每次需要关注的仅仅是单个模块，而不是堆放在一起的上千行 JavaScript 文件；而对于客户端来说则只用接受单一的打包产物，解决了文件数量过多导致 HTTP 请求耗时长的问题。解决模块之间的依赖，并根据依赖树进行打包，是工程化解决的最基本的问题之一。</p>
+<h2 id="提升前端开发效率——预编译语言"><a href="#提升前端开发效率——预编译语言" class="headerlink" title="提升前端开发效率——预编译语言"></a>提升前端开发效率——预编译语言</h2><p>上面说的只是 JavaScript 的模块化，那么我们很自然地就想到 CSS 的模块化。然而因 CSS 本身 <code>@import</code> 的性能问题，一般都是要通过 SASS、LESS 等预编译语言去实现其模块化。</p>
+<p>例如在 SASS 中，通过 <code>@import</code> 语句我们可以导入其它模块。SASS 的编译器会处理模块之间的依赖，并最终将代码打包在一起生成 CSS。</p>
+<p>在实际开发中，我们很多时候都会使用预编译语言来进行编码工作，然后经过 Webpack 等工具的构建将其编译为实际页面中的代码。使用预编译语言的主要目的是为了实现 HTML、CSS、JavaScript 不具备的特性。比如说上面提到的最常见的 SASS，它是 CSS 的预编译语言，通过它开发者可以使用模块、定义变量、编写嵌套规则等等来提高开发效率。</p>
+<p>除了 CSS 的预编译语言，HTML 对应的有 HAML，JavaScript 对应的有 Coffee 等等。总体而言这些预编译语言的目的就是使开发体验更友好，开发者可以更高效地编写和维护代码。</p>
+<p>当然现在预编译已经不仅仅是这些，我们还可以使用 Babel 预编译 JavaScript 来实现新的 ES 特性，以及使用 TypeScript 去做类型检查等，在预编译这里还可以有更多的想象力。</p>
+<h2 id="现代-JavaScript-应用必不可少的部分——包管理器"><a href="#现代-JavaScript-应用必不可少的部分——包管理器" class="headerlink" title="现代 JavaScript 应用必不可少的部分——包管理器"></a>现代 JavaScript 应用必不可少的部分——包管理器</h2><p>和 Java、C++ 这些语言不同，JavaScript 没有强大的标准库。许多常用的功能，比如日期处理、URL 处理、异步流程控制等往往都需要手工去编写，而采用外部已有的开源框架库或许是节约成本的最好办法。</p>
+<p>Bower 作为包管理器最早进入人们的视野，大部门前端框架库也都提供了通过 Bower 安装的方式。通过它你可以获取项目需要的依赖，并且通过打包工具和业务代码打包到一起。</p>
+<p>虽然现在当我们说包管理器可能首先想到的是 npm，但它最开始其实主要是为 Node.js 服务的，而人们逐渐意识到它也可以用于前端并且真正担当起前端包管理器的大任也就是近两年的时间。在现阶段来说 npm 已经超越 Bower 成为开发者首选的包管理器，而 Yarn 作为 Facebook 出品的新生代也不过是管理 node_modules 的另一个工具罢了，与 npm 并没有什么本质上的区别。在后续的相关文章中会更详细地介绍包管理器常见的问题和处理办法。</p>
+<h2 id="让机器做更多的事——构建流程管理"><a href="#让机器做更多的事——构建流程管理" class="headerlink" title="让机器做更多的事——构建流程管理"></a>让机器做更多的事——构建流程管理</h2><p>随着工程化的发展，交给构建过程的任务也越来越多，并且在不同环境下需要对任务进行区分。比如对于一个前端工程来说，除了需要预编译各种类型的文件、资源打包之外，本地环境下还要生成 source-map、配置模块热加载等等便于调试代码；而到了生产环境下则要对资源进行压缩，生成版本号等等。</p>
+<p>因此对于开发者来说需要将这些任务统一起来进行管理，也就有了 Gulp 和 Grunt 等构建流程管理工具。这类工具的出现使得构建变得更加傻瓜化，通过项目中的一些配置，开发者可以使用简单的一行命令启动本地开发环境或者构建和发布整个工程。</p>
+<p>相比于 Gulp 和 Grunt，Webpack 出现的更晚。它和前两者的核心定位其实不太一样，Webpack 本身只是作为一个模块打包工具的姿态出现的，但是利用一些相关工具和插件我们也可以完成整个工程的构建。Webpack 的“一切皆模块”以及“按需加载”两大特性使得它更好地服务于工程化。在后面的文章中会有很多关于 Webpack 的部分，包括 Webpack 的打包原理及优化、从零搭建起一个开发环境等，会详细讲解 Webpack 的使用以及其最新的特性。</p>
+<h2 id="摆脱冗长的等待——构建流程优化"><a href="#摆脱冗长的等待——构建流程优化" class="headerlink" title="摆脱冗长的等待——构建流程优化"></a>摆脱冗长的等待——构建流程优化</h2><p>现在当我们讨论工程化，效率和优化是出现得越来越频繁的词。当把工程化的各种功能都实现在我们的工程中之后，却发现完整地构建一遍需要好几分钟甚至更长。工程本身的越发庞大以及越来越多的构建任务使得耗时越来越久，此时是不是又怀念起了在 HTML 里写内联脚本的日子。</p>
+<p>除了构建速度的问题，推给用户端的资源体积过大也是问题。需要针对项目的特点采用按需加载、异步加载、长效缓存等等策略。在后面的文章中会单独有一篇来讲构建方面的优化。</p>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2018/06/04/javascript/现代JS框架存在的根本原因/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2018/07/01/web_engineer/web-engineer-01/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/06/04/javascript/现代JS框架存在的根本原因/" data-id="cjpr5sb44002h32ghww2g6k1y" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/07/01/web_engineer/web-engineer-01/" data-id="cjpr5sb56004h32ghchp5ri9f" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2018/06/04/javascript/现代JS框架存在的根本原因/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2018/07/01/web_engineer/web-engineer-01/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -178,6 +169,14 @@
       <ul>
         
           <li>
+            <a href="/2019/01/03/css/bgimage/">CSS 根据设备像素比引用不同比例的图片</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/03/css/css1px/">CSS 实现1px border</a>
+          </li>
+        
+          <li>
             <a href="/2018/12/13/reprint/rep02/">深入Babel，这一篇就够了</a>
           </li>
         
@@ -187,14 +186,6 @@
         
           <li>
             <a href="/2018/11/23/node/node-06/">Node 学习笔记06 - 内存控制</a>
-          </li>
-        
-          <li>
-            <a href="/2018/11/08/node/node-05/">Node 学习笔记05 - 异步I/O</a>
-          </li>
-        
-          <li>
-            <a href="/2018/11/08/平凡的世界/">平凡的世界读后感</a>
           </li>
         
         <li><a class="more" href="/archives"><strong>更多文章......<strong></a></li>
@@ -229,7 +220,7 @@
   
   <div class="outer">
     <div id="footer-left">
-      &copy; 2014 - 2018 陈广宵
+      &copy; 2014 - 2019 陈广宵
     </div>
      <div id="footer-right">
       联系方式&nbsp;|&nbsp;chengx@guangxiao.me

@@ -127,16 +127,16 @@
 </tbody>
 </table>
 <p>示例</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">具体语法:</span></span><br><span class="line">Kill -信号选项 nginx的主进程号</span><br><span class="line">Kill -HUP 4873</span><br><span class="line"> </span><br><span class="line">Kill -信号控制 `cat /xxx/path/log/nginx.pid`</span><br><span class="line"> </span><br><span class="line">Kill -USR1 `cat /xxx/path/log/nginx.pid`</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>具体语法:</span><br><span class="line">Kill -信号选项 nginx的主进程号</span><br><span class="line">Kill -HUP 4873</span><br><span class="line"> </span><br><span class="line">Kill -信号控制 `cat /xxx/path/log/nginx.pid`</span><br><span class="line"> </span><br><span class="line">Kill -USR1 `cat /xxx/path/log/nginx.pid`</span><br></pre></td></tr></table></figure>
 <h2 id="shell-定时任务-nginx信号管理-完成日志按日期存储"><a href="#shell-定时任务-nginx信号管理-完成日志按日期存储" class="headerlink" title="shell+定时任务+nginx信号管理,完成日志按日期存储"></a>shell+定时任务+nginx信号管理,完成日志按日期存储</h2><p>分析思路</p>
 <ul>
 <li>凌晨00:00:01,把昨天的日志重命名,放在相应的目录下</li>
 <li>再USR1信息号控制nginx重新生成新的日志文件</li>
 </ul>
 <p>脚本一</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">base_path='/usr/local/nginx/logs'</span><br><span class="line">log_path=$(date -d yesterday +"%Y%m")</span><br><span class="line">day=$(date -d yesterday +"%d")</span><br><span class="line">mkdir -p $base_path/$log_path</span><br><span class="line">mv $base_path/access.log $base_path/$log_path/access_$day.log</span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="variable">$base_path</span>/<span class="variable">$log_path</span>/access_<span class="variable">$day</span>.<span class="built_in">log</span></span></span><br><span class="line">kill -USR1 `cat /usr/local/nginx/logs/nginx.pid`</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>!/bin/bash</span><br><span class="line">base_path='/usr/local/nginx/logs'</span><br><span class="line">log_path=$(date -d yesterday +"%Y%m")</span><br><span class="line">day=$(date -d yesterday +"%d")</span><br><span class="line">mkdir -p $base_path/$log_path</span><br><span class="line">mv $base_path/access.log $base_path/$log_path/access_$day.log</span><br><span class="line"><span class="meta">#</span> echo $base_path/$log_path/access_$day.log</span><br><span class="line">kill -USR1 `cat /usr/local/nginx/logs/nginx.pid`</span><br></pre></td></tr></table></figure>
 <p>脚本二</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">LOGPATH=/usr/local/nginx/logs/z.com.access.log</span><br><span class="line">BASEPATH=/data/$(date -d yesterday +%Y%m)</span><br><span class="line">mkdir -p $BASEPATH</span><br><span class="line">bak=$BASEPATH/$(date -d yesterday +%d%H%M).zcom.access.log</span><br><span class="line">mv $LOGPATH $bak</span><br><span class="line">touch $LOGPATH</span><br><span class="line">kill -USR1 `cat /usr/local/nginx/logs/nginx.pid`</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>!/bin/bash</span><br><span class="line">LOGPATH=/usr/local/nginx/logs/z.com.access.log</span><br><span class="line">BASEPATH=/data/$(date -d yesterday +%Y%m)</span><br><span class="line">mkdir -p $BASEPATH</span><br><span class="line">bak=$BASEPATH/$(date -d yesterday +%d%H%M).zcom.access.log</span><br><span class="line">mv $LOGPATH $bak</span><br><span class="line">touch $LOGPATH</span><br><span class="line">kill -USR1 `cat /usr/local/nginx/logs/nginx.pid`</span><br></pre></td></tr></table></figure>
 <h3 id="Crontab-编辑定时任务"><a href="#Crontab-编辑定时任务" class="headerlink" title="Crontab 编辑定时任务"></a>Crontab 编辑定时任务</h3><p>示例</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">01 00 * * * /xxx/path/b.sh  #每天0时1分(建议在02-04点之间,系统负载小)</span><br></pre></td></tr></table></figure>
 <h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
@@ -147,7 +147,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/03/nginx/Nginx日志切割/" data-id="cjqb2pvui003whpghc02nv96m" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/12/03/nginx/Nginx日志切割/" data-id="cjpr5sb49002q32ghoqeihv2x" class="article-share-link">分享</a>
       
       
         <a href="http://www.xbroder.com/2016/12/03/nginx/Nginx日志切割/#disqus_thread" class="article-comment-link">留言</a>
@@ -278,7 +278,7 @@
   
   <div class="outer">
     <div id="footer-left">
-      &copy; 2014 - 2018 陈广宵
+      &copy; 2014 - 2019 陈广宵
     </div>
      <div id="footer-right">
       联系方式&nbsp;|&nbsp;chengx@guangxiao.me

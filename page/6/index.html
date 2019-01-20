@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-nginx/Nginx虚拟主机配置" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-nginx/Nginx日志管理" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/11/09/nginx/Nginx虚拟主机配置/">Nginx虚拟主机配置</a>
+      <a class="article-title" href="/2016/11/27/nginx/Nginx日志管理/">Nginx日志管理</a>
     </h1>
   
 
@@ -88,27 +88,38 @@
       
         <!-- Table of Contents -->
         
-        <p>Nginx虚拟主机配置有三种方式：基于域名的虚拟主机配置、基于端口的虚拟主机配置、基于IP的虚拟主机配置</p>
-<h2 id="基于域名的虚拟主机配置"><a href="#基于域名的虚拟主机配置" class="headerlink" title="基于域名的虚拟主机配置"></a>基于域名的虚拟主机配置</h2><p>示例如下</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen 80;  #监听端口</span><br><span class="line">    server_name a.com; #监听域名</span><br><span class="line">    location / &#123;</span><br><span class="line">        root /var/www/html;   #绝对路径定位</span><br><span class="line">        index index.html;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name z.com;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        root z.com;  #相对路径定位，相对于nginx根目录定位</span><br><span class="line">        index index.html;</span><br><span class="line">    &#125;</span><br><span class="line">    access_log logs/z.com.access.log main;    #访问日志设置</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="基于端口的虚拟主机配置"><a href="#基于端口的虚拟主机配置" class="headerlink" title="基于端口的虚拟主机配置"></a>基于端口的虚拟主机配置</h2><p>示例如下</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 8080;</span><br><span class="line">    server_name z.com;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        root html;</span><br><span class="line">        index index.html;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="基于IP的虚拟主机配置"><a href="#基于IP的虚拟主机配置" class="headerlink" title="基于IP的虚拟主机配置"></a>基于IP的虚拟主机配置</h2><p>示例如下</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name 192.168.1.204;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        root /var/www/html;</span><br><span class="line">        index index.html;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="Nginx的配置段"><a href="#Nginx的配置段" class="headerlink" title="Nginx的配置段"></a>Nginx的配置段</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 全局区</span><br><span class="line">worker_processes 1; # 有1个工作的子进程,可以自行修改,但太大无益,因为要争夺CPU,一般设置为 CPU数*核数</span><br><span class="line"> </span><br><span class="line">Event &#123;</span><br><span class="line"><span class="meta">#</span> 一般是配置nginx连接的特性</span><br><span class="line"><span class="meta">#</span> 如1个word能同时允许多少连接</span><br><span class="line"> worker_connections  1024; # 这是指 一个子进程最大允许连1024个连接</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">http &#123;  #这是配置http服务器的主要段</span><br><span class="line">     Server1 &#123; # 这是虚拟主机段</span><br><span class="line">      </span><br><span class="line">            Location &#123;  #定位,把特殊的路径或文件再次定位,如image目录单独处理</span><br><span class="line">            &#125;             # 如.php单独处理</span><br><span class="line"> </span><br><span class="line">     &#125;</span><br><span class="line"> </span><br><span class="line">     Server2 &#123;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <h2 id="Nginx-允许针对不同的server做不同的log"><a href="#Nginx-允许针对不同的server做不同的log" class="headerlink" title="Nginx 允许针对不同的server做不同的log"></a>Nginx 允许针对不同的server做不同的log</h2><p>我们观察nginx的server段,可以看到如下类似信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">access_log  logs/host.access.log  main;</span><br></pre></td></tr></table></figure>
+<p>这说明 该server, 它的访问日志的文件是  logs/host.access.log ,<br>使用的格式”main”格式.<br>除了main格式,你可以自定义其他格式.</p>
+<p>main格式是什么?</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">    '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">    '"$http_user_agent" "$http_x_forwarded_for"';</span><br></pre></td></tr></table></figure>
+<p>main格式是我们定义好一种日志的格式,并起个名字,便于引用.<br>以上面的例子, main类型的日志,记录的 remote_addr…. http_x_forwarded_for等选项.</p>
+<h3 id="日志格式-是指记录哪些选项"><a href="#日志格式-是指记录哪些选项" class="headerlink" title="日志格式 是指记录哪些选项"></a>日志格式 是指记录哪些选项</h3><p>默认的日志格式: main</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">    '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">	'"$http_user_agent" "$http_x_forwarded_for"';</span><br></pre></td></tr></table></figure>
+<p>如默认的main日志格式,记录这么几项<br>远程IP- 远程用户/用户时间 请求方法(如GET/POST) 请求体body长度 referer来源信息<br>http-user-agent用户代理/蜘蛛 ,被转发的请求的原始IP</p>
+<p>http_x_forwarded_for:在经过代理时,代理把你的本来IP加在此头信息中,传输你的原始IP</p>
+<p>例如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">58.132.169.60 - - [07/Oct/2015:11:40:19 +0800] "GET / HTTP/1.1" 200 30 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:41.0) Gecko/20100101 Firefox/41.0" "-"</span><br></pre></td></tr></table></figure>
+<h3 id="声明一个独特的log-format并命名"><a href="#声明一个独特的log-format并命名" class="headerlink" title="声明一个独特的log_format并命名"></a>声明一个独特的log_format并命名</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">log_format  mylog '$remote_addr- "$request" '</span><br><span class="line"> 	'$status $body_bytes_sent "$http_referer" '</span><br><span class="line">    '"$http_user_agent" "$http_x_forwarded_for"';</span><br></pre></td></tr></table></figure>
+<p>在下面的server/location,我们就可以引用 mylog</p>
+<p>在server段中,这样来声明<br>Nginx允许针对不同的server做不同的Log ,(有的web服务器不支持,如lighttp)</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">access_log logs/access_8080.log mylog;  </span><br><span class="line"><span class="meta">#</span>声明log   log位置          log格式;</span><br></pre></td></tr></table></figure>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_log_module.html" target="_blank" rel="noopener">Module ngx_http_log_module</a></li>
+</ul>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2016/11/09/nginx/Nginx虚拟主机配置/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2016/11/27/nginx/Nginx日志管理/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/11/09/nginx/Nginx虚拟主机配置/" data-id="cjpr5sb4m003c32gh7frzanep" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2016/11/27/nginx/Nginx日志管理/" data-id="cjpr5sb4b002u32ghmcvvq5l2" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2016/11/09/nginx/Nginx虚拟主机配置/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2016/11/27/nginx/Nginx日志管理/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -132,6 +143,10 @@
       <ul>
         
           <li>
+            <a href="/2019/01/04/es6/es01/">ES6</a>
+          </li>
+        
+          <li>
             <a href="/2019/01/03/css/bgimage/">CSS 根据设备像素比引用不同比例的图片</a>
           </li>
         
@@ -145,10 +160,6 @@
         
           <li>
             <a href="/2018/12/12/reprint/rep01/">一口(很长的)气了解 babel</a>
-          </li>
-        
-          <li>
-            <a href="/2018/11/23/node/node-06/">Node 学习笔记06 - 内存控制</a>
           </li>
         
         <li><a class="more" href="/archives"><strong>更多文章......<strong></a></li>

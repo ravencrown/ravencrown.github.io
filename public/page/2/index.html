@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-javascript/js学习计划" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-node/node-02" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/10/11/javascript/js学习计划/">学习计划安排</a>
+      <a class="article-title" href="/2018/10/27/node/node-02/">Node 学习笔记02 - node 编程基础</a>
     </h1>
   
 
@@ -79,7 +79,7 @@
           
   <div class="article-category1">
     
-    <a class="article-category-link" href="/categories/笔记本/">分类：笔记本</a>
+    <a class="article-category-link" href="/categories/Node/">分类：Node</a>
   </div>
 
         </div>
@@ -88,104 +88,43 @@
       
         <!-- Table of Contents -->
         
-        <p>以下是分类学习计划</p>
+        <p>Node 的开发环境非常容易设置，比 Java、Python 等语言更容易配置些。如果用 Mac, 可以直接使用 HomeBrew 安装。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew install node</span><br></pre></td></tr></table></figure>
+<h2 id="一、NVM"><a href="#一、NVM" class="headerlink" title="一、NVM"></a>一、NVM</h2><p>个人建议使用 nvm 安装 Node。 Node 版本很多，你一定会有切换 Node 的版本的场景。nvm 就是用来管理 Node 版本的工具。另一个工具是 n 工具，不过个人喜欢使用 nvm 进行管理。<a href="https://github.com/creationix/nvm" target="_blank" rel="noopener">nvm 安装</a></p>
+<p>nvm 安装 node 和管理 node。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ nvm ls-remote         // 列出可以安装的 node 版本号</span><br><span class="line">$ nvm install v8.10.0    // 安装指定版本</span><br><span class="line">$ nvm uninstall v8.10.0  // 删除指定版本</span><br><span class="line">$ nvm use v8.10.0       // 切换 node 版本</span><br><span class="line">$ nvm current          // 查看当前版本</span><br><span class="line">$ nvm ls              // 查看已经安装的版本</span><br></pre></td></tr></table></figure>
+<h2 id="二、NRM"><a href="#二、NRM" class="headerlink" title="二、NRM"></a>二、NRM</h2><p>Node 经常遇到的一个问题就是安装包太慢，官网提供的镜像资源服务器在国外，所以经常吐槽官网的镜像。</p>
+<p><strong>nvm 安装</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g nrm</span><br></pre></td></tr></table></figure>
+<p>列出可用的镜像源</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ nrm ls</span><br></pre></td></tr></table></figure>
+<p>会列出下面的几个源，带 * 号的表示当前的采用的镜像源。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">  npm ---- https://registry.npmjs.org/</span><br><span class="line">  cnpm --- http://r.cnpmjs.org/</span><br><span class="line">* taobao - https://registry.npm.taobao.org/</span><br><span class="line">  nj ----- https://registry.nodejitsu.com/</span><br><span class="line">  rednpm - http://registry.mirror.cqupt.edu.cn/</span><br><span class="line">  npmMirror  https://skimdb.npmjs.com/registry/</span><br><span class="line">  edunpm - http://registry.enpmjs.org/</span><br></pre></td></tr></table></figure>
+<p>如果想使用其他的源，例如想换成 cnpm 的源</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ nrm use cnpm</span><br></pre></td></tr></table></figure>
+<p>会提示<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Registry has been set to: http://r.cnpmjs.org/</span><br></pre></td></tr></table></figure></p>
+<h2 id="三、淘宝镜像源和-CNPM"><a href="#三、淘宝镜像源和-CNPM" class="headerlink" title="三、淘宝镜像源和 CNPM"></a>三、淘宝镜像源和 CNPM</h2><p>直接参考这篇文章，不复制粘贴<a href="https://npm.taobao.org/" target="_blank" rel="noopener">淘宝镜像源和 CNPM</a></p>
+<h2 id="四、NPM"><a href="#四、NPM" class="headerlink" title="四、NPM"></a>四、NPM</h2><p>直接参考官网文档，介绍的最权威<a href="https://www.npmjs.com.cn/" target="_blank" rel="noopener">官网文档</a>，必读，必须熟悉，少废话。</p>
+<h2 id="五、Package-json"><a href="#五、Package-json" class="headerlink" title="五、Package.json"></a>五、Package.json</h2><p>同样给两个地址自己读，同样是 Node 中非常重要的必须要熟悉的知识</p>
 <blockquote>
 <ul>
-<li><strong>算法</strong></li>
-<li><strong>Vue/React 及源码学习</strong></li>
-<li><strong>Node.js、Koa、Express</strong></li>
-<li><strong>Webpack 配置工程师</strong></li>
-<li><strong>JavaScript</strong></li>
-<li><strong>小程序</strong></li>
-<li><strong>ES6 深入</strong></li>
-<li><strong>网络HTTP/操作系统/编译原理</strong></li>
-<li><strong>C++等</strong></li>
-<li><strong>jQuery 源码学习等</strong></li>
-</ul>
-</blockquote>
-<h2 id="Vue"><a href="#Vue" class="headerlink" title="Vue"></a>Vue</h2><blockquote>
-<ul>
-<li><strong><a href="https://github.com/ustbhuangyi/vue-analysis" target="_blank" rel="noopener">Vue 源码分析</a></strong></li>
-<li><strong><a href="https://github.com/vuejs/vue-router" target="_blank" rel="noopener">vue-router</a></strong></li>
-<li><strong>vue…系列 vuex 等等</strong></li>
-<li><strong><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></strong> </li>
-<li><strong><a href="http://coding.imooc.com/class/228.html" target="_blank" rel="noopener">慕课源码学习课程</a></strong></li>
-</ul>
-</blockquote>
-<h2 id="React"><a href="#React" class="headerlink" title="React"></a>React</h2><blockquote>
-<ul>
-<li><strong><a href=""></a></strong></li>
-</ul>
-</blockquote>
-<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><blockquote>
-<ul>
-<li><strong><a href="https://github.com/chihungyu1116/leetcode-javascript" target="_blank" rel="noopener">leetcode-javascript</a></strong></li>
-<li>一 <strong><a href="https://github.com/tayllan/awesome-algorithms" target="_blank" rel="noopener">系列丰富的算法链接和地址，包括JavaScript的算法也有。awesome-algorithms</a></strong> </li>
-<li><strong><a href="https://github.com/bayandin/awesome-awesomeness" target="_blank" rel="noopener">awesome-awesomeness</a></strong></li>
-<li><strong><a href="https://github.com/apachecn/awesome-algorithm" target="_blank" rel="noopener">awesome-algorithm(Leetcode 题解 (跟随思路一步一步撸出代码) 及经典算法实现)</a></strong></li>
-<li><strong><a href="https://github.com/trekhleb/javascript-algorithms/blob/master/README.zh-CN.md" target="_blank" rel="noopener">javascript-algorithms</a></strong></li>
-<li><strong><a href="https://github.com/hustcc/JS-Sorting-Algorithm" target="_blank" rel="noopener">一本关于排序算法的 GitBook 在线书籍 《十大经典排序算法》，使用 JavaScript &amp; Python &amp; Go &amp; Java 实现</a></strong></li>
-</ul>
-</blockquote>
-<h2 id="JavaScript"><a href="#JavaScript" class="headerlink" title="JavaScript"></a>JavaScript</h2><blockquote>
-<ul>
-<li><strong><a href="https://github.com/denysdovhan/wtfjs" target="_blank" rel="noopener">what the f*ck JavaScript?</a></strong> </li>
-<li><strong><a href="https://github.com/mqyqingfeng/Blog" target="_blank" rel="noopener">冴羽写博客的地方，预计写四个系列：JavaScript深入系列、JavaScript专题系列、ES6系列、React系列。</a></strong></li>
-<li><strong><a href="https://github.com/getify/You-Dont-Know-JS" target="_blank" rel="noopener">You-Dont-Know-JS</a></strong></li>
-<li><strong><a href="https://github.com/xiaoyu2er/awesome-webpack" target="_blank" rel="noopener">awesome-webpack</a></strong></li>
-<li><strong><a href="https://github.com/v8/v8" target="_blank" rel="noopener">V8 引擎</a></strong></li>
-<li><strong><a href="https://github.com/JsAaron/jQuery" target="_blank" rel="noopener">jQuery架构设计与实现（2.1.4版本）</a></strong></li>
-<li><strong><a href="http://www.cnblogs.com/aaronjs/p/3279314.html" target="_blank" rel="noopener">jQuery源码分析系列，博客园博文，作者：Aaron</a></strong></li>
-<li><strong><a href="https://github.com/chokcoco/jQuery-" target="_blank" rel="noopener">jQuery源码资料汇总</a></strong></li>
-</ul>
-</blockquote>
-<h2 id="Node"><a href="#Node" class="headerlink" title="Node"></a>Node</h2><blockquote>
-<ul>
-<li><strong><a href="https://github.com/chyingp/nodejs-learning-guide" target="_blank" rel="noopener">Nodejs学习笔记以及经验总结，公众号”程序猿小卡”</a></strong></li>
-<li><strong><a href="https://github.com/ElemeFE/node-interview/tree/master/sections/zh-cn" target="_blank" rel="noopener">如何通过饿了么 Node.js 面试</a></strong></li>
-<li><strong><a href="https://github.com/youyudehexie/node123" target="_blank" rel="noopener">node.js中文资料导航</a></strong></li>
-<li><strong><a href="https://github.com/nqdeng/7-days-nodejs" target="_blank" rel="noopener">七天学会NodeJS</a></strong></li>
-<li><strong><a href="https://github.com/sindresorhus/awesome-nodejs" target="_blank" rel="noopener">awesome-nodejs</a></strong></li>
-<li><strong><a href="https://github.com/i5ting/node-debug-tutorial" target="_blank" rel="noopener">node-debug-tutorial</a></strong></li>
-<li><strong><a href="https://github.com/nswbmw/N-blog" target="_blank" rel="noopener">《一起学 Node.js》</a></strong></li>
-<li><strong><a href="https://github.com/yjhjstz/deep-into-node" target="_blank" rel="noopener">深入理解Node.js：核心思想与源码分析</a></strong></li>
-<li><strong><a href="https://github.com/bailicangdu/node-elm" target="_blank" rel="noopener">基于 node.js + Mongodb 构建的后台系统</a></strong></li>
-<li><strong><a href="https://github.com/alsotang/node-lessons" target="_blank" rel="noopener">Node.js 包教不包会</a></strong></li>
-</ul>
-</blockquote>
-<h2 id="博客笔记类"><a href="#博客笔记类" class="headerlink" title="博客笔记类"></a>博客笔记类</h2><blockquote>
-<ul>
-<li><strong><a href="https://github.com/jaywcjlove/handbook" target="_blank" rel="noopener">handbook - 放置我的笔记、搜集、摘录、实践，保持好奇心。看文需谨慎，后果很严重。</a></strong></li>
-<li><strong><a href="https://github.com/jaywcjlove/linux-command" target="_blank" rel="noopener">linux-command - Linux命令大全搜索工具，内容包含Linux命令手册、详解、学习、搜集。</a></strong></li>
-<li><strong><a href="https://github.com/CyC2018/CS-Notes" target="_blank" rel="noopener">CS-Notes - Computer Science Learning Notes</a></strong></li>
-<li><strong><a href="https://github.com/nieweidong/fetool" target="_blank" rel="noopener">大前端的瑞士军刀，只记录有用的。</a></strong></li>
-<li><strong><a href="https://github.com/youngwind/blog" target="_blank" rel="noopener">梁少峰的个人博客</a></strong></li>
-<li><strong><a href="https://github.com/doyoe/trip" target="_blank" rel="noopener">移动前端开发经验指南</a></strong></li>
-</ul>
-</blockquote>
-<h2 id="github-值得研究项目"><a href="#github-值得研究项目" class="headerlink" title="github 值得研究项目"></a>github 值得研究项目</h2><blockquote>
-<ul>
-<li><strong><a href="https://github.com/denoland/deno" target="_blank" rel="noopener">deno - node作者新项目</a></strong></li>
-</ul>
-</blockquote>
-<h2 id="github-风云人物"><a href="#github-风云人物" class="headerlink" title="github 风云人物"></a>github 风云人物</h2><h2 id="面试相关"><a href="#面试相关" class="headerlink" title="面试相关"></a>面试相关</h2><blockquote>
-<ul>
-<li><strong><a href="https://github.com/chihungyu1116/leetcode-javascript" target="_blank" rel="noopener">小鱼二的博客</a></strong></li>
+<li><a href="https://www.npmjs.com.cn/files/package.json/" target="_blank" rel="noopener">package.json</a></li>
+<li><a href="https://www.npmjs.com.cn/getting-started/using-a-package.json/" target="_blank" rel="noopener">Working with package.json</a></li>
 </ul>
 </blockquote>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2018/10/11/javascript/js学习计划/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2018/10/27/node/node-02/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/10/11/javascript/js学习计划/" data-id="cjpr5sb3y002932ghztzaxskv" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/10/27/node/node-02/" data-id="cjpr5sb4t003q32ghw97vs2d6" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2018/10/11/javascript/js学习计划/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2018/10/27/node/node-02/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -209,23 +148,23 @@
       <ul>
         
           <li>
+            <a href="/2019/01/04/es6/es01/">ES6</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/03/css/bgimage/">CSS 根据设备像素比引用不同比例的图片</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/03/css/css1px/">CSS 实现1px border</a>
+          </li>
+        
+          <li>
             <a href="/2018/12/13/reprint/rep02/">深入Babel，这一篇就够了</a>
           </li>
         
           <li>
             <a href="/2018/12/12/reprint/rep01/">一口(很长的)气了解 babel</a>
-          </li>
-        
-          <li>
-            <a href="/2018/11/23/node/node-06/">Node 学习笔记06 - 内存控制</a>
-          </li>
-        
-          <li>
-            <a href="/2018/11/08/node/node-05/">Node 学习笔记05 - 异步I/O</a>
-          </li>
-        
-          <li>
-            <a href="/2018/11/08/平凡的世界/">平凡的世界读后感</a>
           </li>
         
         <li><a class="more" href="/archives"><strong>更多文章......<strong></a></li>
@@ -260,7 +199,7 @@
   
   <div class="outer">
     <div id="footer-left">
-      &copy; 2014 - 2018 陈广宵
+      &copy; 2014 - 2019 陈广宵
     </div>
      <div id="footer-right">
       联系方式&nbsp;|&nbsp;chengx@guangxiao.me

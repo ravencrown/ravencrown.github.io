@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-nginx/Nginx的Gzip配置" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-如何正确学习C++" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/12/29/nginx/Nginx的Gzip配置/">Nginx的Gzip设置</a>
+      <a class="article-title" href="/2017/06/23/如何正确学习C++/">如何正确学习C++</a>
     </h1>
   
 
@@ -79,7 +79,7 @@
           
   <div class="article-category1">
     
-    <a class="article-category-link" href="/categories/Nginx/">分类：Nginx</a>
+    <a class="article-category-link" href="/categories/C/">分类：C++</a>
   </div>
 
         </div>
@@ -88,40 +88,45 @@
       
         <!-- Table of Contents -->
         
-        <h2 id="Gzip配置参数"><a href="#Gzip配置参数" class="headerlink" title="Gzip配置参数"></a>Gzip配置参数</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">gzip配置的常用参数</span><br><span class="line">gzip on|off;  #是否开启gzip</span><br><span class="line">gzip_buffers 32 4K| 16 8K #缓冲(压缩在内存中缓冲几块? 每块多大?)</span><br><span class="line">gzip_comp_level [1-9] #推荐6 压缩级别(级别越高,压的越小,越浪费CPU计算资源)</span><br><span class="line">gzip_disable #正则匹配UA 什么样的Uri不进行gzip</span><br><span class="line">gzip_min_length 200 # 开始压缩的最小长度(再小就不要压缩了,意义不在)</span><br><span class="line">gzip_http_version 1.0|1.1 # 开始压缩的http协议版本(可以不设置,目前几乎全是1.1协议)</span><br><span class="line">gzip_proxied          # 设置请求者代理服务器,该如何缓存内容</span><br><span class="line">gzip_types text/plain  application/xml # 对哪些类型的文件用压缩 如txt,xml,html ,css</span><br><span class="line">gzip_vary on|off  # 是否传输gzip压缩标志 Vary是用来标志缓存的依据.</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span>注意:</span><br><span class="line"><span class="meta">#</span>图片/mp3这样的二进制文件,不必压缩</span><br><span class="line"><span class="meta">#</span>因为压缩率比较小, 比如100-&gt;80字节,而且压缩也是耗费CPU资源的.</span><br><span class="line"><span class="meta">#</span>比较小的文件不必压缩,</span><br></pre></td></tr></table></figure>
-<p><strong>思考:</strong></p>
-<ul>
-<li>如果2个人,一个浏览器支持gzip,一个浏览器不支持gzip2个同时请求同个页面, chinaCache缓存压缩后,还是未压缩的?</li>
-<li>如果1人,再次请求页面,chinaCache返回压缩后的缓存内容,还是压缩前的缓存内容?</li>
+        <p>这里首先分享一个北京大学的C++公开课 - 《程序设计学习ACM》，<a href="https://pan.baidu.com/s/1YDHwcPeveUOIsmKHox7YPQ" target="_blank" rel="noopener">百度网盘地址</a></p>
+<p>之所以决定开始学习 C++, 是因为 Node 的底层是基于 C++，所以决定开始学习 C++，以便深入 Node。</p>
+<h2 id="C-的应用"><a href="#C-的应用" class="headerlink" title="C++ 的应用"></a>C++ 的应用</h2><ul>
+<li>C++ 通常用于编写设备驱动程序和其他要求实时性的直接操作硬件的软件。</li>
+<li>任何一个使用苹果电脑或 Windows PC 机的用户都在间接地使用 C++，因为这些系统的主要用户接口是使用 C++ 编写的。</li>
+<li>Node、Android 等底层都是 C++编写</li>
+<li>嵌入式、游戏编程、网络编程、系统编程</li>
 </ul>
-<p>这个时候 Vary的作用体现出来.即——缓存的内容受 Accept-Encoding头信息的影响.  </p>
-<p>所以如果<br>请求时,不支持gzip, 缓存服务器将会生成一份未gzip的内容.<br>请求时,支持gzip, 缓存服务器将会生成一份gzip的内容.  </p>
-<p>下次再请求时, 缓存服务器会考虑客户端的Accept-Encoding因素,并合理的返回信息  </p>
-<p>Nginx对于图片,js等静态文件的缓存设置<br>注:这个缓存是指针对浏览器所做的缓存,不是指服务器端的数据缓存.  </p>
-<p>主要知识点: location expires指令  </p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">location ~ \.(jpg|jpeg|png|gif)$ &#123;</span><br><span class="line">    expires 1d;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">location ~ \.js$ &#123;</span><br><span class="line">    expires 1h;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>设置并载入新配置文件,用firebug观察,<br>会发现 图片内容,没有再次产生新的请求,原因–利用了本地缓存的效果.  </p>
-<p><strong>注: 在大型的新闻站,或文章站中,图片变动的可能性很小,建议做1周左右的缓存Js,css等小时级的缓存.</strong></p>
-<p>如果信息流动比较快,也可以不用expires指令,<br>用last_modified, etag功能(主流的web服务器都支持这2个头信息)  </p>
-<p>原理是:<br>响应: 计算响应内容的签名, etag 和 上次修改时间<br>请求: 发送 etatg, If-Modified-Since 头信息.<br>服务器收到后,判断etag是否一致, 最后修改时间是否大于if-Modifiled-Since<br>如果监测到服务器的内容有变化,则返回304,<br>浏览器就知道,内容没变,直接用缓存.  </p>
-<p><strong>304 比起上面的expires 指令多了1次请求,但是比200状态,少了传输内容.</strong></p>
-<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
-<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_gzip_module.html" target="_blank" rel="noopener">Nginx Gzip Module</a></li>
-<li>Nginx官网, <a href="http://nginx.org/en/docs/http/ngx_http_gzip_static_module.html" target="_blank" rel="noopener">Nginx Gzip Static Module</a></li>
+<h2 id="C-特点"><a href="#C-特点" class="headerlink" title="C++ 特点"></a>C++ 特点</h2><ul>
+<li>快：运算速度快</li>
+<li>省：节省资源，能够降低硬件成本</li>
 </ul>
+<h2 id="与C语言的关系"><a href="#与C语言的关系" class="headerlink" title="与C语言的关系"></a>与C语言的关系</h2><ul>
+<li>C 是 C++ 的子集：拿着 C 的代码放到 C++ 的 IDE 环境下编辑，完全没有问题</li>
+<li>从 C语言的基础上发展过来的</li>
+<li>C 面向过程</li>
+<li>C++ 支持面向过程 + 支持面向对象</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li>语言基础，参考<a href="https://www.zhihu.com/question/38828701" target="_blank" rel="noopener">C++ Primer 第五版</a></li>
+<li>安装Visual Studio IDE</li>
+<li><a href="https://wizardforcel.gitbooks.io/w3school-cpp/content/index.html" target="_blank" rel="noopener">W3School C++ 基础教程</a></li>
+<li><a href="https://www.imooc.com/course/list?c=cplusplus" target="_blank" rel="noopener">C++ 慕课视频</a></li>
+<li><a href="https://www.imooc.com/course/list?c=c" target="_blank" rel="noopener">C语言 慕课视频</a></li>
+</ul>
+<p>test push </p>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2016/12/29/nginx/Nginx的Gzip配置/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2017/06/23/如何正确学习C++/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2016/12/29/nginx/Nginx的Gzip配置/" data-id="cjpr5sb4f002z32ghf1egzeo6" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2017/06/23/如何正确学习C++/" data-id="cjpr5sb2l000t32ghwfo8y27p" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2016/12/29/nginx/Nginx的Gzip配置/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2017/06/23/如何正确学习C++/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -145,23 +150,23 @@
       <ul>
         
           <li>
+            <a href="/2019/01/04/es6/es01/">ES6</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/03/css/bgimage/">CSS 根据设备像素比引用不同比例的图片</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/03/css/css1px/">CSS 实现1px border</a>
+          </li>
+        
+          <li>
             <a href="/2018/12/13/reprint/rep02/">深入Babel，这一篇就够了</a>
           </li>
         
           <li>
             <a href="/2018/12/12/reprint/rep01/">一口(很长的)气了解 babel</a>
-          </li>
-        
-          <li>
-            <a href="/2018/11/23/node/node-06/">Node 学习笔记06 - 内存控制</a>
-          </li>
-        
-          <li>
-            <a href="/2018/11/08/node/node-05/">Node 学习笔记05 - 异步I/O</a>
-          </li>
-        
-          <li>
-            <a href="/2018/11/08/平凡的世界/">平凡的世界读后感</a>
           </li>
         
         <li><a class="more" href="/archives"><strong>更多文章......<strong></a></li>
@@ -196,7 +201,7 @@
   
   <div class="outer">
     <div id="footer-left">
-      &copy; 2014 - 2018 陈广宵
+      &copy; 2014 - 2019 陈广宵
     </div>
      <div id="footer-right">
       联系方式&nbsp;|&nbsp;chengx@guangxiao.me

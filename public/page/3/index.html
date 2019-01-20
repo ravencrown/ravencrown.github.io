@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-富爸爸穷爸爸笔记" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-webpack01" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/22/富爸爸穷爸爸笔记/">富爸爸穷爸爸笔记</a>
+      <a class="article-title" href="/2018/08/05/webpack01/">Webpack 入门（一）</a>
     </h1>
   
 
@@ -79,7 +79,7 @@
           
   <div class="article-category1">
     
-    <a class="article-category-link" href="/categories/理财/">分类：理财</a>
+    <a class="article-category-link" href="/categories/JavaScript/">分类：JavaScript</a>
   </div>
 
         </div>
@@ -88,141 +88,138 @@
       
         <!-- Table of Contents -->
         
-        <p>《富爸爸穷爸爸》系列对一个人提高财商非常用帮助，读完《富爸爸穷爸爸》会用人用一种立马去创业的冲动。又跑去买了《富爸爸穷爸爸》系列的其他几本书，后面读完会补充上笔记。以下是《富爸爸穷爸爸》的一些句子摘录</p>
-<ul>
-<li>富人之所以越来越富，穷人之所以越来越穷，中产阶级之所以总是在债务的泥潭中挣扎，其中一个主要原因就是，他们对金钱的认识不是来自学校，而是来自家庭。大多数人都是从父母那儿了解钱是怎么回事的。</li>
+        <p><code>webpack</code> 是一个现代 <code>JavaScript</code> 应用程序的静态模块打包器(<code>module bundler</code>)<br>在打包过程中，会从入口开始递归地构建一个依赖关系图，其中包含应用程序需要用到的每个模块，<br>然后将这些模块打包成一个或多个<code>bundle</code></p>
+<p>webpack 处理前端的资源文件：JS、CSS、图片，将源文件转成浏览器能识别的</p>
+<p>ES6 – (loader/plugin) –&gt; ES5<br>SASS/LESS/Stylus – (loader/plugin) –&gt; CSS<br>image – (loader/plugin) –&gt; 压缩、转base64格式<br>Coffee/ts – (loader/plugin) –&gt; js<br>ETC…</p>
+<h2 id="四个核心概念"><a href="#四个核心概念" class="headerlink" title="四个核心概念"></a>四个核心概念</h2><ul>
+<li>entry 入口源文件</li>
+<li>输出 生成文件</li>
+<li>loader 编译文件</li>
+<li>plugin 比loader更强大，能使用更多webpack的api</li>
 </ul>
+<h3 id="入口-Entry"><a href="#入口-Entry" class="headerlink" title="入口 Entry"></a>入口 Entry</h3><p>入口起点(<code>entry</code>)指示 webpack 应该使用哪个模块，来作为构建其内部依赖图的开始。进入入口起点后，webpack 会找出有哪些模块和库是入口起点（直接和间接）依赖的。每个依赖项随即被处理，最后输出到称之为 <code>bundles</code> 的文件中</p>
+<p>简单说：就是 HTML 直接引用的 JS 文件，其他非入口文件则作为直接或间接的依赖引入</p>
+<p><strong>用法</strong><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// entry: string|Array&lt;string&gt;</span></span><br><span class="line"><span class="comment">// 传数组的时候，可以将多个依赖文件导向一个 chunk，打包到一个 bundle 文件，参考 CommonsChunkPlugin 插件</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 单页面</span></span><br><span class="line"><span class="keyword">const</span> config = &#123;</span><br><span class="line">  entry: <span class="string">'./path/to/my/entry/file.js'</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 多页面：根据经验每个页面一个入口</span></span><br><span class="line"><span class="keyword">const</span> config = &#123;</span><br><span class="line">  entry: &#123;</span><br><span class="line">    pageOne: <span class="string">'./src/pageOne/index.js'</span>,</span><br><span class="line">    pageTwo: <span class="string">'./src/pageTwo/index.js'</span>,</span><br><span class="line">    pageThree: <span class="string">'./src/pageThree/index.js'</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h3 id="输出-output"><a href="#输出-output" class="headerlink" title="输出 output"></a>输出 output</h3><p>打包之后输出的配置，只能有一个</p>
+<p>示例<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">output: &#123;</span><br><span class="line">    path: path.resolve(__dirname + <span class="string">'/dist'</span>),  <span class="comment">// webpack3 之后使用绝对路径</span></span><br><span class="line">    filename: <span class="string">'js/[name]-[chunkhash].js'</span>,</span><br><span class="line">    publicPath: <span class="string">'http://cdn.com/'</span></span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></p>
+<p><strong>filename 占位符</strong></p>
 <ul>
-<li><p>“那是学校教你们的法子，”他笑着说，“但生活可不是这样教你的。我得说生活才是最好的老师。大多数时候，生活不会和你说什么，它只是推着你转，每一次推，它都像是在说：‘喂，醒一醒，我要让你学点东西。’”</p>
-</li>
-<li><p>假如你学会了生活这门课程，做任何事情你都会游刃有余。如果你学不会，生活照样会推着你转。人们通常会做两件事，一些人在生活推着他转的同时，抓住生活赐予的每个机会；而另一些人则非常生气，去与生活抗争。他们与老板抗争，与工作抗争，甚至与自己的配偶抗争，他们不知道生活同时也给了他们机会。”</p>
-</li>
-<li><p>“生活推着我们所有的人，有些人放弃了，有些人在抗争。少数人学会了这门课程，取得了进步，他们欢迎生活来推动他们，对他们来说，这种推动意味着他们需要并愿意去学习一些东西。他们学习，然后取得进步。但大多数人放弃了，还有一部分人像你一样在抗争。”</p>
-</li>
-<li><p>如果你认为是我的问题，你就会想改变我；如果你认为问题在你那儿，你就会改变自己，学习一些东西让自己变得更聪明。大多数人认为世界上除了自己外，其他人都应该改变。让我告诉你吧，改变自己比改变他人更容易。”</p>
-</li>
-<li><p>有些人会这么做，只因为他们和他们的家庭需要钱而接受这份工资。但他们所做的也只是等待，等待加薪，因为他们认为更多的钱能解决问题。大部分人接受这样的工资，还有一些人会再找一份工作，仍旧干得很努力，但仍只能得到很少的报酬。”</p>
-</li>
-<li><p>学习怎样让钱为你工作是一个持续终生的过程。大多数人上了4年大学后，学习也就到头了。可我知道我会用一辈子去研究钱这东西，因为我研究得越深，就越发现我还有更多的东西要学习。大多数人从不研究这个问题，他们去上班，挣工资，平衡收支，仅此而已，他们不明白自己为什么老缺钱，于是以为多挣点钱就能解决问题，但几乎没有人意识到缺乏财商教育才是问题的关键。”</p>
-</li>
+<li>name 模块名称。 例上面入口的 pageOne，pageTwo，pageThree</li>
+<li>hash 模块编译后的（整体）Hash值</li>
+<li>chunkhash 分片的Hash值（每个模块的hash）</li>
 </ul>
-<ul>
-<li><p>“起床，上班，付账，再起床，再上班，再付账……他们的生活从此被这两种感觉所控制：恐惧和贪婪。给他们更多的钱，他们就会以更高的开支重复这种循环。这就是我所说的‘老鼠赛跑’。”</p>
+<p><img width="792" alt="d28ab5fd-b360-4185-9ba5-8d4a1b16c92a" src="https://user-images.githubusercontent.com/9835391/34867635-d818c624-f7bb-11e7-9e16-546f9f84efd0.png"></p>
+<h2 id="核心概念：Loader"><a href="#核心概念：Loader" class="headerlink" title="核心概念：Loader"></a>核心概念：Loader</h2><p>loader 它是指用来将一段代码转换成另一段代码。loader 可以使你在 import 或”加载”模块时预处理文件。因此，loader 类似于其他构建工具中“任务(task)”</p>
+<p>例如：比如在 <code>require(&#39;a.coffee&#39;)</code> 的时候，webpack 自动先编译成 JS 文件，再引入进来</p>
+<p>类似 gulp 中的 task 任务</p>
+<h3 id="loader的特性"><a href="#loader的特性" class="headerlink" title="loader的特性"></a>loader的特性</h3><ul>
+<li>loader 可以是串联方式的，例如 <code>style-loader!css-loader</code></li>
+<li>loader 可以是同步也可以是异步的</li>
+<li>loader 可以运行在 Node.js 中，并且可以执行任何操作</li>
+<li>loader 可以接受查询参数（query）</li>
+<li><p>loader 在命令行中是通过 –module-bind（webpack -h） 的方式绑定，也可以在配置文件中通过正则表达式指定某个后缀名的文件由哪个 loader 来执行</p>
 </li>
-<li><p>永远不要忘记，你有两种感情——恐惧和欲望，如果你让它们来控制你的思想，你就会落入一生中最大的陷阱。一直生活在恐惧中，从不追求自己的梦想，这是残酷的。为钱拼命工作，以为钱能买来快乐，这也是残酷的。</p>
+<li><p>loader 可以通过 NPM 安装/发布</p>
 </li>
-<li><p>如果你们想学，我就会把你们带上这条布满荆棘的道路，大多数人都会选择避开它。我会带你们去大多数人都害怕去的地方，跟着我，你们就要抛弃为钱工作的观念，学习如何让钱为你们工作。”</p>
-</li>
+<li>loader 可以获取到 webpack 的配置</li>
+<li>plugin 可以给予 loader 更多的特性</li>
+<li>loader 可以产生一个额外的任意文件</li>
 </ul>
-<ul>
-<li><p>据说，对很多人来说在公众面前讲话比死还可怕。精神病学认为，害怕在公众面前说话是因为害怕被排斥、害怕冒尖、害怕被批评、害怕被嘲笑、害怕被别人所不容。简言之，是害怕与别人不同。这种心理阻碍了人们去想新办法来解决问题。</p>
+<h3 id="loader-的使用"><a href="#loader-的使用" class="headerlink" title="loader 的使用"></a>loader 的使用</h3><p>三种方式</p>
+<ol>
+<li>在 require 或者 import 声明中指定</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Styles <span class="keyword">from</span> <span class="string">'style-loader!css-loader?modules!./styles.css'</span>;</span><br><span class="line"><span class="comment">//or</span></span><br><span class="line"><span class="built_in">require</span>(<span class="string">"style-loader!css-loader?modules!./styles.css"</span>);</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>通过配置文件</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>: &#123;</span><br><span class="line">   rules: [</span><br><span class="line">     &#123;</span><br><span class="line">       <span class="comment">// test 是对资源的正则匹配，如果匹配到了，就应用下面的 loader 对匹配到的资源进行处理</span></span><br><span class="line">       test: <span class="regexp">/\.css$/</span>,</span><br><span class="line">       use: [</span><br><span class="line">         &#123; <span class="attr">loader</span>: <span class="string">'style-loader'</span> &#125;,</span><br><span class="line">         &#123;</span><br><span class="line">           loader: <span class="string">'css-loader'</span>,</span><br><span class="line">           options: &#123;</span><br><span class="line">             modules: <span class="literal">true</span></span><br><span class="line">           &#125;</span><br><span class="line">         &#125;</span><br><span class="line">       ]</span><br><span class="line">     &#125;</span><br><span class="line">   ]</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>通过命令行 CLI</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// webpack 执行一次开发时的编译</span></span><br><span class="line"><span class="comment">// webpack -p 执行一次生成环境的编译（压缩）</span></span><br><span class="line"><span class="comment">// webpack --watch 在开发时持续监控增量编译（很快）</span></span><br><span class="line"><span class="comment">// webpack -d 让他生成SourceMaps</span></span><br><span class="line"><span class="comment">// webpack --progress 显示编译进度</span></span><br><span class="line"><span class="comment">// webpack --colors 加个颜色，变漂亮</span></span><br><span class="line"><span class="comment">// webpack --sort-modules-by, --sort-chunks-by, --sort-assets-by 将modules/chunks/assets进行列表排序</span></span><br><span class="line"><span class="comment">// webpack --display-chunks 展示编译后的分块</span></span><br><span class="line"><span class="comment">// webpack --display-reasons 显示更多引用模块原因</span></span><br><span class="line"><span class="comment">// webapck --display-error-details 显示更多报错信息</span></span><br><span class="line"></span><br><span class="line">$ webpack --<span class="built_in">module</span>-bind jade-loader --<span class="built_in">module</span>-bind css=style-loader!css-loader</span><br></pre></td></tr></table></figure>
+<h2 id="使用-babel-loader-转换-ES6-代码"><a href="#使用-babel-loader-转换-ES6-代码" class="headerlink" title="使用 babel-loader 转换 ES6 代码"></a>使用 babel-loader 转换 ES6 代码</h2><p>安装 babel 参考 <a href="http://babeljs.io/docs/setup/#installation" target="_blank" rel="noopener">http://babeljs.io/docs/setup/#installation</a></p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install --save-dev babel-loader babel-core</span><br></pre></td></tr></table></figure>
+<h3 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Via config</span></span><br><span class="line"><span class="built_in">module</span>: &#123;</span><br><span class="line">  rules: [</span><br><span class="line">    &#123; </span><br><span class="line">        test: <span class="regexp">/\.js$/</span>, </span><br><span class="line">        exclude: <span class="regexp">/node_modules/</span>, </span><br><span class="line">        loader: <span class="string">"babel-loader"</span> </span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Via loader</span></span><br><span class="line"><span class="keyword">var</span> Person = <span class="built_in">require</span>(<span class="string">"babel!./Person.js"</span>).default;</span><br><span class="line"><span class="keyword">new</span> Person();</span><br></pre></td></tr></table></figure>
+<h3 id="配置文件-babelrc"><a href="#配置文件-babelrc" class="headerlink" title="配置文件 .babelrc"></a>配置文件 <code>.babelrc</code></h3><p><strong>在 <code>.babelrc</code> 文件中定义</strong><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"presets"</span>: [<span class="string">"env"</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="presets-是干什么用的？"><a href="#presets-是干什么用的？" class="headerlink" title="presets 是干什么用的？"></a>presets 是干什么用的？</h3><p>设置转码规则，版本参考 <a href="https://babeljs.cn/docs/plugins/" target="_blank" rel="noopener">https://babeljs.cn/docs/plugins/</a></p>
+<p>转换对应模块参考图<br><img src="https://user-images.githubusercontent.com/9835391/34867649-eafcdadc-f7bb-11e7-92b0-512151410ee4.png" alt="6147470b-73c6-4ba1-96d6-3c536beff662"></p>
+<p>例如<br><code>const和let现在一律转换成var</code><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 转换前</span></span><br><span class="line"><span class="keyword">var</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">let</span> b = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">const</span> c = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//转换后</span></span><br><span class="line"><span class="keyword">var</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">var</span> b = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">var</span> c = <span class="number">3</span>;</span><br></pre></td></tr></table></figure></p>
+<p><code>let 的块级作用域如何体现</code><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 转换前</span></span><br><span class="line"><span class="keyword">let</span> a1 = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">let</span> a2 = <span class="number">6</span>;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">let</span> a1 = <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">let</span> a2 = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">let</span> a1 = <span class="number">4</span>;</span><br><span class="line">        <span class="keyword">let</span> a2 = <span class="number">5</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">a1 = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转换后</span></span><br><span class="line"><span class="keyword">var</span> a1 = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">var</span> a2 = <span class="number">6</span>;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> _a1 = <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">var</span> _a2 = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> _a3 = <span class="number">4</span>;</span><br><span class="line">        <span class="keyword">var</span> _a4 = <span class="number">5</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">a1 = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实质就是在块级作用域改变一下变量名，使之与外层不同</span></span><br></pre></td></tr></table></figure></p>
+<p><code>赋值解构转换</code><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 转换前</span></span><br><span class="line"><span class="keyword">var</span> props = &#123;</span><br><span class="line">    name: <span class="string">"heyli"</span>,</span><br><span class="line">    getName: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;,</span><br><span class="line">    setName: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">let</span> &#123; name, getName, setName &#125; = <span class="keyword">this</span>.props;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转换后</span></span><br><span class="line"><span class="keyword">var</span> props = &#123;</span><br><span class="line">    name: <span class="string">"heyli"</span>,</span><br><span class="line">    getName: <span class="function"><span class="keyword">function</span> <span class="title">getName</span>(<span class="params"></span>) </span>&#123;&#125;,</span><br><span class="line">    setName: <span class="function"><span class="keyword">function</span> <span class="title">setName</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> name = props.name;</span><br><span class="line"><span class="keyword">var</span> getName = props.getName;</span><br><span class="line"><span class="keyword">var</span> setName = props.setName;</span><br></pre></td></tr></table></figure></p>
+<p><code>扩展运算符</code><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 转换前</span></span><br><span class="line"><span class="comment">// ...y代表它接收了剩下的参数。也就是arguments除了第一个标号的参数之外剩余的参数。</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">func</span>(<span class="params">x, ...y</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(x);</span><br><span class="line">    <span class="built_in">console</span>.log(y);</span><br><span class="line">    <span class="keyword">return</span> x * y.length;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 转换后</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">func</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(x);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> _len = <span class="built_in">arguments</span>.length, y = <span class="built_in">Array</span>(_len &gt; <span class="number">1</span> ? _len - <span class="number">1</span> : <span class="number">0</span>), _key = <span class="number">1</span>; _key &lt; _len; _key++) &#123;</span><br><span class="line">        y[_key - <span class="number">1</span>] = <span class="built_in">arguments</span>[_key];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">console</span>.log(y);</span><br><span class="line">    <span class="keyword">return</span> x * y.length;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>配置 presets 的三种方式</strong></p>
+<ol>
+<li><p>在webpack 配置文件 loader 中直接配置</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    test: <span class="regexp">/\.js$/</span>,</span><br><span class="line">    loader: <span class="string">'babel'</span>,</span><br><span class="line">    query: &#123;</span><br><span class="line">        presets: [<span class="string">'lastest'</span>]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>同时还要注意降低负债和支出，这也会让你有更多的钱投入资产项。很快，你就会有钱来考虑进行一些投资了</p>
+<li><p><code>.babelrc</code> 配置文件中配置</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    presets: [<span class="string">'lastest'</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>只要你拥有足够的财务知识，你就不必害怕去“冒险”</p>
+<li><p>在 package.json 中配置</p>
 </li>
-<li><p>如果你盲从于别人，你的财务状况就会像下图展示的那样。作为一个自己有房子的雇员，你努力工作的结果如下：</p>
-</li>
-<li><p>假如你决定集中精力创建自己的事业，又该怎样确立目标呢？对大多数人而言，他们的目标是保住他们的工作并靠工资取得他们想要的资产。</p>
-</li>
-<li><p>大多数人在努力致富时，总是试图在15厘米厚的混凝土上建造帝国大厦。</p>
-</li>
-<li><p>“富人获得资产，而穷人和中产阶级获得负债，只不过他们以为那些负债就是资产。”</p>
-</li>
-<li><p>资产就是能把钱放进你口袋里的东西, 负债是把钱从你口袋里取走的东西。</p>
-</li>
+</ol>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">"babel": &#123;</span><br><span class="line">    "presets": ["lastest"]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="常用的-Loader"><a href="#常用的-Loader" class="headerlink" title="常用的 Loader"></a>常用的 Loader</h3><ul>
+<li>处理样式：<code>less-loader, sass-loader, style-loader, postcss-loader</code></li>
+<li>图片处理：<code>url-loader, file-loader</code></li>
+<li>js: <code>babel-loader，babel-preset-es2015，babel-preset-react</code> 等等</li>
+<li>将js模块暴露到全局：<code>expose-loader</code></li>
 </ul>
+<h3 id="module-loaders"><a href="#module-loaders" class="headerlink" title="module.loaders"></a>module.loaders</h3><p>module.loaders 可配置的参数</p>
 <ul>
-<li><p>第三个秘诀是：“关注自己的事业。”存在财务问题的人经常耗费一生为别人工作，其中许多人在他们不能工作时就变得一无所有。</p>
-</li>
-<li><p>从事你所学的专业的可怕后果在于，它会让你忘记关注自己的事业。人们耗尽一生去关注别人的事业并使他人致富。</p>
-</li>
-<li><p>为了财务安全，人们需要关注自己的事业。你的事业的重心是你的资产项，而不是你的收入项</p>
-</li>
-<li><p>对成年人而言，把支出保持在低水平、减少借款并勤劳地工作会帮你打下一个稳固的资产基础</p>
-</li>
-<li><p>我见过许多年轻夫妇，在结婚后不久就陷入了即使工作多年也无法摆脱债务的生活方式中。</p>
-</li>
+<li>test: 正则匹配方式</li>
+<li>exclude: loader 处理的资源的排除的范围</li>
+<li>include: loader 处理包含的范围，可以是正则、数组、绝对路径</li>
+<li>loader: 使用 “!” 分割 loader，从后往前处理</li>
+<li>loaders: 以 loader 组成的 数组</li>
 </ul>
-<ul>
-<li><p>如果你对法律一无所知，就很容易被欺负；如果你了解法律，你就有还击的机会。这也是富爸爸高薪雇用聪明的会计师和律师的原因</p>
-</li>
-<li><p>第一是会计，也就是我说的财务知识。如果你想建立一个自己的商业帝国，财务知识是非常重要的。你管理的钱越多，就越要精确，否则这幢大厦就会倒塌。这需要左脑来处理，是细节的部分。财务知识能帮助你读懂财务报表，还能让你辨别一项生意的优势和劣势。</p>
-</li>
-<li><p>第二是投资，我把它称为钱生钱的科学。投资涉及策略和方案，这要右脑来做，是属于创造的部分。</p>
-</li>
-<li><p>第三是了解市场，它是供给与需求的科学。这要求了解受感情驱动的市场的“技术面”</p>
-</li>
-<li><p>第四是法律。例如：利用一个具有会计、投资和市场运营的企业会使你的财富实现爆炸性地增长。了解减税优惠政策和公司法的人会比雇员和小业主更快致富。这就像一个人在走，而另一个人却在飞，久而久之这种差距就</p>
-</li>
-<li><p>雇员挣钱、纳税，并靠剩下的钱为生；企业挣钱、花钱，并只为剩下来的钱缴税。</p>
-</li>
-<li><p>《开公司致富》，就对私营公司所具有的能力提供了很好的看法。</p>
-</li>
-<li><p>原因很简单，这是我生命中最快乐的事情，我更喜欢变化而不是害怕变化，我更喜欢能挣到数百万美元而不是去担心能不能升职。当今我们所处的时代是历史上从未有过的最激动人心的时代，当后人回顾今天这段历史时，他们一定会感叹这是一个让人心情激荡的时代。旧的东西消亡了，新的东西产生了，到处都在发生翻天覆地的变化，这的确让人兴奋不已。</p>
-</li>
-<li><p>那么究竟为什么要努力提高自己的财商呢？如果你这样做了，你就会获得巨大的成功；如果不这样做，对你来说，这个时代就会让你恐慌。你会发现一些人勇敢地走在了时代的前面，而另一些人却只能紧紧地抓住生活的救生圈。</p>
-</li>
-<li><p>300年前，土地是一种财富，所以，谁拥有土地，谁就拥有财富。后来，美国依靠工厂和工业产品上升为世界头号强国，工业家占有了财富。今天，信息便是财富。问题是，信息以光一样的速度在全世界迅速传播，这种新的财富不再像土地和工厂那样具有明确的范围和界限。变化会越来越快，越来越显著，百万富翁的人数会极大地增加，同样，也会有许多人被远远地抛在后面。</p>
-</li>
-<li><p>他们没有意识到已有的某种思想或方法在昨天还是一种资产，今天却已经变成了负债。</p>
-</li>
-<li><p>富人往往更富有创造性，愿意经过精心筹划后再去冒险。</p>
-</li>
-<li><p>我知道在现实生活中他们也会做同样的事情——眼看着有许多大生意可做，手头上却没有钱。</p>
-</li>
-<li><p>拥有理财能力就意味着拥有更多的选择机会。如果机会并没按你的预想降临，那么你还能做点什么来改善自己的财务状况呢？如果机会降临了，你却没有钱，银行也不帮你，那你又该做些什么来利用这一机会使自己受益呢？如果你的预感是错误的，你所预计的事情并没有发生，你又如何将一笔小钱变成数百万美元？这就是理财能力。当你想要的没有出现时，你能想出多少种理财方法来把一笔小钱变成数百万美元。这就要看你在解决财务问题上有怎样的创造性了。</p>
-</li>
-<li><p>那么，为什么你想提高自己的理财能力呢？因为你想成为能够自己创造机遇的人。你能够坦然地接受发生的任何事情，并努力使事情变得更好。很</p>
-</li>
-<li><p>我发展自己的财商是因为我想参加这场世界上最快、最大的金钱游戏。以我自己的观点来看，我愿意加入这场史无前例的人性革命的洪流，并投身到这个靠脑力而不是体力来工作的时代。除此之外，这也是一场行动，正在发生，紧追猛赶，惊险且充满乐趣。</p>
-</li>
-<li><p>1．辛苦工作，薪水的50%用于缴税，省下的钱拿去储蓄。你的存款利率为5%，而且利息还要再缴税。<br>2．花些时间来提高你的财商，增强你的动脑能力，从而增加你的资产。</p>
-</li>
-<li><p>1.财务知识。即阅读理解数字的能力。2．投资策略。即以钱生钱的科学。3．市场、供给与需求。贝尔提供了市场所需要的东西，比尔·盖茨也是如此。用2万美元买了一套值7.5万美元的房子，以6万美元的价格卖出，也就是抓住了市场所创造的机会。在市场上，总是有买方，就有卖方。</p>
-</li>
-<li><p>我之所以想不断地提高自己的财商，是因为每当市场发生变化时，一些人会去乞求保住一份工作，而另一些人会接到生活抛给他们的酸柠檬——我们每个人偶尔都会有这样的坏运气——然后将其变成数以百万计的美元。这就是财商。</p>
-</li>
-<li><p>下面是我用例证的5个原因：<br>1．激励人们学习更多的知识；<br>2．告诉人们如果打好基础，将来的道路就会平坦很多；<br>3．告诉人们每个人都能获得巨大的财富；<br>4．告诉人们条条大路通罗马；<br>5．告诉人们财务知识并不深奥。</p>
-</li>
-<li><p>在任何一项投资中，成功的办法都是运用你的技术知识、智慧以及对于这个游戏的热爱来减少意外、降低风险。当然，风险总是存在的，但你的财商可以提高你应付意外的能力</p>
-</li>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">loaders: [</span><br><span class="line">    &#123;</span><br><span class="line">        test: <span class="regexp">/\.js$/</span>,</span><br><span class="line">        loader: <span class="string">'babel-loader'</span>,</span><br><span class="line">        <span class="comment">// 指定 exclude，include 可以提升打包速度</span></span><br><span class="line">        exclude: path.resolve(__dirname, <span class="string">'/node_modules/'</span>),</span><br><span class="line">        include: path.resolve(__dirname, <span class="string">'/src/'</span>),</span><br><span class="line">        query: &#123;</span><br><span class="line">            <span class="string">"presets"</span>: [<span class="string">"latest"</span>]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        test: <span class="regexp">/\.css$/</span>,</span><br><span class="line">        loader: <span class="string">'style-loader!css-loader!postcss-loader'</span>,</span><br><span class="line">        loaders: [</span><br><span class="line">            <span class="string">'style-loader'</span>,</span><br><span class="line">            <span class="string">'css-loader'</span>,</span><br><span class="line">            <span class="string">'postcss-loader'</span></span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h2 id="webpack-处理项目中的-CSS-文件"><a href="#webpack-处理项目中的-CSS-文件" class="headerlink" title="webpack 处理项目中的 CSS 文件"></a>webpack 处理项目中的 CSS 文件</h2><ul>
+<li>css-loader: 支持 css 文件作为模块引入 js 中（require/import） 方式</li>
+<li>style-loader: 为了在html中以style的方式嵌入css</li>
 </ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    test: <span class="regexp">/\.css$/</span>,</span><br><span class="line">    <span class="comment">// 处理顺序，从右到左</span></span><br><span class="line">    <span class="comment">// importLoaders=1 的作用</span></span><br><span class="line">    loader: <span class="string">'style-loader!css-loader?importLoaders=1'</span></span><br><span class="line">&#125;,</span><br><span class="line">&#123;</span><br><span class="line">    test: <span class="regexp">/\.css$/</span>,</span><br><span class="line">    loader: <span class="string">'postcss-loader'</span>,</span><br><span class="line">    options: &#123;</span><br><span class="line">        plugins() &#123;</span><br><span class="line">            <span class="keyword">return</span> [</span><br><span class="line">                <span class="built_in">require</span>(<span class="string">'autoprefixer'</span>)(&#123;</span><br><span class="line">                    browsers: [</span><br><span class="line">                        <span class="string">'&gt;1%'</span>,</span><br><span class="line">                        <span class="string">'last 2 versions'</span>,</span><br><span class="line">                        <span class="string">'Firefox ESR'</span>,</span><br><span class="line">                        <span class="string">'not ie &lt; 9'</span></span><br><span class="line">                    ]</span><br><span class="line">                &#125;)</span><br><span class="line">            ]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="webpack-处理项目中的-LESS-SASS-文件"><a href="#webpack-处理项目中的-LESS-SASS-文件" class="headerlink" title="webpack 处理项目中的 LESS/SASS 文件"></a>webpack 处理项目中的 LESS/SASS 文件</h2><p>less-loader<br>sass-loader</p>
+<h1 id="webpack-处理项目中的模板文件"><a href="#webpack-处理项目中的模板文件" class="headerlink" title="webpack 处理项目中的模板文件"></a>webpack 处理项目中的模板文件</h1><p>html-loader 看图</p>
+<p><img src="https://user-images.githubusercontent.com/9835391/34867665-f72bc8d6-f7bb-11e7-9e57-8827b2034043.png" alt="23222d21-dc2a-40a5-8462-344bb48d8ac3"></p>
+<p>ejs-loader</p>
+<p><a href="https://doc.webpack-china.org/loaders/" target="_blank" rel="noopener">https://doc.webpack-china.org/loaders/</a>    <code>模板(Templating)</code></p>
+<h2 id="核心概念：Plugins"><a href="#核心概念：Plugins" class="headerlink" title="核心概念：Plugins"></a>核心概念：Plugins</h2><p>加强版 Loader,可以使用 webpack 的API，需要通过require()引入并将插件实例添加到plugins数组中<br>如果还记得，可以介绍下 html-webpack-plugin</p>
 <ul>
-<li><p>大部分人无法致富仅仅是因为他们没有受到理财训练，因而不知道机会其实就在眼前。</p>
-</li>
-<li><p>致富也是同样的道理，但不幸的是，大部分人贫穷的主要原因就在于他们太担心失去。胜利者不害怕失败，但失败者害怕。失败是成功过程中的一个组成部分，如果避开失败，也就不会成功。</p>
-</li>
-<li><p>1．第一类也是最普遍的一类，即进行一揽子投资的人。他们联系一家从事经营个人投资。2．第二类是自己创造投资机会的投资者。</p>
-</li>
-<li><p>如何寻找其他人都忽视的机会。</p>
-</li>
-<li><p>大多数人眼睁睁地让缺少资金阻止了他们去达成交易，如果你能越过这个障碍，你就能比那些没能掌握这些技能的人早一步成为百万富翁</p>
-</li>
-<li><p>怎样把精明的人组织起来？</p>
-</li>
+<li>代码热替换, HotModuleReplacementPlugin (开发的时候无需刷新页面即可看到更新)</li>
+<li>生成 html 文件，HtmlWebpackPlugin</li>
+<li>将 CSS 成生文件，而非内联，ExtractTextPlugin</li>
+<li>代码丑化，UglifyJsPlugin，开发过程中不建议打开</li>
+<li>多个 html共用一个 js 文件 (chunk)，可用 CommonsChunkPlugin,</li>
+<li>webpack-bundle-analyzer: 用视图的形式分析bundle.js中的每个模块</li>
+<li>清理文件夹，Clean</li>
+<li>报错但不退出webpack进程，NoErrorsPlugin</li>
+<li>调用模块的别名 ProvidePlugin，例如想在 js 中用 $，如果通过 webpack 加载，需要将 $ 与 jQuery 对应起来</li>
 </ul>
-<ul>
-<li><p>正如一句格言所说：“工作（job）一词就是‘比破产强一点’（justoverbroke）</p>
-</li>
-<li><p>相反，我劝告年轻人在找工作时要看能从中学到什么，而不是只看能挣多少钱。在选择某种职业或陷入“老鼠赛跑”的陷阱之前，要仔细看看脚下的路，弄清楚自己到底想获得什么技能。</p>
-</li>
-<li><p>我经常向人们提一个问题：“你终日忙碌的目的是什么？”就像那只小老鼠一样，我想知道人们是否会想一想，这样辛苦地工作到头来究竟是为了什么？未来的日子又会怎样呢？</p>
-</li>
+<p><img width="780" alt="55cdd3e7-c74c-471f-b072-b7d96e9a5f5a" src="https://user-images.githubusercontent.com/9835391/34867687-08ec271e-f7bc-11e7-976e-afec483c62a0.png"></p>
+<p><img src="https://user-images.githubusercontent.com/9835391/34867723-2501ee7a-f7bc-11e7-95c8-c2d09440145a.png" alt="d2efe2b5-97d8-4fc5-b4b3-f5b221336f21"></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a href="https://github.com/ruanyf/webpack-demos" target="_blank" rel="noopener">阮一峰 Webpack Demos</a> △</li>
+<li><a href="https://github.com/postcss/postcss" target="_blank" rel="noopener">postcss github</a></li>
+<li><a href="http://babeljs.io/docs/plugins/" target="_blank" rel="noopener">参考 babel 官网</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2016/01/babel.html" target="_blank" rel="noopener">阮一峰 Babel 入门教程</a></li>
+<li><a href="https://doc.webpack-china.org/contribute/writing-a-plugin/#-" target="_blank" rel="noopener">如何编写一个Plugin</a></li>
+<li><a href="https://doc.webpack-china.org/contribute/writing-a-loader/#-" target="_blank" rel="noopener">如何编写一个Loader</a></li>
 </ul>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2018/07/22/富爸爸穷爸爸笔记/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2018/08/05/webpack01/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/07/22/富爸爸穷爸爸笔记/" data-id="cjpr5sb2o000w32ghezppugx2" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/08/05/webpack01/" data-id="cjpr5sb2f000n32ghbzoichu4" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2018/07/22/富爸爸穷爸爸笔记/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2018/08/05/webpack01/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -246,23 +243,23 @@
       <ul>
         
           <li>
+            <a href="/2019/01/04/es6/es01/">ES6</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/03/css/bgimage/">CSS 根据设备像素比引用不同比例的图片</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/03/css/css1px/">CSS 实现1px border</a>
+          </li>
+        
+          <li>
             <a href="/2018/12/13/reprint/rep02/">深入Babel，这一篇就够了</a>
           </li>
         
           <li>
             <a href="/2018/12/12/reprint/rep01/">一口(很长的)气了解 babel</a>
-          </li>
-        
-          <li>
-            <a href="/2018/11/23/node/node-06/">Node 学习笔记06 - 内存控制</a>
-          </li>
-        
-          <li>
-            <a href="/2018/11/08/node/node-05/">Node 学习笔记05 - 异步I/O</a>
-          </li>
-        
-          <li>
-            <a href="/2018/11/08/平凡的世界/">平凡的世界读后感</a>
           </li>
         
         <li><a class="more" href="/archives"><strong>更多文章......<strong></a></li>
@@ -297,7 +294,7 @@
   
   <div class="outer">
     <div id="footer-left">
-      &copy; 2014 - 2018 陈广宵
+      &copy; 2014 - 2019 陈广宵
     </div>
      <div id="footer-right">
       联系方式&nbsp;|&nbsp;chengx@guangxiao.me

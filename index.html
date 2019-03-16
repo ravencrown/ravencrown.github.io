@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-es6/es01" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-javascript/thistype" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/01/04/es6/es01/">ES6</a>
+      <a class="article-title" href="/2019/03/05/javascript/thistype/">this 的四种绑定方式</a>
     </h1>
   
 
@@ -79,7 +79,7 @@
           
   <div class="article-category1">
     
-    <a class="article-category-link" href="/categories/ES6语法/">分类：ES6语法</a>
+    <a class="article-category-link" href="/categories/JavaScript/">分类：JavaScript</a>
   </div>
 
         </div>
@@ -88,31 +88,56 @@
       
         <!-- Table of Contents -->
         
-        <h2 id="ES6-常见问题"><a href="#ES6-常见问题" class="headerlink" title="ES6 常见问题"></a>ES6 常见问题</h2><blockquote>
-<ul>
-<li>ES6 模块化如何使用，开发环境如何打包</li>
-<li>Class 和普通构造函数有何区别</li>
-<li>Promise 的基本使用和原理</li>
-<li>ES6 常用功能</li>
+        <ul>
+<li>默认绑定</li>
+<li>显示绑定</li>
+<li>隐式绑定</li>
+<li>new 绑定</li>
 </ul>
-</blockquote>
-<h2 id="ES6-模块化如何使用，开发环境如何打包"><a href="#ES6-模块化如何使用，开发环境如何打包" class="headerlink" title="ES6 模块化如何使用，开发环境如何打包"></a>ES6 模块化如何使用，开发环境如何打包</h2><h3 id="模块化的基本语法"><a href="#模块化的基本语法" class="headerlink" title="模块化的基本语法"></a>模块化的基本语法</h3><h3 id="开发环境配置"><a href="#开发环境配置" class="headerlink" title="开发环境配置"></a>开发环境配置</h3><h3 id="关于-JS-众多模块化标准"><a href="#关于-JS-众多模块化标准" class="headerlink" title="关于 JS 众多模块化标准"></a>关于 JS 众多模块化标准</h3><h2 id="Class-和普通构造函数有何区别"><a href="#Class-和普通构造函数有何区别" class="headerlink" title="Class 和普通构造函数有何区别"></a>Class 和普通构造函数有何区别</h2><h3 id="JS-构造函数"><a href="#JS-构造函数" class="headerlink" title="JS 构造函数"></a>JS 构造函数</h3><h3 id="class-基本语法"><a href="#class-基本语法" class="headerlink" title="class 基本语法"></a>class 基本语法</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 普通构造函数写法</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Math</span> (<span class="params">x, y</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.x = x;</span><br><span class="line">    <span class="keyword">this</span>.y = y</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">Math</span>.prototype.add = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.x + <span class="keyword">this</span>.y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> m = <span class="keyword">new</span> <span class="built_in">Math</span>(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="built_in">console</span>.log(m.add());  <span class="comment">// 3</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ES6 语法</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Math</span> </span>&#123;</span><br><span class="line">    <span class="keyword">constructor</span> (x, y) &#123;</span><br><span class="line">        <span class="keyword">this</span>.x = x;</span><br><span class="line">        <span class="keyword">this</span>.y = y;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    add () &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.x + <span class="keyword">this</span>.y</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> m = <span class="keyword">new</span> <span class="built_in">Math</span>(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="built_in">console</span>.log(m.add()) <span class="comment">// 3</span></span><br></pre></td></tr></table></figure>
-<h3 id="语法糖"><a href="#语法糖" class="headerlink" title="语法糖"></a>语法糖</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Math</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typeof</span> <span class="built_in">Math</span> <span class="comment">// function</span></span><br><span class="line"><span class="built_in">Math</span> === <span class="built_in">Math</span>.prototype.constructor <span class="comment">// true</span></span><br><span class="line">m.__proto__ === <span class="built_in">Math</span>.prototype <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-<h3 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ES6 继承方式</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">    <span class="keyword">constructor</span> (name) &#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    eat () &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`<span class="subst">$&#123;<span class="keyword">this</span>.name&#125;</span>eat`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span> <span class="keyword">extends</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">    <span class="keyword">constructor</span> (name) &#123;</span><br><span class="line">        <span class="keyword">super</span>(name);</span><br><span class="line">        <span class="keyword">this</span>.name = name</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    say () &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`<span class="subst">$&#123;<span class="keyword">this</span>.name&#125;</span>say`</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> dog = <span class="keyword">new</span> Dog(<span class="string">'hasiqi'</span>);</span><br><span class="line">dog.eat();</span><br><span class="line">dog.say();</span><br></pre></td></tr></table></figure>
+<p>其他非正式的绑定</p>
+<ul>
+<li>硬绑定/软绑定</li>
+<li>箭头绑定</li>
+</ul>
+<h2 id="默认绑定"><a href="#默认绑定" class="headerlink" title="默认绑定"></a>默认绑定</h2><p>函数不带任何修饰的函数引用（上下文）进行调用的。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span> </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> a = <span class="number">2</span>;</span><br><span class="line">foo() <span class="comment">// 2</span></span><br></pre></td></tr></table></figure></p>
+<p>但是如果使用严格模式，则不能将全局对象用于默认绑定，因此 <code>this</code> 会绑定到 <code>undefined</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span> </span>&#123;</span><br><span class="line"><span class="meta">    "use strict"</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> a = <span class="number">2</span>;</span><br><span class="line">foo() <span class="comment">//  TypeError: this is undefined</span></span><br></pre></td></tr></table></figure>
+<p>兼容<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span> </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> a = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">(<span class="function"><span class="keyword">function</span> </span>&#123;</span><br><span class="line"><span class="meta">    "use strict"</span>;</span><br><span class="line">    foo()  <span class="comment">// 2</span></span><br><span class="line">&#125;)()</span><br></pre></td></tr></table></figure></p>
+<h2 id="隐式绑定"><a href="#隐式绑定" class="headerlink" title="隐式绑定"></a>隐式绑定</h2><p>这一条考虑的是调用位置是否有上线对象</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj2 = &#123;</span><br><span class="line">    a: <span class="number">10</span>,</span><br><span class="line">    foo: foo</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj1 = &#123;</span><br><span class="line">    a: <span class="number">20</span>,</span><br><span class="line">    foo: foo</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">obj1.obj2.foo(); <span class="comment">// 10</span></span><br></pre></td></tr></table></figure>
+<p>如果这么思考的话，可以认为默认绑定的上下文是window<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span> </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> a = <span class="number">2</span>;</span><br><span class="line">foo() <span class="comment">// 上下文是 window，这里可以看做  window.foo()</span></span><br></pre></td></tr></table></figure></p>
+<p>在全局作用域中声明 <code>foo</code>，实际上等于 声明<code>window.foo</code></p>
+<h3 id="隐式丢失"><a href="#隐式丢失" class="headerlink" title="隐式丢失"></a>隐式丢失</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.a)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    a: <span class="number">10</span>,</span><br><span class="line">    foo: foo</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> bar = obj.foo;</span><br><span class="line"><span class="keyword">var</span> a = <span class="string">"oops, global"</span>;</span><br><span class="line">bar(); <span class="comment">// "oops, global"</span></span><br></pre></td></tr></table></figure>
+<p>此时的<code>bar()</code>，实际上是不带任何修饰函数调用，因此使用默认绑定</p>
+<h2 id="显示绑定"><a href="#显示绑定" class="headerlink" title="显示绑定"></a>显示绑定</h2><p>call, apply 等绑定</p>
+<h2 id="this-绑定"><a href="#this-绑定" class="headerlink" title="this 绑定"></a>this 绑定</h2><p>首先重新定义 <code>JavaScript</code>中的构造函数。</p>
+<p>在JavaScript中，构造函数指的是一些使用 <code>new</code> 操作符时被调用的函数。他们并不属于某个类，也不会实例化一个类。实际上，他们甚至不能说是一种特殊的函数类型，他们只是被 <code>new</code> 操作符调用的普通函数</p>
+<p>使用<code>new</code>来调用函数，或者说发生构造函数调用时候，会自动执行下面的操作</p>
+<ul>
+<li>创建（或者说构造）一个全新的对象 </li>
+<li>这个新对象会被执行[[ Prototype ]] 连接</li>
+<li>这个新对象会被绑定到函数调用的this</li>
+<li>如果函数没有返回其他对象，那么 new 表达式的函数调用会自动返回这个新对象</li>
+</ul>
+<h2 id="优先级"><a href="#优先级" class="headerlink" title="优先级"></a>优先级</h2><ol>
+<li>new 绑定</li>
+<li>显示绑定</li>
+<li>隐式绑定</li>
+<li>默认绑定</li>
+</ol>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2019/01/04/es6/es01/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2019/03/05/javascript/thistype/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2019/01/04/es6/es01/" data-id="cjr4cnfb40000ksgh75gq6pw7" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2019/03/05/javascript/thistype/" data-id="cjtb8iqh700188gghgq04htqa" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2019/01/04/es6/es01/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2019/03/05/javascript/thistype/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -136,23 +161,23 @@
       <ul>
         
           <li>
-            <a href="/2019/01/04/es6/es01/">ES6</a>
+            <a href="/2019/03/05/javascript/thistype/">this 的四种绑定方式</a>
           </li>
         
           <li>
-            <a href="/2019/01/03/css/bgimage/">CSS 根据设备像素比引用不同比例的图片</a>
+            <a href="/2019/03/03/javascript/constandlet/">全局作用域中，用const和let声明的变量去哪了？</a>
           </li>
         
           <li>
-            <a href="/2019/01/03/css/css1px/">CSS 实现1px border</a>
+            <a href="/2019/03/03/javascript/jssropetype/">引擎如何对作用域查询的</a>
           </li>
         
           <li>
-            <a href="/2018/12/13/reprint/rep02/">深入Babel，这一篇就够了</a>
+            <a href="/2019/03/02/javascript/jsscopeerror/">查询作用域导致的异常</a>
           </li>
         
           <li>
-            <a href="/2018/12/12/reprint/rep01/">一口(很长的)气了解 babel</a>
+            <a href="/2019/02/25/javascript/jsenginefind/">引擎如何对作用域查询的</a>
           </li>
         
         <li><a class="more" href="/archives"><strong>更多文章......<strong></a></li>
@@ -194,7 +219,7 @@
   <div class="widget-wrap widget-wrap-categories">
     <h3 class="widget-title categories">分类</h3>
     <div class="widget" id="categories">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSS/">CSS</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ES6语法/">ES6语法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Node/">Node</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/V8引擎/">V8引擎</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/优秀转载/">优秀转载</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/前端工程化/">前端工程化</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/游记/">游记</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/理财/">理财</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/笔记本/">笔记本</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络/">网络</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/随笔/">随笔</a><span class="category-list-count">3</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSS/">CSS</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ES6语法/">ES6语法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/JavaScript/">JavaScript</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Node/">Node</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/V8引擎/">V8引擎</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/优秀转载/">优秀转载</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/前端工程化/">前端工程化</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/文章/">文章</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/笔记本/">笔记本</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/网络/">网络</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -204,7 +229,7 @@
   <div class="widget-wrap widget-wrap-categories">
     <h3 class="widget-title tagcloud">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/C/" style="font-size: 15.83px;">C++</a> <a href="/tags/CSS/" style="font-size: 17.67px;">CSS</a> <a href="/tags/CSS3/" style="font-size: 14px;">CSS3</a> <a href="/tags/ES6/" style="font-size: 14px;">ES6</a> <a href="/tags/GitChat-课程-非原创/" style="font-size: 23.17px;">GitChat 课程(非原创)</a> <a href="/tags/HTTPS/" style="font-size: 14px;">HTTPS</a> <a href="/tags/JavaScript/" style="font-size: 19.5px;">JavaScript</a> <a href="/tags/Koa/" style="font-size: 14px;">Koa</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a> <a href="/tags/Node/" style="font-size: 23.17px;">Node</a> <a href="/tags/React/" style="font-size: 14px;">React</a> <a href="/tags/Vue/" style="font-size: 21.33px;">Vue</a> <a href="/tags/Webpack/" style="font-size: 14px;">Webpack</a> <a href="/tags/babel/" style="font-size: 15.83px;">babel</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/学习力/" style="font-size: 17.67px;">学习力</a> <a href="/tags/理财/" style="font-size: 17.67px;">理财</a> <a href="/tags/随笔/" style="font-size: 17.67px;">随笔</a> <a href="/tags/香港/" style="font-size: 14px;">香港</a>
+      <a href="/tags/C/" style="font-size: 16.2px;">C++</a> <a href="/tags/CSS/" style="font-size: 18.4px;">CSS</a> <a href="/tags/CSS3/" style="font-size: 14px;">CSS3</a> <a href="/tags/ES6/" style="font-size: 14px;">ES6</a> <a href="/tags/GitChat-课程-非原创/" style="font-size: 22.8px;">GitChat 课程(非原创)</a> <a href="/tags/HTTPS/" style="font-size: 14px;">HTTPS</a> <a href="/tags/JavaScript/" style="font-size: 25px;">JavaScript</a> <a href="/tags/Koa/" style="font-size: 14px;">Koa</a> <a href="/tags/Nginx/" style="font-size: 25px;">Nginx</a> <a href="/tags/Node/" style="font-size: 22.8px;">Node</a> <a href="/tags/React/" style="font-size: 14px;">React</a> <a href="/tags/Vue/" style="font-size: 20.6px;">Vue</a> <a href="/tags/Webpack/" style="font-size: 14px;">Webpack</a> <a href="/tags/babel/" style="font-size: 16.2px;">babel</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/学习力/" style="font-size: 18.4px;">学习力</a> <a href="/tags/理财/" style="font-size: 18.4px;">理财</a> <a href="/tags/随笔/" style="font-size: 18.4px;">随笔</a> <a href="/tags/香港/" style="font-size: 14px;">香港</a>
     </div>
   </div>
 
@@ -213,7 +238,7 @@
   <div class="widget-wrap widget-wrap-categories">
     <h3 class="widget-title archive">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 

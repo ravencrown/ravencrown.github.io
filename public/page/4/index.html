@@ -60,7 +60,7 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-web_engineer/web-engineer-02" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-web_engineer/web-engineer-03" class="article article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-inner">
     
@@ -69,7 +69,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/05/web_engineer/web-engineer-02/">前端工程化（二）：前端模块化指引与实践</a>
+      <a class="article-title" href="/2018/07/07/web_engineer/web-engineer-03/">前端工程化（三）：关于包管理器你应该知道的</a>
     </h1>
   
 
@@ -88,113 +88,137 @@
       
         <!-- Table of Contents -->
         
-        <p>对于 JavaScript 开发者来说，现在每天都在和无数的模块打交道。也许你还没有注意到，从 npm 上刚安装几个包，项目中就已经有成千上万个模块了。了解模块是什么，以及它们是如何在项目中工作的，对于现在的 JavaScript 开发者变得从未有过的重要。</p>
-<p>在这篇文章中我会介绍 JavaScript 模块的标准以及相关的工具。如果你对 AMD、CommonJS、ES6 Module 这些概念还有点模糊，这篇文章会帮助你理清。后半部分会介绍 Webpack 的打包机制，希望能把 Webpack 是如何处理依赖以及合并模块这件事情讲清楚，这是我们后面讲打包优化的基础。</p>
-<h2 id="什么是模块？"><a href="#什么是模块？" class="headerlink" title="什么是模块？"></a>什么是模块？</h2><p>我们可以把工程比作我们居住的城市，而模块就是这个城市内部的各个职能系统——学校、医院、消防局等等。它们各司其职，负责着不同的功能，共同保证着城市的正常运转。</p>
-<p>在软件工程设计中，我们通常将具有特定功能的代码封装为模块。比如在一个 Web 应用里，可能会有专门负责处理网络请求的模块、专门负责日期处理的模块、专门负责渲染的模块等等，每个模块各自发挥着不同的作用，都是系统不可缺少的一部分。</p>
-<p>具体到代码层面，模块则是一个较为笼统和宽泛的概念，实现的形式并不一样。在一些情况下，一个文件可以包含多个模块，也可以与模块一一对应。比如在工程中也许会有一个 error.js 专门用于错误处理，或者通过 util.js 来放各种工具函数，由每个文件负责一个单一的功能。</p>
-<h2 id="为什么要使用模块？"><a href="#为什么要使用模块？" class="headerlink" title="为什么要使用模块？"></a>为什么要使用模块？</h2><p>模块化的设计可以为系统带来很多好处，在我看来最重要的有以下几个：</p>
+        <p>我发现介绍 npm 以及 Yarn 等包管理器的文章相对较少，但是在我们的实际开发中却经常遇到和包管理器相关的问题。有时候我们可以通过 rm -rf node_modules &amp;&amp; npm i 暴力地将问题解决，有时候却不能。因此我决定专门写一篇文章总结下使用包管理器的正确姿势。</p>
+<h2 id="什么是包管理器？"><a href="#什么是包管理器？" class="headerlink" title="什么是包管理器？"></a>什么是包管理器？</h2><p>让我们还是从概念开始说起，包管理器是一个可以让开发者便捷地获取代码和分发代码的工具。一些具有特定功能的代码（框架、库等）按照特性形式被封装成包，开发者可以通过包管理器安装这些包，也可以把自己的代码通过包的方式分享给别人使用。</p>
+<p>在很多语言中都有包管理器，比如 Java 中的 Maven，Ruby 中的 gem。在目前 JavaScript 应用中，最主流的包管理器是 npm 和 Yarn，本文主要介绍它们。</p>
+<p>JavaScript 是一个缺乏标准库的语言。当你想解决 URL 处理、日期处理这类很常见的问题，在没有标准库的情况下就只能自己动手写代码或者从自己以前的工程中拷贝代码。而使用 npm 等包管理器最大的好处是里面有很多非常成熟的包来解决这类问题，可以直接安装到项目中使用，给开发工作带来了很大的便利。</p>
+<h2 id="npm-特性一览"><a href="#npm-特性一览" class="headerlink" title="npm 特性一览"></a>npm 特性一览</h2><p>下面我会着重介绍 npm 在开发中最常用的特性。由于不同 npm 版本之间会有一些差异，我会尽量使用共通的样例，使不同版本之间表现得尽量一致。如果你是一个初学者我建议你使用和我一样或者更高的版本，这里我使用的 npm 版本是 5.5.1。</p>
+<p><strong>初始化你的 npm 工程</strong><br>不妨让我们从工程的初始化开始介绍 npm。</p>
+<p>mkdir npm-demo &amp;&amp; cd npm-demo # 新建并进入目录<br>npm init # 初始化 npm 项目<br>初始化时会要求你输入一些基本信息，这里我们使用默认的，一路回车下来即可。接着打开工程中的 </p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">package.json：</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"name"</span>: <span class="string">"npm-demo"</span>,</span><br><span class="line">  <span class="string">"version"</span>: <span class="string">"1.0.0"</span>,</span><br><span class="line">  <span class="string">"description"</span>: <span class="string">""</span>,</span><br><span class="line">  <span class="string">"main"</span>: <span class="string">"index.js"</span>,</span><br><span class="line">  <span class="string">"scripts"</span>: &#123;</span><br><span class="line">    <span class="string">"test"</span>: <span class="string">"echo \"Error: no test specified\" &amp;&amp; exit 1"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"author"</span>: <span class="string">""</span>,</span><br><span class="line">  <span class="string">"license"</span>: <span class="string">"ISC"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里介绍几个比较重要的字段：</p>
 <blockquote>
 <ul>
-<li>1.作用域封装：在 JavaScript 中代码执行的顶层作用域即是全局作用域，这意味着变量和函数定义很容易冲突。而使用模块将代码封装起来，可保证内部实现不会暴露在全局作用域中，我们只需将模块的功能通过接口的方式暴露出去给其它模块调用即可，避免了污染全局命名空间的问题。</li>
-<li>2.重用性：在工程中经常会出现重复的部分，比如一个 Web 应用中各个页面共同的 header、footer，最原始的开发方式是将同样的代码复制粘贴到各个地方。这种做法的缺点是当这些共同的部分发生改变时，我们需要逐一改动每个地方的代码。而如果把实现一类功能的代码封装为模块之后，就可以提供给各个调用者。比如说应用中有一个 Dialog 组件，可以把它的结构和样式封装起来，在不同的页面中调用它。假如 Dialog 的样式需要调整，那么只要调整该模块那么相当于此修改对所有页面都生效。</li>
-<li>3.解除耦合：试想一下如果有一个几千行代码的文件在你的工程里，内部实现了各种各样的功能并且互相调用，这样的代码调试起来有多痛苦。将系统分解为模块的一个很重要意义就是解除各部分之间的耦合。当系统的某个部分需要发生改变的时候，通过模块我们可以快速定位问题。由于模块把功能的具体实现封装在了内部，只要模块间的接口不变，模块内部的变化对于外面的其它部分并没有感知。因此通过模块化可以提升系统的可维护性。</li>
-<li>4.按需加载：如果没有模块，所有的代码将被放在一个大文件里面统统塞给用户。当页面不断地增加功能，不断地添加代码，最终的文件只会越来越大，而页面也打开地越来越慢，对于用户来说非常不友好。使用模块化来拆分逻辑可以使页面需要的资源最先被加载，而后续的模块在恰当的时机再进行异步加载，从而让页面加载速度更快，用户也得到更好的体验。</li>
+<li>name：当我们将包上传到 npm 平台上时，它类似于该包的 id，不能和平台上已有的包冲突。别人如果要安装你这个包的时候也是用这个名字。</li>
+<li>version：这里的版本号遵循 npm 特有的 semver 语法，后面我们会特别介绍。</li>
+<li>main：这是包执行的入口，当这个包被别的地方引入的时候，引入的其实就是这个入口文件。</li>
+<li>scripts：npm 提供的脚本命令功能，比如当我们执行 npm run test，npm 就会帮我们执行后面定义的脚本，利用它可以实现很多开发和构建中的自动化命令。</li>
 </ul>
 </blockquote>
-<h2 id="JavaScript-模块发展简史"><a href="#JavaScript-模块发展简史" class="headerlink" title="JavaScript 模块发展简史"></a>JavaScript 模块发展简史</h2><p>让我们先来回顾一下 JavaScript 模块的历史是怎样演化的。</p>
-<p><strong>script 标签</strong></p>
-<p>最原始的模块实现方式是通过在页面中插入多个 script 标签。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=<span class="string">"//mycdn.com/moduleA.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">&lt;script src=<span class="string">"//mycdn.com/moduleB.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line">&lt;script src=<span class="string">"//mycdn.com/main.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
-<p>这种方法的缺陷是所有这些脚本都是共用全局的作用域。在任何一个 JavaScript 文件中进行顶层作用域的变量或函数声明，都会暴露在全局中，使得其它脚本也相应获取。当应用的规模和复杂度上升，这些脚本之间很容易发生命名冲突，从而导致不可预知的问题。</p>
-<h2 id="立即执行函数表达式"><a href="#立即执行函数表达式" class="headerlink" title="立即执行函数表达式"></a>立即执行函数表达式</h2><p>后来随着 Web 的发展，人们发现通过立即执行函数表达式（ IIFE ）可以解决命名空间的问题。IIFE 的实现原理是把代码包裹在一个函数中，并且在声明这个函数之后立即执行它，这样相当于为代码单独创建了一个作用域。比如在下面的代码中我们创建了一个立即执行函数表达式，变量的声明处于它自己的函数作用域内，与其它的模块作用域隔离开。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// foobar 并不会暴露在全局作用域</span></span><br><span class="line">  <span class="keyword">var</span> foobar = <span class="string">'Hello IIFE!'</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(foobar);</span><br><span class="line">&#125;)()</span><br></pre></td></tr></table></figure>
-<p>如果通过这种方法封装的模块需要与别的模块发生交互，则可以将特定的对象绑定在全局来允许其它模块通过全局对象获取，比如下面的形式：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// calculator.js</span></span><br><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 将 calculator 绑定在全局对象上，使其它模块调用</span></span><br><span class="line">  <span class="built_in">window</span>.calculator = &#123;</span><br><span class="line">    add: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="comment">//...</span></span><br><span class="line">    &#125;,</span><br><span class="line">    sub: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="comment">//...</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;)()</span><br><span class="line"></span><br><span class="line"><span class="comment">// app.js</span></span><br><span class="line">calculator.add(<span class="number">1</span>, <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
-<p>立即执行函数表达式的缺点在于，如果模块之间有着依赖关系，必须将它们按照特定的顺序引入到页面中。比如上面的 calculator，必须使定义 calculator 的 JavaScript 先执行，再执行调用的模块。由于这种依赖关系是隐式的，当所有这些模块都互相依赖时，文件的引入顺序将变得难以维护。</p>
-<p><strong>AMD</strong></p>
-<p>AMD 是 Asynchronous Module Definition（异步模块定义）的缩写。下面的代码使用 AMD 规范定义了一个模块：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义一个求和的模块</span></span><br><span class="line">define(<span class="string">'getSum'</span>, [<span class="string">'math'</span>], <span class="function"><span class="keyword">function</span>(<span class="params">math</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'sum: '</span> + math.sum(a, b));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>在 AMD 中定义模块是使用 define 函数，它可以接受三个参数。第一个参数是当前模块的 ID，相当于给这个模块起一个名字；第二个参数是当前模块的依赖，比如上面我们定义的 getSum 模块需要 math 模块的依赖；第三个参数可以是函数或者对象。如果是函数，可以利用函数的返回值将定义的模块接口导出；如果是对象，则代表它为当前模块的导出值。</p>
-<p>通过这种形式定义模块的好处在于，它 显式 地表达出了每个模块所依赖的其它模块。并且模块定义也不再绑定到全局对象上，不必担心其在别的地方被篡改。</p>
-<p><strong>CommonJS 与 Node.js 模块系统</strong></p>
-<p>CommonJS 是于 2009 年提出的 JavaScript 规范，它最开始是为了定义服务端标准，而非用于浏览器环境。之后 Node.js 采用并实现了它的部分规范，在模块系统上进行了一些调整。一般来说，我们不会严格区分 CommonJS 与 Node.js 的模块标准，详述两种标准的区别超出了本文的范围，在下文中我会直接使用 CommonJS 来进行表述。</p>
-<p>Browserify 的出现带来了浏览器环境模块的变革。它是一个运行在 Node 环境下的模块打包工具，可以把模块按照 Node.js 的模块规则合并为浏览器支持的形式，这使得浏览器端的框架类库也可以按照 CommonJS 的形式编写。随着 Node.js 以及 npm 流行，近两年来对于开发者来说遵循 CommonJS 标准来编写和使用模块已经成为了一个基本通识。</p>
-<p>在 CommonJS 中每个文件是一个模块，并且拥有属于自己的作用域和上下文。模块的依赖通过 <code>require</code> 函数来引入。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> math = <span class="built_in">require</span>(<span class="string">'./math'</span>);</span><br></pre></td></tr></table></figure>
-<p>如果想把模块的接口暴露给外部，则要通过 exports 将其导出，如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">exports.getSum = <span class="function"><span class="keyword">function</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>AMD 和 CommonJS 具有同样的特性——模块的依赖必须显式引入，这样就解决了之前维护复杂模块引入时的顺序问题。</p>
-<p><strong>ES6 Module</strong></p>
-<p>ES6 Module 是目前比较推荐开发者使用的模块标准。之所以在过去我们有各种不同的模块化标准是因为 JavaScript 这门语言本身不具备模块化的特性，而现在 ES6 中已经具备了。ES6 Module 的模块语法和 CommonJS 很像，它通过 import 和 export 来进行模块的导入和导出。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math <span class="keyword">from</span> <span class="string">'./math'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">sum</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在 ES6 Module 中也是每个文件作为一个模块。和 CommonJS 不同的是，ES6 Module 的模块的依赖是静态的，或者说是在编译时确定的，而不是运行时确定的。</p>
-<p>举个例子，我们可以在 CommonJS 中的 if 语句中 require 模块，根据代码运行时 if 的判断条件决定是否要引入该模块。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 根据运行时条件确定是否引入</span></span><br><span class="line"><span class="keyword">if</span>(<span class="built_in">Date</span>.now() &gt; <span class="keyword">new</span> <span class="built_in">Date</span>(<span class="string">'2019-01-01'</span>)) &#123;</span><br><span class="line">  <span class="built_in">require</span>(<span class="string">'./my_module'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>而在 ES6 Module 中则不允许这样做，import 必须在代码的顶层作用域，这意味着你不能把它放在 if 等代码块中。ES6 Module 这样规定的原因在于可以使编译器在编译阶段就可以获取到整个依赖树，从而进行代码静态分析层面的优化，比如检测出哪些模块是从来没有被使用过的，然后从打包结果中优化掉等等。</p>
-<h2 id="动态加载模块"><a href="#动态加载模块" class="headerlink" title="动态加载模块"></a>动态加载模块</h2><p>有些场景下我们希望能够动态地去加载一些模块，在 CommonJS 中可以直接使用 require 实现。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(condition) &#123;</span><br><span class="line">    <span class="built_in">require</span>(<span class="string">'moduleA'</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">require</span>(<span class="string">'moduleB'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>但是在 ES6 Module 中，由于上面我们提到的 import 是在编译时被处理而非运行时，因此无法实现动态加载的特性。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 报错</span></span><br><span class="line"><span class="keyword">if</span>(condition) &#123;</span><br><span class="line">    <span class="built_in">require</span>(<span class="string">'moduleA'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 报错</span></span><br><span class="line"><span class="keyword">var</span> foo = <span class="string">'foo'</span>;</span><br><span class="line"><span class="keyword">var</span> bar = <span class="string">'bar'</span>;</span><br><span class="line"><span class="keyword">import</span> foobar <span class="keyword">from</span> (foo + bar);</span><br></pre></td></tr></table></figure>
-<p>为了解决这个问题，tc39 提出了一个 import() 函数提案。它可以接受一个参数，指定所加载的模块，并且返回一个 Promise 对象。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> foo = <span class="string">'foo'</span>;</span><br><span class="line"><span class="keyword">var</span> bar = <span class="string">'bar'</span>;</span><br><span class="line"><span class="keyword">import</span>(foo + bar).then(<span class="function"><span class="params">module</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'foobar loaded:'</span>, <span class="built_in">module</span>);</span><br><span class="line">&#125;).catch(<span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(err);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>目前 Webpack 从 2.0.0 版本开始已经支持该动态加载形式，在后面的文章中会更加详细地进行介绍。</p>
-<h2 id="模块打包原理简述"><a href="#模块打包原理简述" class="headerlink" title="模块打包原理简述"></a>模块打包原理简述</h2><p>现在假设我们依照 ES6 Module 的规范写了一些模块，问题是如何将它们作用于我们的应用呢？现在最主流的解决方案是使用 Webpack 来处理它们。Webpack 以及其它的一些打包工具最基本的功能就是按照我们定义好的依赖树将模块合并成单一的文件，让浏览器能够按照预想的依赖顺序去执行。这个过程我们通常将它叫做模块打包。</p>
-<p>下面让我们以 Webpack 打包 ES6 Module 为例看看具体过程是如何实现的。该示例同时也放在了 GitHub 上面，可以点击 这里 查看。</p>
-<p>首先让我们创建两个文件，app.js 和 module.js：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// app.js</span></span><br><span class="line"><span class="keyword">import</span> moduleLog <span class="keyword">from</span> <span class="string">'./module.js'</span>;</span><br><span class="line"><span class="built_in">document</span>.write(<span class="string">'app.js loaded.'</span>);</span><br><span class="line">moduleLog();</span><br></pre></td></tr></table></figure>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// module.js</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">document</span>.write(<span class="string">'module.js loaded.'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>然后使用 Webpack 进行打包：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># Webpack 版本需要大于等于 2，这里使用的版本是 3.5.5</span><br><span class="line">webpack app.js dist/bundle.js</span><br></pre></td></tr></table></figure>
-<p>app.js 是我们的打包入口文件，dist/bundle.js 是最终的打包合并结果文件。Webpack 会在打包的过程中从入口 app.js 开始查找所有依赖的模块，并最终包装和合并这些模块放在 bundle.js 中。接下来让我们分析一下打包结果 dist/bundle.js 的大体结构：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params">modules</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> installedModules = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__webpack_require__</span>(<span class="params">moduleId</span>) </span>&#123;</span><br><span class="line">        <span class="comment">/* code */</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="keyword">return</span> __webpack_require__(<span class="number">0</span>); <span class="comment">// entry file</span></span><br><span class="line">&#125;)([ <span class="comment">/* modules array */</span> ]);</span><br></pre></td></tr></table></figure>
-<p>这段代码总体上来看是一个立即执行函数表达式，它只有一个参数 modules，即 Webpack 从入口文件开始检索到的所有依赖模块。每一个依赖模块会被 Webpack 进行一次包装，放到 modules array 的数组中等待代码运行时调用。</p>
-<p>上面立即执行的匿名函数体内分为几个部分。首先定义了一个 installedModules 对象用来放置已经加载过的模块。接着定义了 <code>__webpack_require__</code>，这个函数是 Webpack 模块加载的核心，可以认为它是浏览器环境下的 require。在函数体最后使用 <code>__webpack_require__</code> 加载了工程的入口模块，在浏览器中执行时即会从入口开始去逐步执行后面的模块。</p>
-<p>让我们看一下 <code>__webpack_require__</code> 的具体实现：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">__webpack_require__</span>(<span class="params">moduleId</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// Check if module is in cache</span></span><br><span class="line">    <span class="keyword">if</span> (installedModules[moduleId]) &#123;</span><br><span class="line">        <span class="keyword">return</span> installedModules[moduleId].exports;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Create a new module (and put it into the cache)</span></span><br><span class="line">    <span class="keyword">var</span> <span class="built_in">module</span> = installedModules[moduleId] = &#123;</span><br><span class="line">        i: moduleId,</span><br><span class="line">        l: <span class="literal">false</span>,</span><br><span class="line">        exports: &#123;&#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">// Execute the module function</span></span><br><span class="line">    modules[moduleId].call(</span><br><span class="line">        <span class="built_in">module</span>.exports,</span><br><span class="line">        <span class="built_in">module</span>, <span class="built_in">module</span>.exports,</span><br><span class="line">        __webpack_require__</span><br><span class="line">    );</span><br><span class="line">    <span class="comment">// Flag the module as loaded</span></span><br><span class="line">    <span class="built_in">module</span>.l = <span class="literal">true</span>;</span><br><span class="line">    <span class="comment">// Return the exports of the module</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">module</span>.exports;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>通过上面代码可以看出 <code>__webpack_require__</code> 主要做了几个事情：</p>
+<p><strong>仓库与依赖</strong></p>
+<p>在提到所有与依赖相关的话题之前，我想首先介绍 npm 仓库（ registry ）。仓库是一个遵循 npm 特定包规范的站点，它提供 API 来让用户上传和下载包、获取包信息、以及管理用户账号。</p>
+<p>npm 提供了一个官方的仓库，但是在国内由于特定原因我们需要翻墙才能使用它。因此一般的做法是使用淘宝提供的仓库。设置方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm config set registry https:<span class="comment">//registry.npm.taobao.org</span></span><br></pre></td></tr></table></figure>
+<p>通过 <code>npm install</code> 我们可以从远程或者目标路径获取 npm 包。这里有一些比较重要的参数：</p>
 <blockquote>
 <ul>
-<li>检查该模块是否已经加载过，如果是则直接返回已加载过的</li>
-<li>添加 moduleId 等属性，并把该模块放进 installedModules</li>
-<li>将模块 this 指到它的 module.exports，并执行已经包装好的模块逻辑</li>
-<li>返回 modules.exports</li>
+<li>-S, –save：在 npm5 以前，你需要指定这个参数来让刚刚安装的包记录在 package.json 的 dependencies 中，否则只是安装在项目本地的 node_modules 中。一般我们要求必须要加这个参数，否则就会造成不同环境下 npm install 的结果不一样。在 npm5 之后这变成了一个默认行为而不需要手动添加了。</li>
+<li>-D, –save-dev：指定当前环境是开发环境，将包的信息记录在 devDependencies 中。</li>
 </ul>
 </blockquote>
-<p>在 Webpack 包装模块代码的时候，会把 <code>__webpack_require__</code> 作为参数传进去。在实际的模块代码中，导入其它模块的语句都会被替换为这种浏览器可以执行的形式，通过这种方式使模块间有了互相调用的能力。</p>
-<p>纵观整个 bundle.js，Webpack 主要在打包中处理了下面这些问题：</p>
+<p>在 npm 中依赖主要分为两种—— dependencies 和 devDependencies（还有其它类型的依赖但是这里不涉及）。两者的区别在于 dependencies 是生产环境下的依赖（ prod )，devDependencies 则是开发环境下的依赖（ dev ）。</p>
+<p>比如说我现在工程中的 pakcage.json 是这样：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"name"</span>: <span class="string">"npm-demo"</span>,</span><br><span class="line">  <span class="string">"dependencies"</span>: &#123;</span><br><span class="line">    <span class="string">"split"</span>: <span class="string">"^1.0.1"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"devDependencies"</span>: &#123;</span><br><span class="line">    <span class="string">"q"</span>: <span class="string">"^1.5.0"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <blockquote>
 <ul>
-<li>从入口文件开始分析整个应用的依赖树</li>
-<li>将每个依赖模块包装起来，并放到一个数组中等待调用</li>
-<li>实现模块加载的方法，并提供到模块执行的环境中，使得模块间可以互相调用</li>
-<li>将执行入口文件的逻辑放在一个立即执行函数表达式中</li>
+<li>当不加任何参数时执行 npm install，这两个包都会被安装到 node_modules 中。</li>
+<li>当执行 npm install –only=prod，只会安装 dependencies 中的包。</li>
+<li>当执行 npm install –only=dev，只会安装 devDependencies 中的包。</li>
 </ul>
 </blockquote>
-<p>当浏览器执行这个 bundle.js 时，首先会执行入口文件的逻辑，接着会利用 Webpack 提供好的模块以及模块的加载方法来根据依赖关系一步步执行整个应用。以上就是一个简单的 Webpack 处理打包的过程。</p>
-<h2 id="ES6-Module-与浏览器"><a href="#ES6-Module-与浏览器" class="headerlink" title="ES6 Module 与浏览器"></a>ES6 Module 与浏览器</h2><p>到写这篇文章为止，现代的浏览器已经开始逐渐支持 JavaScript 模块语法，包括 Chrome、Safari、Edge 以及 Firefox（后两者需要开启实验特性标识），这意味着我们也可以不使用 Webpack 等打包工具，而直接采用 ES6 Module 的语法编写我们的模块。下面的示例可以直接运行在支持 ES6 Module 的浏览器上：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=<span class="string">"module"</span> src=<span class="string">"app.js"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br><span class="line"><span class="comment">// main.js</span></span><br><span class="line"><span class="keyword">import</span> &#123;log&#125; <span class="keyword">from</span> <span class="string">"./module.js"</span>;</span><br><span class="line">log();</span><br><span class="line"><span class="comment">// module.js</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> log = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'module.js loaded.'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>不过这种方式目前还存在两个问题：</p>
+<p>通过添加安装参数，可以实现环境区分。当工程规模比较大的时候，通过只安装当前环境的包可以加快总体安装的速度。另外一点需要注意的是，当我们把当前这个包发布出去以后，别人通过 <code>npm install npm-demo</code> 安装它时，只会安装它的 dependencies，而会忽略 devDependencies。这意味着所有与功能相关的依赖都要放在 dependencies 中，而 devDependencies 中通常会放一些如构建工具（ Rollup ）、质量检测工具（ Eslint ）等只有本地开发才使用的包。</p>
+<p><strong>semver ——一把双刃剑</strong></p>
+<p>上面提到版本号 ^1.0.1 前面的 ^ 是 npm 特有的 semver 版本号语法中的符号。semver 全称是 semantic versioning，也就是语义化的版本。它设计的初衷在于允许依赖的版本是动态的，因而可以快捷地获取到一定范围内的最新版本。下面列出了 semver 的各种形式来让我们直观地理解一下：</p>
 <blockquote>
 <ul>
-<li>对于不支持 ES6 Module 的浏览器如何向下兼容。对于同一个页面来说要兼容两种浏览器就需要插入两种脚本，打包过的和未打包过的，目前来看这个问题不可避免。</li>
-<li>仍然需要由工具来完成一些其它的构建任务，比如代码预编译、tree-shaking、代码压缩等等，这些还没有办法直接在浏览器层面解决。</li>
+<li>^version：对应所有中版本号和小版本号。比如 ^1.0.1 可以理解为所有形式为 1.x.x 的最新版本。</li>
+<li>~version：对应所有小版本号。比如 ~1.0.1 可以理解为所有形式为 1.0.x 的最新版本。</li>
+<li>version：对应特定版本。比如版本号为 1.0.1 ，则安装的模块版本只能为 1.0.1。</li>
 </ul>
 </blockquote>
-<p>个人认为随着浏览器对于 JavaScript 模块化支持的成熟，这些问题也会有相应地解决方案，相信在未来几年 JavaScript 模块化的实现会给开发者带来更多的改变。</p>
+<p>动态版本使得开发者无需更改 pakcage.json 中的依赖版本信息，便可以获取到他所定义的范围内最新的版本。比如当我们通过 <code>npm install split</code> 安装了这个包之后，package.json 中它的版本号为 <code>^1.0.1</code>。当 split 这个包的作者发布了一个新的版本 1.0.2 的时候，我们下次重新执行 <code>npm install</code> 就会装这个 1.0.2 的版本了。</p>
+<p>semver 带来的优势是可以使 npm 包的发布者很方便地将小版本推送到使用者。比如当有一些小的 bugfix 时候，用户不需要有任何感知，便可以将其中的问题修复。其实 npm 对于各个版本号的意义也有约定。</p>
+<blockquote>
+<ul>
+<li>小版本发布（如 1.0.1 -&gt; 1.0.2）：bugfix 以及微小的改动</li>
+<li>中版本发布（如 1.0.1 -&gt; 1.1.0）：添加了新的特性，同时并不会破坏原有的功能或更改接口</li>
+<li>大版本发布（如 1.0.1 -&gt; 2.0.0）：添加了破坏性的改动，有功能或接口不再兼容</li>
+</ul>
+</blockquote>
+<p>只要包的发布者和使用者都遵循这样的规则，那么还是能带来很多收益的。但是问题就在于这种约定并非强制，也并不能保证百分百的开发者都能遵守。试想一下，假如某一个包的开发者更改了接口名称，而只发布了一个小版本。那所有调用了这个更改前的接口的使用方，在不知情的情况下更新到这个新版本就无法正常工作了。</p>
+<p>之前公司内部的一个项目使用了一个 UI 库，在几乎未改任何代码的情况下重新发布之后发现页面样式出了问题，造成了线上故障。开发同学查了很久才发现是 UI 库自己升了一个小版本，把自己内部的一处样式改掉了。类似这样的问题其实很难避免，在使用 semver 动态规则的同时，我们的应用无时不刻在冒着依赖不稳定的风险。</p>
+<p><strong>固定版本号，保障你的应用</strong></p>
+<p>由之前的讨论可以看出，为了保证构建的可靠性，需要将 JavaScript 模块的版本固定下来，这样才能使每次构建的结果保持一致。可能也是发现了 semver 存在这样的问题，在 npm 早期的版本中提供了 shrinkwrap 这样一个固定模块版本号的功能。在项目中执行 <code>npm shrinkwrap</code>，即可根据当前 node_moduels 中的包信息生成依赖和版本描述信息—— npm-shrinkwrap.json。当该工程下一次执行 <code>npm install</code> 时，就会按照该文件中的信息获取特定的版本，而不再使用 package.json 中的动态版本规则。一个 shrinkwrap 文件的结构类似以下这种形式：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"name"</span>: <span class="string">"foobar"</span>,</span><br><span class="line">  <span class="string">"version"</span>: <span class="string">"1.0.0"</span>,</span><br><span class="line">  <span class="string">"dependencies"</span>: &#123;</span><br><span class="line">    <span class="string">"through"</span>: &#123;</span><br><span class="line">      <span class="string">"version"</span>: <span class="string">"2.3.8"</span>,</span><br><span class="line">      <span class="string">"resolved"</span>: <span class="string">"https://registry.npmjs.org/through/-/through-2.3.8.tgz"</span>,</span><br><span class="line">      <span class="string">"integrity"</span>: <span class="string">"sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU="</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>利用 shrinkwrap 我们可以保证构建的一致性，但是在实际使用中仍然存在一些问题。在较低版本的 npm 中，当我们执行模块的添加、更新、删除操作时，shrinkwrap.json 并不会自动同步，仍然需要手动执行 npm shrinkwrap，这无疑使工作流程更复杂。假如某个项目成员忘记了手动同步，就会导致最终构建结果与预期不一致。另外 shrinkwrap 作为 npm 中一个非默认的构建模式，让每个人接受和使用仍需要一定的学习成本。</p>
+<p>在 npm4 中解决了这个问题，shrinkwrap.json 不再需要手动维护，当执行包的安装、更新、删除等操作后 npm 会自动为我们更新它。而到了 npm5 的版本，固定版本号成为了一个默认行为，并且提出了新的约束版本号的文件—— package-lock.json。它和 shrinkwrap.json 本质上是同样的结构和功能，唯一的区别在于 package-lock.json 只能用在顶层包而不能存在于依赖包中，而 shrinkwrap.json 则可以。</p>
+<p>早期版本的 shrinkwrap 命令还不够成熟，在生成过程中容易出现错误。因此建议最好使用 npm5 的固定版本号功能，无论是 package-lock.json 还是 shrinkwrap.json，只要存在一个于工程中即可保证构建过程中依赖的稳定性。</p>
+<p><strong>使用 scripts 让工作自动化</strong></p>
+<p>在初始化 npm 项目时候，我们在 package.json 看到有 scripts 字段：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"scripts"</span>: &#123;</span><br><span class="line">    <span class="string">"test"</span>: <span class="string">"echo \"Error: no test specified\" &amp;&amp; exit 1"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是 npm 提供的脚本命令功能，脚本命令分为两种：</p>
+<blockquote>
+<ul>
+<li>npm 生命周期命令：在一个 npm 包的发布和安装等过程中允许开发者写很多钩子，比如 preinstall、postinstall、prepublish、postpublish 等等，这对于包的开发者来说非常有用。</li>
+<li>自义命令：这里是除了以上那些生命周期中的命令以外的命令，允许开发者自行定义命令名称和执行脚本。</li>
+</ul>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"scripts"</span>: &#123;</span><br><span class="line">    <span class="string">"dev"</span>: <span class="string">"webpack-dev-server"</span>,</span><br><span class="line">    <span class="string">"build"</span>: <span class="string">"eslint ./src &amp;&amp; webpack"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面两个自定义命令，分别包含了使用于不同环境下的脚本，通过这项功能我们可以免去总是输入一大串命令的痛苦。合理地配置 scripts 甚至可以使我们不必使用 Gulp、Grunt 等自动化流程工具，完全交给 npm scripts 来完成。</p>
+<h2 id="Yarn-带来的变革"><a href="#Yarn-带来的变革" class="headerlink" title="Yarn 带来的变革"></a>Yarn 带来的变革</h2><p>Yarn 是 Facebook 公司在 2016 年 10 月 11 日开源的模块管理器，它宣称比 npm 更快、更安全、更可靠。Yarn 并不重头建立一个新的 Javascript 模块仓库，而只是替代 npm 客户端来管理原有的 node_modules 中的模块，并弥补 npm 的缺陷。鉴于某些原因，为了使用 Yarn ，我们需要把它的源指向国内，比如采用 cnpm 的源：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn config set registry https:<span class="comment">//registry.npm.taobao.org</span></span><br></pre></td></tr></table></figure>
+<p>在 Yarn 出现的时候，npm 还是 4 的版本。那时候锁定版本号并不是一个默认行为，Yarn 带来的一个重大改进就是会帮助开发者自动生成和维护版本号描述文件。初次执行 Yarn 时会在项目中自动生成一个名为 yarn.lock 的文件，它与 npm shrinkwrap 的内容形式很相近，并且会随着模块的更新自动同步。</p>
+<p>Yarn 在当时另外一项比较大的改进就是性能比当时 npm 更优。Yarn 为了解决当时 npm 安装模块速度慢问题，在拉取包时采用并行操作，优化了请求队列，更高效地利用当前的网络资源。同时默认的 yarn.lock 也无形中减少了解析 semver 与获取模块最新版本的时间。</p>
+<p>npm 的版本号锁定问题和性能问题其实已经被开发者诟病了许久，Yarn 这个竞争对手的出现可以说给 npm 带来了改进的动力。后来 npm5 出现学习了很多 Yarn 的特性，比如 npm 现在也会默认生成的 pakcage-lock.json，并且改进了缓存策略来提升安装包时候的速度。</p>
+<p>对于开发者来说目前 npm5 和 Yarn 都是可以满足日常开发需要的，使用自己觉得顺手的工具就好。</p>
+<h2 id="使用包管理器的正确姿势"><a href="#使用包管理器的正确姿势" class="headerlink" title="使用包管理器的正确姿势"></a>使用包管理器的正确姿势</h2><p>使用 npm5 或 Yarn 来管理模块<br>对于现在的开发者来说不建议使用低版本 npm 进行开发，原因如下：</p>
+<blockquote>
+<ul>
+<li>npm3 之前有一个很大的问题，即 node_modules 中的包层级是嵌套的，这会造成整个安装速度极慢且有很多重复和冗余的包。</li>
+<li>早期的 npm 版本安装模块不会自动生成包版本信息文件，这个问题上面已经说了，会为构建过程留下隐患。</li>
+<li>npm5 和 Yarn 有更加良好的缓存机制，可以有效提升安装速度。</li>
+<li>现在的工具有更友善的交互，报错信息也会比较清晰，方便查找模块安装错误。</li>
+</ul>
+</blockquote>
+<p><strong>万能修复大法？rm -rf node_modules &amp;&amp; npm i</strong></p>
+<p>很多开发同学在使用 npm 的时候一发现 npm 模块有问题就执行 <code>rm -rf node_modules &amp;&amp; npm i</code>，一些情况下可以解决问题，一些情况下却不能，让我们尝试去看看这是为什么。</p>
+<p>当我们执行 npm install 或者 yarn 来安装模块的时候，大概经历了几个过程：</p>
+<blockquote>
+<ul>
+<li>首先会寻找包版本信息文件（ pakcage-lock.json，yarn.lock等），如果发现有版本信息文件，则依照它来进行模块安装。</li>
+<li>检查 pakcage.json 中的依赖，如果此时项目中不存在版本信息文件，则完全按照 pakcage.json 进行安装，并生成一个版本信息文件。如果此时存在版本信息文件，则只会安装 package.json 中有而版本信息文件中没有的包。</li>
+<li>如果确实有这种新包，则更新版本信息文件。</li>
+</ul>
+</blockquote>
+<p>因此当我们发现项目中的某个包和我们预想不一致时，首先查看版本信息文件中该包的来源和版本，因为在安装过程中它的优先级最高。有的时候执行了 rm -rf node_modules &amp;&amp; npm i 也没有解决问题，可能是由于版本信息文件中这个包本身就有问题，无论你怎么删掉重装也还是一样。</p>
+<p><strong>不知道包怎么来的？试试 yarn why</strong></p>
+<p>npm 依赖包的层级通常很深，有时候我们不知道怎么就把一个包装在项目里了，但是又不清楚它是由谁引入的，这时可以通过 yarn 来帮我们查看。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn why &lt;package-name&gt;</span><br></pre></td></tr></table></figure>
+<p>通过 log 可以清晰地看出依赖关系，都有哪些包把 lodash 引入到了项目中。</p>
+<p><strong>搭建内网 npm 仓库</strong></p>
+<p>在日常开发中，很多公司内部的包我们不希望发布到 npm 官方仓库，因为里面可能涉及一些不希望暴露给外部的代码。这时我们可以选择在公司内网搭建 npm 私有仓库。</p>
+<p>借助 npm 的 scope 特性我们可以实现公有和私有包的区分，在为 npm 包设定名字的时候可以加上 <code>scope</code>。它的格式是 <code>@somescope/somepackagename</code>，比如公司内部的包命名可以为 <code>@mynpm/myui</code>，这种包只能上传到私有仓库，官方仓库是不接受的。</p>
+<p>现在比较主流的解决方案有 <code>cnpm</code> 和 <code>verdaccio</code>。两者的区别主要在于同步官方仓库包的机制：</p>
+<blockquote>
+<ul>
+<li>cnpm 的机制把所有官方仓库的包拷贝到私有仓库中，然后每隔几分钟从官方仓库中同步一次。这样的优点是用户下载包会比较快，缺点是包刚发布上去可能需要等待几分钟来同步或者去手动同步。另外就是对硬盘要有一定要求，毕竟全球那么多 JavaScript 开发者每天都在发布无数的包上去，都需要去同步到内网仓库中。</li>
+<li>verdaccio 相对来说则智能一些。它并不会主动拷贝和同步官方源的包，只有在用户去安装包的时候才从官方的仓库拉取，并在本地生成缓存。经过验证在一段时间之后它的缓存命中率是非常高的，因为用户在绝大多数情况下都在安装同样的包。</li>
+</ul>
+</blockquote>
+<p>以上通过区分内外网仓库，可以防止内部的包泄露到外网中。</p>
 
       
       
         <div class="article-more-link">
-          <a class="go-more-link" href="/2018/07/05/web_engineer/web-engineer-02/">继续阅读全文 »</a>
+          <a class="go-more-link" href="/2018/07/07/web_engineer/web-engineer-03/">继续阅读全文 »</a>
         </div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://www.xbroder.com/2018/07/05/web_engineer/web-engineer-02/" data-id="cjpr5sb58004l32ghipxo2gf2" class="article-share-link">分享</a>
+      <a data-url="http://www.xbroder.com/2018/07/07/web_engineer/web-engineer-03/" data-id="cjtaxnusb005cs6ghf1rhirc9" class="article-share-link">分享</a>
       
       
-        <a href="http://www.xbroder.com/2018/07/05/web_engineer/web-engineer-02/#disqus_thread" class="article-comment-link">留言</a>
+        <a href="http://www.xbroder.com/2018/07/07/web_engineer/web-engineer-03/#disqus_thread" class="article-comment-link">留言</a>
       
       
     </footer>
@@ -218,6 +242,10 @@
       <ul>
         
           <li>
+            <a href="/2019/03/16/javascript/jscompile/">(no title)</a>
+          </li>
+        
+          <li>
             <a href="/2019/01/04/es6/es01/">ES6</a>
           </li>
         
@@ -231,10 +259,6 @@
         
           <li>
             <a href="/2018/12/13/reprint/rep02/">深入Babel，这一篇就够了</a>
-          </li>
-        
-          <li>
-            <a href="/2018/12/12/reprint/rep01/">一口(很长的)气了解 babel</a>
           </li>
         
         <li><a class="more" href="/archives"><strong>更多文章......<strong></a></li>

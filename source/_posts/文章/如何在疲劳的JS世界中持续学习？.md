@@ -2,7 +2,7 @@
 title: 如何在疲劳的JS世界中持续学习？
 date: 2018-07-11 11:46:51
 tags: JavaScript
-categories: JavaScript
+categories: 文章
 ---
 
 

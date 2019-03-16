@@ -612,12 +612,17 @@ a.article-title:hover {
   margin: 1.1em 0;
 }
 .article-entry h1,
-.article-entry h2,
-.article-entry h3 {
+.article-entry h2 {
   margin-top: 1.5em;
   padding: 0 0 0.5em 0;
   letter-spacing: -0.03em;
   border-bottom: 1px solid #d3d3d3;
+  color: #000;
+}
+.article-entry h3 {
+  margin-top: 1.5em;
+  padding: 0 0 0.5em 0;
+  letter-spacing: -0.03em;
   color: #000;
 }
 .article-entry h2 {

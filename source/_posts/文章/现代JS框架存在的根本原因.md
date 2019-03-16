@@ -3,7 +3,7 @@ layout: post
 title: 现代JS框架存在的根本原因
 date: 2018-06-04 23:05:11
 tags: JavaScript
-categories: JavaScript
+categories: 文章
 ---
 
 **【本文转载自 奇舞周刊 微信公众号】**

@@ -3,7 +3,7 @@ layout: post
 title: 香港一日游咯
 date: 2018-10-10 23:12:19
 tags: 香港
-categories: 游记
+categories: 文章
 ---
 
 去香港，下面这些都是要提前准备的
